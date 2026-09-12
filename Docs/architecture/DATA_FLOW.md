@@ -23,6 +23,13 @@
 
 **Plain English:** The visible app never edits simulation numbers directly. It sends named commands (`INIT`, `STEP`, `GET_SNAPSHOT`, `GET_DIGEST`, `LOAD_SNAPSHOT`) to the worker. The worker is the only code path that advances simulation truth.
 
+**M01 update — real-time pacing (ARCH-005):** the periodic `STEP` is now driven by `SimulationDriver` on the main thread. Each animation frame it converts elapsed real time × the selected speed (Pause, 0.25×, 1×, 5×, 20×, 100×, 1000×) into whole simulated minutes via the pure `accumulateSimMinutes`, then posts `STEP { count }`. Because state depends only on the total minutes stepped, 1× and 1000× reach the same world for the same simulated duration.
+
+```text
+requestAnimationFrame → accumulateSimMinutes(pacing, elapsedMs, speed)
+    → STEP { count }  (count = 0 while paused)
+```
+
 **Mermaid equivalent:**
 
 ```mermaid
@@ -46,7 +53,8 @@ sequenceDiagram
       │
       │  toRenderSnapshot()
       ▼
-  RenderSnapshot { simMinute, visualPhase, tickCount, … }
+  RenderSnapshot { simMinute, visualPhase, tickCount,
+                   calendar (derived), timeOfDay, isDaytime, … }
       │
       │  postMessage STEP_COMPLETE
       ▼
@@ -57,6 +65,8 @@ sequenceDiagram
 ```
 
 **Plain English:** The 3D scene and HUD receive a **small, read-only summary**. They cannot see PRNG internals, full event logs, or future NPC minds. If the renderer lags or unmounts, simulation truth in the worker is unchanged (ARCH-002).
+
+**M01 update — derived calendar:** `toRenderSnapshot` runs `deriveCalendar(simMinute)` so the snapshot carries the human date/clock/season plus `timeOfDay` (drives day/night lighting) and `isDaytime`. The calendar is derived, never stored, so it cannot drift from the authoritative counter and never enters the save digest. The static town geometry (`src/world/townLayout.ts`) is authored content read directly by the renderer, not streamed per frame (ADR-006).
 
 ---
 
