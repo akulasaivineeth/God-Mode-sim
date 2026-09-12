@@ -80,9 +80,9 @@ state (ADR-006).
   them from `clock.simMinute`.
 - `src/rendering/Town.tsx` (WORLD-001) — draws the town: terrain-displaced
   ground (segmented plane using `terrainHeightAt`), zone patches, sidewalks,
-  roads, pedestrian paths, river, buildings (box walls + pyramid roofs), town
-  trees, the nearby forest, and graves — all placed on the terrain height.
-  Low-poly, shared materials.
+  roads, pedestrian paths, river with banks, differentiated buildings, the
+  forest, and graves — all placed on the terrain height. Low-poly, shared
+  materials. See the Revision 3 section below for the visual-polish details.
 - `src/rendering/DayNightLighting.tsx` (SIM-TIME-004) — computes sun position,
   directional/ambient/hemisphere light intensity, and sky background colour
   purely from `timeOfDay`, so lighting is exact at every speed.
@@ -116,6 +116,51 @@ state (ADR-006).
 - `src/shared/requirements.ts` — added M01 acceptance/regression ID lists.
 - `scripts/export-review-bundle.ts` — M01 requirement statuses, a 1-day
   scenario, and both the M00 historical digest and the M01 scenario digest.
+
+---
+
+## Revision 3 — visual/art-direction polish & performance (CHATGPT-DECISION M01-002)
+
+All changes below are authored/presentation only; ARCH-002 and determinism are
+untouched (golden digest `fac095d1` unchanged).
+
+- **Readable river** (`townLayout.ts`): the river bends inward past the town's
+  eastern edge with a broad channel (width 8) and visible banks
+  (`bankWidth`/`bankColor`), so Riverside reads as a riverside town from the
+  Overview/Angled presets instead of a thin edge strip.
+- **Legible terrain** (`townLayout.ts` + `Town.tsx`): hills are concentrated to
+  the north/west (where the forest sits) while the eastern river valley stays
+  flat, so water never runs uphill. The ground mesh is flat-shaded and tinted by
+  height (green core → dry-grass hills) so the elevation reads clearly. Core
+  stays perfectly flat; `maxHeight` is a modest 7 (no mountains, no physics).
+- **Building archetypes** (`BUILDING_ARCHETYPES` + `Town.tsx`): a small reusable
+  set of low-poly archetypes differentiates facilities — gable roofs
+  (house/cafe/workshop/warehouse/farmhouse), flat roofs (apartment/store/utility),
+  hip roofs (clinic/school/community). Add-ons: storefront awnings (store/cafe),
+  protruding entry volumes (civic), a rooftop tank (utility), plus window/door
+  colour blocks on the front face. Same fictional-modern language, no asset pack.
+- **Composition** — clear hierarchy of water/bank, dark road, light sidewalk,
+  tan path, grass, park, farm, square; no billboards or giant labels.
+- **Day/night readability** (`DayNightLighting.tsx`): raised ambient/hemisphere/
+  directional floors so the town is readable at dawn and daytime without fake
+  emissive; night is still visibly darker.
+- **Performance — instancing** (`Town.tsx`): all trees (town + forest) now draw
+  as two `InstancedMesh` calls (trunks, canopies) instead of one mesh pair per
+  tree, and all graves as one `InstancedMesh`. Deterministic authored
+  positions/scales are preserved (`collectAllTrees`).
+
+### Render metrics (town shell)
+
+| Metric | Before (per-object meshes) | After (instanced) |
+|--------|----------------------------|-------------------|
+| Tree draw calls | ~186 (93 trees × trunk+canopy) | **2** |
+| Grave draw calls | 16 | **1** |
+| Total scene draw calls | ~260 | **99** (measured, live HUD) |
+| Triangles | comparable | **~22.7k** (measured) |
+
+Draw calls/triangles are shown live in the diagnostics HUD (`Draw calls · Tris`)
+via `gl.info.render`, so the metric is observable at runtime. (FPS in the cloud
+review desktop is environment noise, not the M2 target truth.)
 
 ---
 

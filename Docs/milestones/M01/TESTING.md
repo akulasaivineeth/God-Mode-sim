@@ -43,12 +43,15 @@ npm run export-review-bundle
 | Sidewalks | ≥ 2 sidewalk strips per road, all positive width | Sidewalks removed |
 | Pedestrian paths | ≥ 4 authored paths, all positive width | Paths removed |
 | Nearby forest | ≥ 20 forest trees, forest sits on elevated terrain, distinct from town trees | Forest lost or flattened |
-| Terrain elevation | `maxHeight` > 0; flat at core (0,0)/(20,-10); modest hills at periphery bounded by `maxHeight` | Terrain flattened or unbounded |
+| Terrain elevation | `maxHeight` > 0; flat at core (0,0)/(20,-10); north/west hills bounded by `maxHeight`; east river valley flat | Terrain flattened, unbounded, or river runs uphill |
 | Terrain determinism | `terrainHeightAt` returns the same value for the same input | Non-deterministic terrain |
 | Buildings on flat core | every building sits at terrain height 0 (no floating/sinking) | A building drifted onto a slope |
+| River readability | ≥ 5 points, width ≥ 7, banks wider than water, bends inward (min x ≤ 38), spans the map z | River reduced to a tiny edge strip |
+| Building archetypes | archetype defined for every building type; ≥ 2 roof styles; house≠apartment roof; store canopy; utility tower; community entry | Building silhouettes collapsed to one grammar |
+| Tree instancing source | `collectAllTrees()` = town + forest trees | Shared/instanced tree path removed |
 | No Day-1 government | no `townhall`/`government` type; a neutral `community` building exists; no government-implying labels/ids | A mature-government building was (re)introduced |
 
-**Requirement:** WORLD-001 (spec §3.2 world shell, §22 no Day-1 government)
+**Requirement:** WORLD-001 (spec §3.2 world shell, §22 no Day-1 government). Suite: `tests/unit/townLayout.test.ts` (13 tests).
 
 ---
 

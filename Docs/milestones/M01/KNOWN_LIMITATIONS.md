@@ -20,6 +20,10 @@ Distinguishes **deliberate scope limits**, **planned future work**, and any
   flat so buildings/roads sit level.
 - **The Community Hall is a gathering place only.** Per spec §22 the town has no
   mature government on Day 1 — no government/mayor/council/police state exists.
+- **Buildings are differentiated low-poly archetypes, not final art.** Roof
+  styles + light add-ons (awnings/entries/tower/window blocks) give facilities
+  distinct silhouettes; this is an intentional stylized shell, not production
+  models. Trees/graves are instanced for performance headroom before M02.
 - **Seasons are labels, not effects.** The clock reports the season, but weather,
   temperature, and environmental consequences are M10.
 - **No economy, God tools, save/branch UI, or experiments.** M04+/M11.
