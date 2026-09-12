@@ -1,0 +1,106 @@
+---
+description: Canonical non-negotiable architecture and workflow rules for GOD MODE
+alwaysApply: true
+---
+
+# GOD MODE Project Constitution
+
+The canonical product specification is:
+
+Docs/specs/GOD_MODE_Canonical_Build_Specification.md
+
+The canonical validation specification is:
+
+Docs/qa/GOD_MODE_Independent_Validation_UAT.md
+
+The builder operating prompt is:
+
+Docs/agents/GOD_MODE_Cursor_Builder_Prompt.md
+
+The reviewer operating prompt is:
+
+Docs/agents/GOD_MODE_Grok_Reviewer_Prompt.md
+
+These documents define product intent. Existing implementation does not override them.
+
+## Non-Negotiable Rules
+
+1. Implement only the currently authorized milestone.
+
+2. Never silently simplify a canonical requirement because an easier implementation exists.
+
+3. This product must not require paid runtime AI APIs, LLM APIs, Ollama, or external inference services.
+
+4. NPC autonomy must arise from deterministic simulation systems including:
+   - perception
+   - beliefs
+   - memory
+   - needs
+   - emotions
+   - personality
+   - goals
+   - utility scoring
+   - planning
+   - seeded randomness
+
+5. NPCs must never make decisions using information they have not perceived, learned, inferred, remembered, or been told.
+
+6. Objective world truth and subjective NPC belief state must remain separate.
+
+7. Society-level outcomes must emerge from individual behavior.
+
+Forbidden shortcut:
+famine -> increase crime globally
+
+Required causal structure:
+scarcity -> prices/hunger/stress/opportunity -> individual NPC decisions -> aggregate crime may change
+
+8. Simulation state is authoritative.
+Rendering and UI must never become the source of simulation truth.
+
+9. All randomness affecting simulation outcomes must be seeded and reproducible.
+
+10. Save, replay, checkpoint, experiment, and timeline-branching systems must preserve deterministic state including RNG state.
+
+11. Explicit God interventions succeed exactly.
+Their downstream consequences remain emergent.
+
+12. NPC life events must influence psychology through systems rather than directly assigning outcomes.
+
+Forbidden example:
+parents die -> criminal = true
+
+13. Maintain stable requirement IDs from the canonical specifications.
+
+14. Every milestone must include automated tests and reviewer evidence.
+
+15. Do not proceed to the next milestone until independent review marks the current milestone PASS.
+
+16. If implementation and canonical specification disagree, the specification wins unless the Product Owner explicitly changes it.
+
+17. Preserve architectural separation between:
+   - simulation
+   - rendering
+   - UI
+   - persistence
+   - testing/debug tooling
+
+18. Performance decisions must target:
+Apple M2 MacBook Pro
+8 GB unified memory
+
+19. Prefer correctness, determinism, observability, and maintainability over shortcuts.
+
+20. Do not implement future milestone features merely because they appear easy while working on the current milestone.
+
+21. Composer is the builder.
+Grok is the independent reviewer.
+The builder must not declare its own milestone accepted.
+
+22. Major NPC decisions must be explainable through causal traces.
+
+23. At high simulation speeds, presentation may simplify, but simulation consequences must remain equivalent.
+
+24. Do not introduce any architectural dependency on an LLM for NPC conversations or decisions.
+
+25. If uncertain whether a design decision conflicts with the specification, stop and surface the ambiguity rather than silently inventing behavior.
