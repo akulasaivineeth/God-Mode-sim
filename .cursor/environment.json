@@ -1,0 +1,17 @@
+{
+  "name": "GOD MODE",
+  "install": "npm ci && npx playwright install chromium",
+  "terminals": [
+    {
+      "name": "dev-server",
+      "command": "npm run dev -- --host 127.0.0.1 --port 5173",
+      "description": "Vite dev server for the GOD MODE app (http://localhost:5173)."
+    }
+  ],
+  "ports": [
+    {
+      "name": "vite-dev",
+      "port": 5173
+    }
+  ]
+}
