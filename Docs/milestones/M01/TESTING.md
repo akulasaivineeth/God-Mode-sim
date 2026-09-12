@@ -35,6 +35,23 @@ npm run export-review-bundle
 | Day/night boundary | night <06:00 and ≥18:00, day between | Day/night threshold broke |
 | timeOfDay fraction | 00:00→0, 12:00→0.5, 18:00→0.75 | Lighting input broke |
 
+### `tests/unit/townLayout.test.ts` — WORLD-001
+
+| Test | What it checks | Failure means |
+|------|----------------|---------------|
+| Day-one facilities | store, clinic, school, cafe, houses, apartment, workshop, warehouse, utility, farmhouse, park, square, cemetery, plots, river all present | A required facility was dropped |
+| Sidewalks | ≥ 2 sidewalk strips per road, all positive width | Sidewalks removed |
+| Pedestrian paths | ≥ 4 authored paths, all positive width | Paths removed |
+| Nearby forest | ≥ 20 forest trees, forest sits on elevated terrain, distinct from town trees | Forest lost or flattened |
+| Terrain elevation | `maxHeight` > 0; flat at core (0,0)/(20,-10); modest hills at periphery bounded by `maxHeight` | Terrain flattened or unbounded |
+| Terrain determinism | `terrainHeightAt` returns the same value for the same input | Non-deterministic terrain |
+| Buildings on flat core | every building sits at terrain height 0 (no floating/sinking) | A building drifted onto a slope |
+| No Day-1 government | no `townhall`/`government` type; a neutral `community` building exists; no government-implying labels/ids | A mature-government building was (re)introduced |
+
+**Requirement:** WORLD-001 (spec §3.2 world shell, §22 no Day-1 government)
+
+---
+
 ### `tests/unit/speed.test.ts` — SIM-TIME-002 / SIM-TIME-003 / ARCH-005
 
 | Test | What it checks | Failure means |

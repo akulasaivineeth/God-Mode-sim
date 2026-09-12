@@ -89,7 +89,7 @@ Open the URL shown in the terminal (usually `http://localhost:5173`).
 
 You should see:
 
-- A **handcrafted low-poly 3D town** (houses, store, clinic, school, cafe, workshop, warehouse, farm, park, square, cemetery, roads, trees, a river) under an angled camera
+- A **handcrafted low-poly 3D town** (houses, store, clinic, school, cafe, workshop, warehouse, farm, park, square, community hall, cemetery, roads with sidewalks, pedestrian paths, trees, a nearby forest on gently rolling hills, and a river) under an angled camera
 - **Day/night lighting** that follows the clock
 - A diagnostics panel with the **date, clock, season, day/night, speed**, FPS, worker step time, seed, and a state **digest** (fingerprint)
 - **Speed buttons** (bottom) and **camera buttons** (top-left)

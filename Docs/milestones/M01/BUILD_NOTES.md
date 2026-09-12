@@ -49,13 +49,27 @@ worker remains the sole owner of the clock; the driver only decides pacing.
 
 ### `src/world/townLayout.ts` (WORLD-001)
 
-The canonical town "Riverside" as frozen authored data: typed buildings
-(town hall, houses, apartments, general store, clinic, school, cafe, workshop,
-warehouse, utility station, farmhouse), two main roads plus two cross streets, a
-central park, a town square, farm plots, vacant plots, a cemetery with grave
-markers, a river polyline, and deterministically placed trees. Coordinates use
-the Three.js ground-plane (X/Z) convention. This is treated as an asset (like a
-mesh), not dynamic simulation state (ADR-006).
+The canonical town "Riverside" as frozen authored data:
+
+- Typed buildings: houses, apartments, general store, clinic, school, cafe,
+  workshop, warehouse, utility station, farmhouse, and a neutral **Community
+  Hall**. There is deliberately **no Town Hall / government building** — the
+  canonical town begins without a mature local government (spec §22); a physical
+  community gathering place is fine but confers no political authority.
+- Two main roads plus two cross streets, with **sidewalks** flanking every
+  street (deterministically derived) and a set of **pedestrian paths** linking
+  the square to the park, housing, store, and community/school areas.
+- A central park, a town square, farm plots, vacant plots, a cemetery with grave
+  markers, a river polyline, sparse town trees, and a distinct **nearby forest**
+  ("North Woods") on the northern hills.
+- **Modest terrain elevation** via `terrainHeightAt(x, z)`: a pure, deterministic
+  heightfield that is flat in the settled core (so buildings/roads/sidewalks sit
+  level) and rises into gentle hills at the periphery where the forest sits. No
+  physics.
+
+Coordinates use the Three.js ground-plane (X/Z) convention. All of this is
+treated as an authored asset (like a mesh/heightfield), not dynamic simulation
+state (ADR-006).
 
 ---
 
@@ -64,9 +78,11 @@ mesh), not dynamic simulation state (ADR-006).
 - `src/rendering/types.ts` — extended the read-only `RenderSnapshot` with the
   derived `calendar`, `timeOfDay`, and `isDaytime`. `toRenderSnapshot` computes
   them from `clock.simMinute`.
-- `src/rendering/Town.tsx` (WORLD-001) — draws the town: ground, zone patches,
-  roads, river, buildings (box walls + pyramid roofs), trees (trunk + cone),
-  and graves. Low-poly, shared materials.
+- `src/rendering/Town.tsx` (WORLD-001) — draws the town: terrain-displaced
+  ground (segmented plane using `terrainHeightAt`), zone patches, sidewalks,
+  roads, pedestrian paths, river, buildings (box walls + pyramid roofs), town
+  trees, the nearby forest, and graves — all placed on the terrain height.
+  Low-poly, shared materials.
 - `src/rendering/DayNightLighting.tsx` (SIM-TIME-004) — computes sun position,
   directional/ambient/hemisphere light intensity, and sky background colour
   purely from `timeOfDay`, so lighting is exact at every speed.

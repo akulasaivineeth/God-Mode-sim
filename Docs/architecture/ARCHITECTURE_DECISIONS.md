@@ -236,6 +236,10 @@ the read-only `RenderSnapshot`.
 - The renderer imports `CANONICAL_TOWN` directly; it must treat it as read-only.
 - When buildings gain mutable state, that state (not the base mesh) becomes
   authoritative worker state.
+- The deterministic terrain heightfield (`terrainHeightAt`) is authored content
+  under this decision too: it is a pure function shared by the layout (to place
+  trees/buildings) and the renderer (to displace the ground). It carries no
+  simulation authority and is safe to assert in tests.
 
 **Requirement:** WORLD-001 (preserves ARCH-002)
 

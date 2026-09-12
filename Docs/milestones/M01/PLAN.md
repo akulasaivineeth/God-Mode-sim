@@ -26,7 +26,7 @@ M01 UAT gate (UAT §17): *"Must pass camera/time/high-speed rendering independen
 | SIM-TIME-003 | Pause freezes simulation state; camera/UI remain usable. | Implemented + tested |
 | SIM-TIME-004 | Day/night cycle derived deterministically from the clock. | Implemented + tested |
 | VIS-002 | Free camera: rotate, pan, zoom; plus preset overview/street views. | Implemented (manual UAT) |
-| WORLD-001 | Small handcrafted 3D town shell (housing, store, clinic, school, cafe, workshop/warehouse, farm, park, square, utility area, cemetery, vacant plots, roads, trees, river). | Implemented (manual UAT) |
+| WORLD-001 | Small handcrafted 3D town shell (housing, store, clinic, school, cafe, workshop/warehouse, farm, park, square, community hall, utility area, cemetery, vacant plots, roads, sidewalks, pedestrian paths, trees, nearby forest, modest terrain elevation, river). No Day-1 government building (spec §22). | Implemented + tested |
 | ARCH-002 | Render/simulation separation preserved (worker authoritative; renderer read-only). | Regression + preserved |
 | ARCH-005 | High-speed rendering independence: identical simulated state for the same elapsed sim-time regardless of speed/batching. | Implemented + tested |
 | M01-GATE | 1000× may skip animation but time/state remain correct. | Implemented + tested |

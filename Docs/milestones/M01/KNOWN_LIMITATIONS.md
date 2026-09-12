@@ -12,6 +12,14 @@ Distinguishes **deliberate scope limits**, **planned future work**, and any
 - **Exterior building shells only.** Buildings have no functional interiors and
   no roof/wall fade-away viewing (VIS-003). Interiors arrive with the first
   citizen in M02.
+- **Sidewalks and pedestrian paths are visual only.** They mark where people
+  will walk; actual walkable pathfinding/navigation arrives with citizens (M02).
+- **Terrain elevation is a modest visual heightfield.** Gentle peripheral hills
+  make the world not-flat and carry the nearby forest, but there is no physics,
+  collision, or terrain-driven simulation. The settled core is intentionally
+  flat so buildings/roads sit level.
+- **The Community Hall is a gathering place only.** Per spec §22 the town has no
+  mature government on Day 1 — no government/mayor/council/police state exists.
 - **Seasons are labels, not effects.** The clock reports the season, but weather,
   temperature, and environmental consequences are M10.
 - **No economy, God tools, save/branch UI, or experiments.** M04+/M11.

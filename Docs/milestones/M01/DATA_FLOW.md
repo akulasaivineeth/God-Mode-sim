@@ -62,11 +62,14 @@ never disagree with simulation truth. The calendar is never stored.
 RenderSnapshot.timeOfDay ──► DayNightLighting (sun position, sky colour, intensity)
 RenderSnapshot.calendar  ──► DiagnosticsHud (date/clock/season)
 RenderSnapshot.visualPhase ─► SimBeacon (eases at low speed, snaps if suppressed)
-CANONICAL_TOWN (authored) ─► Town geometry (buildings, roads, park, river, trees)
+CANONICAL_TOWN (authored) ─► Town geometry: terrain heightfield, buildings,
+                             roads, sidewalks, paths, park/square, forest,
+                             river, trees, graves
 ```
 
-The renderer reads only these values and the immutable town asset. It never
-writes back to simulation state (ARCH-002).
+The renderer reads only these values and the immutable town asset (including the
+deterministic `terrainHeightAt` heightfield). It never writes back to simulation
+state (ARCH-002).
 
 ---
 
