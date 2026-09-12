@@ -17,6 +17,8 @@ export function DiagnosticsHud() {
     speed,
     paused,
     animationsSuppressed,
+    renderCalls,
+    renderTriangles,
   } = useDiagnosticsStore();
 
   const calendar = renderSnapshot?.calendar;
@@ -64,6 +66,10 @@ export function DiagnosticsHud() {
       <div>Worker: {workerReady ? 'ready' : 'initializing'}</div>
       <div>Seed: {seed || '—'}</div>
       <div>FPS: {fps.toFixed(1)}</div>
+      <div>
+        Draw calls: <span data-testid="hud-drawcalls">{renderCalls}</span> · Tris:{' '}
+        {renderTriangles.toLocaleString()}
+      </div>
       <div>Worker step: {lastWorkerStepMs.toFixed(2)} ms</div>
       <div>Total step msgs: {totalSteps}</div>
       <div style={{ marginTop: 8, wordBreak: 'break-all' }}>Digest: {lastDigest ?? '—'}</div>

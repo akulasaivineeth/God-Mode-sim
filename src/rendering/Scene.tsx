@@ -25,13 +25,16 @@ interface SceneProps {
 
 function FpsTracker() {
   const setFps = useDiagnosticsStore((state) => state.setFps);
+  const setRenderStats = useDiagnosticsStore((state) => state.setRenderStats);
   const frames = useRef({ count: 0, lastAt: performance.now() });
 
-  useFrame(() => {
+  useFrame((state) => {
     frames.current.count += 1;
     const now = performance.now();
     if (now - frames.current.lastAt >= 1000) {
       setFps(frames.current.count);
+      const info = state.gl.info.render;
+      setRenderStats(info.calls, info.triangles);
       frames.current.count = 0;
       frames.current.lastAt = now;
     }
