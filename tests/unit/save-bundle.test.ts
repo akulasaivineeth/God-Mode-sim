@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseSaveBundle } from '@/persistence/deserialize';
 import { buildSaveBundle, serializeSaveBundle } from '@/persistence/serialize';
-import { SCHEMA_VERSION } from '@/shared/version';
+import { MILESTONE, SCHEMA_VERSION } from '@/shared/version';
 import { createWorldSnapshot, runToySteps } from '@/simulation/core/toySim';
 
 describe('ARCH-004 save bundle', () => {
@@ -12,7 +12,7 @@ describe('ARCH-004 save bundle', () => {
     const parsed = parseSaveBundle(json);
 
     expect(parsed.snapshot.toy.tickCount).toBe(5);
-    expect(parsed.milestone).toBe('M00');
+    expect(parsed.milestone).toBe(MILESTONE);
     expect(parsed.digest).toBe(bundle.digest);
   });
 });
