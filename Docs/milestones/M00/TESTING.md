@@ -17,7 +17,7 @@ npm run build             # production build
 npm run test:all          # full suite in order
 ```
 
-**Canonical digest check:** after `npm run test`, integration tests assert digest `fac095d1` at 100 steps.
+**Canonical digest check:** `tests/integration/toy-sim.test.ts` asserts `expect(digest).toBe('fac095d1')` after 100 steps with seed `GODMODE_M00_CANONICAL_2026`. This golden value is regression-locked in CI.
 
 ---
 
@@ -85,7 +85,7 @@ npm run test:all          # full suite in order
 
 | Test | What it checks | Why it matters | Failure means |
 |------|----------------|----------------|---------------|
-| Stable digest at 100 steps | Fixed seed, 100 steps → known digest `fac095d1` | M00 gate and reviewer baseline | Toy step, PRNG, or digest changed unintentionally |
+| Golden digest at 100 steps | `expect(digest).toBe('fac095d1')` with canonical seed | M00 gate regression lock in CI | Toy step, PRNG, canonicalization, or digest pipeline changed unintentionally |
 
 **Requirement:** M00-GATE
 
