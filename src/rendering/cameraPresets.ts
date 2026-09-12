@@ -12,7 +12,9 @@ export interface CameraPreset {
 }
 
 export const CAMERA_PRESETS: Record<CameraView, CameraPreset> = {
-  overview: { position: [0, 85, 95], target: [0, 0, 0] },
-  angled: { position: [46, 40, 58], target: [0, 0, 4] },
+  // Overview/Angled are biased slightly toward the north-west so the peripheral
+  // hills + North Woods read clearly as topography (not a flat plane).
+  overview: { position: [24, 74, 86], target: [-10, 2, -12] },
+  angled: { position: [44, 38, 54], target: [-8, 3, -10] },
   street: { position: [12, 4.5, 22], target: [0, 2.5, 2] },
 };

@@ -168,8 +168,13 @@ export const BUILDING_ARCHETYPES: Record<BuildingType, BuildingArchetype> = {
 
 export const TERRAIN: TerrainConfig = {
   flatRadius: 34,
-  blend: 15,
-  maxHeight: 7,
+  // Rise to full height over a shorter span so the peripheral hills form a clear
+  // ridge that is unmistakable at overview framing, while the settled core (well
+  // inside flatRadius) stays perfectly flat.
+  blend: 11,
+  // Modest but clearly legible relief (~10 units over a ~100-unit map). Gentle
+  // topography, not mountains, and no physics.
+  maxHeight: 10,
 };
 
 /**
@@ -194,8 +199,12 @@ export function terrainHeightAt(x: number, z: number): number {
   if (reach <= 0) {
     return 0;
   }
+  // Smooth ridge rise (ease-in) plus gentle undulation for facet variety. The
+  // firm base keeps the ridge consistently prominent rather than dipping to a
+  // barely-visible bump.
+  const ridge = reach * reach * (3 - 2 * reach); // smoothstep
   const undulation = 0.5 * (Math.sin(x * 0.13) * Math.cos(z * 0.11) + Math.sin((x + z) * 0.05));
-  return reach * TERRAIN.maxHeight * (0.7 + 0.3 * undulation);
+  return ridge * TERRAIN.maxHeight * (0.82 + 0.18 * undulation);
 }
 
 /**

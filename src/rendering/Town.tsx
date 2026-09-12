@@ -91,8 +91,11 @@ function TerrainGround() {
     const segments = 96;
     const geo = new PlaneGeometry(size, size, segments, segments);
     const pos = geo.attributes.position;
-    const low = new Color(CANONICAL_TOWN.groundColor);
-    const high = new Color('#8f8659');
+    // Three-stop height tint (grass → olive slope → dry-grass hilltop) so the
+    // relief reads clearly even at overview framing. Saturates before the peak.
+    const grass = new Color(CANONICAL_TOWN.groundColor);
+    const slope = new Color('#6f713f');
+    const hilltop = new Color('#b0995f');
     const colors = new Float32Array(pos.count * 3);
     const tmp = new Color();
     for (let i = 0; i < pos.count; i += 1) {
@@ -101,8 +104,12 @@ function TerrainGround() {
       // After the -90° X rotation below, local (x, y) maps to world (x, -y).
       const h = terrainHeightAt(lx, -ly);
       pos.setZ(i, h);
-      const t = Math.min(1, h / TERRAIN.maxHeight);
-      tmp.copy(low).lerp(high, t);
+      const t = Math.min(1, h / (TERRAIN.maxHeight * 0.8));
+      if (t < 0.5) {
+        tmp.copy(grass).lerp(slope, t / 0.5);
+      } else {
+        tmp.copy(slope).lerp(hilltop, (t - 0.5) / 0.5);
+      }
       colors[i * 3] = tmp.r;
       colors[i * 3 + 1] = tmp.g;
       colors[i * 3 + 2] = tmp.b;
