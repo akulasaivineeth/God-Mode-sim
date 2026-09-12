@@ -104,3 +104,35 @@ The builder must not declare its own milestone accepted.
 24. Do not introduce any architectural dependency on an LLM for NPC conversations or decisions.
 
 25. If uncertain whether a design decision conflicts with the specification, stop and surface the ambiguity rather than silently inventing behavior.
+
+## Documentation Definition of Done
+
+A milestone is not complete for review until documentation is updated alongside code.
+
+26. Every milestone receives a `Docs/milestones/MXX/` directory with at minimum:
+    - `README.md` (plain-English milestone summary)
+    - `BUILD_NOTES.md`
+    - `DATA_FLOW.md`
+    - `TESTING.md`
+    - `KNOWN_LIMITATIONS.md`
+
+27. The root `README.md` must reflect the current validated project state: what is complete, what is not built, and how to install/run/test.
+
+28. Living architecture documents must be updated when architecture changes:
+    - `Docs/architecture/SYSTEM_OVERVIEW.md`
+    - `Docs/architecture/DATA_FLOW.md`
+    - `Docs/architecture/ARCHITECTURE_DECISIONS.md` (new ADR when decisions change)
+
+29. New non-obvious systems receive plain-English documentation understandable to the Product Owner without reading source code.
+
+30. Important architectural decisions are recorded as ADRs with decision, reason, alternatives, and consequences.
+
+31. Data-flow or message-protocol changes must update `Docs/architecture/DATA_FLOW.md` and the active milestone `DATA_FLOW.md`.
+
+32. Complex simulation logic must include explanatory comments for WHY and which invariants/requirement IDs they protect — not redundant syntax commentary.
+
+33. Documentation must clearly distinguish **implemented functionality** from **planned/scaffolded** functionality.
+
+34. Documentation must be understandable to the Product Owner without requiring knowledge of the codebase. Use `Docs/GLOSSARY.md` for jargon.
+
+35. Grok must validate documentation accuracy and completeness as part of milestone review, in addition to behavior and architecture checks.

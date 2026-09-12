@@ -8,3 +8,6 @@ build/
 coverage/
 playwright-report/
 test-results/
+generated/
+review-bundle/
+*.tsbuildinfo
