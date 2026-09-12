@@ -71,7 +71,7 @@ You need **Node.js** (version 20 or newer recommended) and **npm** on your Mac.
 ```bash
 git clone https://github.com/akulasaivineeth/God-Mode-sim.git
 cd God-Mode-sim
-git checkout milestone/m00-foundation
+git checkout milestone/m01-world-and-time   # current build (M01); M00 is merged to main
 npm ci
 ```
 
@@ -91,7 +91,7 @@ You should see:
 
 - A **handcrafted low-poly 3D town** (differentiated houses/store/clinic/school/cafe/workshop/warehouse/farm/community hall, park, square, cemetery, roads with sidewalks, pedestrian paths, trees, a nearby forest on gently rolling hills, and a readable river with banks) under an angled camera
 - **Day/night lighting** that follows the clock
-- A diagnostics panel with the **date, clock, season, day/night, speed**, FPS, worker step time, seed, and a state **digest** (fingerprint)
+- A diagnostics panel with the **date, clock, season, day/night, speed**, FPS, **draw calls · triangles** (renderer stats), worker step time, seed, and a state **digest** (fingerprint)
 - **Speed buttons** (bottom) and **camera buttons** (top-left)
 
 Try it: click **1000×** to make the clock race and watch the sun cross the sky;
@@ -144,6 +144,7 @@ More detail: `Docs/architecture/SYSTEM_OVERVIEW.md` and `Docs/architecture/DATA_
 | `Docs/architecture/DATA_FLOW.md` | PO + builders | How data moves (with diagrams) |
 | `Docs/architecture/ARCHITECTURE_DECISIONS.md` | PO + builders | Why key decisions were made (ADRs) |
 | `Docs/milestones/M00/` | PO + reviewers | Everything specific to milestone M00 |
+| `Docs/milestones/M01/` | PO + reviewers | Everything specific to milestone M01 (3D world and time) |
 | `Docs/specs/GOD_MODE_Canonical_Build_Specification.md` | Builders + reviewers | Full product specification |
 | `Docs/qa/GOD_MODE_Independent_Validation_UAT.md` | Reviewer (Grok) | Validation and UAT procedures |
 | `Docs/agents/` | AI agents | Builder and reviewer operating prompts |

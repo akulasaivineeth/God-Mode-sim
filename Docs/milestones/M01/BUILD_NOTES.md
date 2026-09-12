@@ -162,6 +162,26 @@ Draw calls/triangles are shown live in the diagnostics HUD (`Draw calls · Tris`
 via `gl.info.render`, so the metric is observable at runtime. (FPS in the cloud
 review desktop is environment noise, not the M2 target truth.)
 
+## Revision 4 — terrain legibility + docs (CHATGPT-DECISION M01-003)
+
+- **Terrain now unmistakable at overview** (`townLayout.ts` + `Town.tsx` +
+  `cameraPresets.ts`): the N/W hills use a smoothstep ridge profile, a shorter
+  blend (11) and a modestly higher `maxHeight` (10) so the peripheral hills read
+  as clear raised topography from the Overview and Angled presets. The ground
+  tint is now a three-stop gradient (grass → olive slope → dry-grass hilltop)
+  that saturates before the peak for contrast. Overview/Angled presets are biased
+  slightly toward the north-west to frame the hills. The settled core stays flat
+  and the eastern river valley stays flat (river never runs uphill); no physics.
+  A test locks the relief as legible-but-modest (`maxHeight` in [8,14]; N/W peak
+  ≥ half of `maxHeight`).
+- **Docs drift fixed** (`README.md` + M01 README): install/checkout now points to
+  `milestone/m01-world-and-time` (M00 is merged to `main`); the "what you should
+  see" list now includes the live `Draw calls · Tris` renderer stats; the root
+  docs index now lists the `Docs/milestones/M01/` folder alongside M00.
+
+Independent measure at this revision: **112 draw calls · ~23.4k triangles**
+(overview frustum), consistent with the instanced-geometry improvement.
+
 ---
 
 ## Determinism / M00 regression

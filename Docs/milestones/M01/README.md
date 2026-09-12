@@ -23,7 +23,7 @@ There are still **no people** — that begins in M02. M01 is the world and its c
 ## What you can see when you run M01
 
 - A low-poly town seen from an angled camera.
-- A diagnostics panel (top-right) showing the date, clock, season, day/night, speed, and the deterministic digest.
+- A diagnostics panel (top-right) showing the date, clock, season, day/night, speed, live renderer stats (draw calls · triangles), and the deterministic digest.
 - Speed buttons (bottom) and camera buttons (top-left).
 - Selecting a faster speed makes the clock race and the sun move across the sky; **Pause** freezes simulated time while you can still move the camera.
 
