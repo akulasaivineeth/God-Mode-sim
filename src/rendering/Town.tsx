@@ -2,15 +2,20 @@
  * Town geometry — WORLD-001 / VIS.
  *
  * Plain English: Draws the handcrafted low-poly town from the authored layout
- * (src/world/townLayout.ts). This is display only; it reads immutable authored
- * geometry and never touches simulation state (ARCH-002).
+ * (src/world/townLayout.ts): terrain, roads, sidewalks, pedestrian paths, zones,
+ * buildings, trees, a nearby forest on the hills, a river, and graves. This is
+ * display only; it reads immutable authored geometry (including the deterministic
+ * terrain heightfield) and never touches simulation state (ARCH-002).
  */
 import { useMemo } from 'react';
+import { PlaneGeometry } from 'three';
 import {
   CANONICAL_TOWN,
+  terrainHeightAt,
   type AreaRect,
   type Building,
   type RoadSegment,
+  type TreeInstance,
   type Vec2,
 } from '@/world/townLayout';
 
@@ -54,12 +59,42 @@ function FlatArea({ area, y }: { area: AreaRect; y: number }) {
   );
 }
 
+/**
+ * Ground with modest terrain elevation (WORLD-001, spec §3.2). A segmented plane
+ * displaced by the deterministic `terrainHeightAt` heightfield — flat in the
+ * settled core, gentle hills at the edges. No physics.
+ */
+function TerrainGround() {
+  const geometry = useMemo(() => {
+    const size = CANONICAL_TOWN.groundExtent * 2;
+    const segments = 72;
+    const geo = new PlaneGeometry(size, size, segments, segments);
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i += 1) {
+      const lx = pos.getX(i);
+      const ly = pos.getY(i);
+      // After the -90° X rotation below, local (x, y) maps to world (x, -y).
+      pos.setZ(i, terrainHeightAt(lx, -ly));
+    }
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
+    return geo;
+  }, []);
+
+  return (
+    <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <meshStandardMaterial color={CANONICAL_TOWN.groundColor} />
+    </mesh>
+  );
+}
+
 function BuildingMesh({ building }: { building: Building }) {
   const { position, size, wallColor, roofColor } = building;
   const roofRadius = Math.max(size.width, size.depth) * 0.72;
   const roofHeight = Math.max(1.4, size.height * 0.35);
+  const baseY = terrainHeightAt(position.x, position.z);
   return (
-    <group position={[position.x, 0, position.z]}>
+    <group position={[position.x, baseY, position.z]}>
       <mesh position={[0, size.height / 2, 0]} castShadow receiveShadow>
         <boxGeometry args={[size.width, size.height, size.depth]} />
         <meshStandardMaterial color={wallColor} />
@@ -73,9 +108,10 @@ function BuildingMesh({ building }: { building: Building }) {
   );
 }
 
-function Tree({ position, scale }: { position: Vec2; scale: number }) {
+function Tree({ position, scale }: TreeInstance) {
+  const y = terrainHeightAt(position.x, position.z);
   return (
-    <group position={[position.x, 0, position.z]} scale={scale}>
+    <group position={[position.x, y, position.z]} scale={scale}>
       <mesh position={[0, 0.9, 0]} castShadow>
         <cylinderGeometry args={[0.2, 0.28, 1.8, 6]} />
         <meshStandardMaterial color="#5b4327" />
@@ -89,8 +125,9 @@ function Tree({ position, scale }: { position: Vec2; scale: number }) {
 }
 
 function Grave({ position }: { position: Vec2 }) {
+  const y = terrainHeightAt(position.x, position.z);
   return (
-    <mesh position={[position.x, 0.35, position.z]} castShadow>
+    <mesh position={[position.x, y + 0.35, position.z]} castShadow>
       <boxGeometry args={[0.5, 0.7, 0.15]} />
       <meshStandardMaterial color="#b7bcc2" />
     </mesh>
@@ -114,11 +151,7 @@ export function Town() {
 
   return (
     <group>
-      {/* Ground */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[town.groundExtent * 2, town.groundExtent * 2]} />
-        <meshStandardMaterial color={town.groundColor} />
-      </mesh>
+      <TerrainGround />
 
       {/* Zones */}
       <FlatArea area={town.park} y={0.03} />
@@ -131,9 +164,17 @@ export function Town() {
       ))}
       <FlatArea area={town.cemetery} y={0.03} />
 
-      {/* Roads */}
+      {/* Sidewalks (flanking streets) then roads on top */}
+      {town.sidewalks.map((sw) => (
+        <FlatStrip key={sw.id} from={sw.from} to={sw.to} width={sw.width} color="#9aa0a6" y={0.045} />
+      ))}
       {roads.map((road) => (
         <FlatStrip key={road.id} from={road.from} to={road.to} width={road.width} color="#4a4a4a" y={0.05} />
+      ))}
+
+      {/* Pedestrian paths linking key places */}
+      {town.paths.map((path) => (
+        <FlatStrip key={path.id} from={path.from} to={path.to} width={path.width} color="#b8a67f" y={0.05} />
       ))}
 
       <River />
@@ -143,9 +184,14 @@ export function Town() {
         <BuildingMesh key={building.id} building={building} />
       ))}
 
-      {/* Trees */}
+      {/* Town trees (sparse) */}
       {town.trees.map((tree, index) => (
         <Tree key={`tree-${index}`} position={tree.position} scale={tree.scale} />
+      ))}
+
+      {/* Nearby forest on the northern hills (denser, distinct) */}
+      {town.forest.trees.map((tree, index) => (
+        <Tree key={`forest-${index}`} position={tree.position} scale={tree.scale} />
       ))}
 
       {/* Graves */}

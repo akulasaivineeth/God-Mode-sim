@@ -14,11 +14,17 @@
  * The facility set intentionally covers the spec §3.2 day-one requirements:
  * housing, grocery/general store, clinic, school, cafe/social venue,
  * workshop/warehouse, farm, park, town square, utility area, cemetery, vacant
- * plots, plus roads, trees, and a river.
+ * plots, plus roads, sidewalks, pedestrian paths, trees, a nearby forest,
+ * modest terrain elevation, and a river.
+ *
+ * Note on government (canonical §22): the starting town has NO mature local
+ * government or bureaucracy. There is therefore deliberately no Town Hall or
+ * government building. A neutral shared `community` hall exists as a physical
+ * gathering place only — it confers no political authority.
  */
 
 export type BuildingType =
-  | 'townhall'
+  | 'community'
   | 'house'
   | 'apartment'
   | 'store'
@@ -74,14 +80,40 @@ export interface GraveInstance {
   position: Vec2;
 }
 
+export interface Forest {
+  id: string;
+  label: string;
+  area: AreaRect;
+  trees: readonly TreeInstance[];
+}
+
+/**
+ * Deterministic terrain heightfield config (WORLD-001, spec §3.2 "modest terrain
+ * elevation"). The settled town core stays flat so buildings, roads, sidewalks,
+ * and paths sit level; gentle hills rise toward the periphery where the nearby
+ * forest sits. Purely authored presentation data — no physics, no simulation
+ * authority (ARCH-002).
+ */
+export interface TerrainConfig {
+  /** Radius (in world units from origin, per-axis) that stays perfectly flat. */
+  flatRadius: number;
+  /** Distance over which flat blends up into full hills. */
+  blend: number;
+  /** Maximum hill height at the periphery. */
+  maxHeight: number;
+}
+
 export interface TownLayout {
   id: string;
   name: string;
   /** Half-size of the square ground plane (full plane is 2 × groundExtent). */
   groundExtent: number;
   groundColor: string;
+  terrain: TerrainConfig;
   buildings: readonly Building[];
   roads: readonly RoadSegment[];
+  sidewalks: readonly RoadSegment[];
+  paths: readonly RoadSegment[];
   park: AreaRect;
   square: AreaRect;
   farmPlots: readonly AreaRect[];
@@ -89,7 +121,31 @@ export interface TownLayout {
   cemetery: AreaRect;
   river: { points: readonly RiverPoint[]; width: number; color: string };
   trees: readonly TreeInstance[];
+  forest: Forest;
   graves: readonly GraveInstance[];
+}
+
+export const TERRAIN: TerrainConfig = {
+  flatRadius: 34,
+  blend: 16,
+  maxHeight: 5,
+};
+
+/**
+ * WORLD-001 — deterministic ground height at a world (x, z). Returns 0 in the
+ * flat settled core and gentle, bounded hills toward the edges. Pure function of
+ * its inputs (uses only trigonometry, never randomness), so the town and the
+ * renderer agree on terrain and it is safe to assert in tests.
+ */
+export function terrainHeightAt(x: number, z: number): number {
+  const dx = Math.max(0, Math.abs(x) - TERRAIN.flatRadius);
+  const dz = Math.max(0, Math.abs(z) - TERRAIN.flatRadius);
+  const outside = Math.min(1, Math.hypot(dx, dz) / TERRAIN.blend);
+  if (outside <= 0) {
+    return 0;
+  }
+  const undulation = 0.5 * (Math.sin(x * 0.11) * Math.cos(z * 0.09) + Math.sin((x + z) * 0.05));
+  return outside * TERRAIN.maxHeight * (0.7 + 0.3 * undulation);
 }
 
 const WALL = {
@@ -111,11 +167,12 @@ const ROOF = {
 } as const;
 
 const buildings: readonly Building[] = [
-  // NW quadrant — civic
+  // NW quadrant — shared community building (NOT a government/town hall; the
+  // canonical town has no mature government on Day 1, spec §22).
   {
-    id: 'townhall',
-    type: 'townhall',
-    label: 'Town Hall',
+    id: 'community-hall',
+    type: 'community',
+    label: 'Community Hall',
     position: { x: -11, z: -11 },
     size: { width: 9, depth: 9, height: 8 },
     wallColor: WALL.civic,
@@ -312,6 +369,84 @@ function buildGraves(center: Vec2): readonly GraveInstance[] {
   return graves;
 }
 
+const SIDEWALK_WIDTH = 1.4;
+
+/**
+ * WORLD-001 — sidewalks flanking each settled street. Deterministically derived
+ * from the road segments: two parallel strips offset to either side of each road.
+ */
+function buildSidewalks(): RoadSegment[] {
+  const result: RoadSegment[] = [];
+  for (const road of roads) {
+    const offset = road.width / 2 + SIDEWALK_WIDTH / 2 + 0.15;
+    const horizontal = road.from.z === road.to.z;
+    const vertical = road.from.x === road.to.x;
+    for (const sign of [-1, 1] as const) {
+      if (horizontal) {
+        result.push({
+          id: `${road.id}-sidewalk-${sign}`,
+          from: { x: road.from.x, z: road.from.z + sign * offset },
+          to: { x: road.to.x, z: road.to.z + sign * offset },
+          width: SIDEWALK_WIDTH,
+        });
+      } else if (vertical) {
+        result.push({
+          id: `${road.id}-sidewalk-${sign}`,
+          from: { x: road.from.x + sign * offset, z: road.from.z },
+          to: { x: road.to.x + sign * offset, z: road.to.z },
+          width: SIDEWALK_WIDTH,
+        });
+      }
+    }
+  }
+  return result;
+}
+
+const PATH_WIDTH = 1.6;
+
+/**
+ * WORLD-001 — coherent pedestrian paths linking key places (square ↔ park,
+ * housing, commercial store, civic community/school area). Authored polyline-ish
+ * segments; walkable routing itself arrives with citizens in M02.
+ */
+const paths: readonly RoadSegment[] = [
+  { id: 'path-square-park', from: { x: 3, z: 3 }, to: { x: 16, z: 12 }, width: PATH_WIDTH },
+  { id: 'path-square-store', from: { x: -3, z: 3 }, to: { x: -11, z: 9 }, width: PATH_WIDTH },
+  { id: 'path-square-civic', from: { x: -3, z: -3 }, to: { x: -11, z: -8 }, width: PATH_WIDTH },
+  { id: 'path-civic-school', from: { x: -11, z: -8 }, to: { x: -14, z: -22 }, width: 1.4 },
+  { id: 'path-square-housing', from: { x: 3, z: -3 }, to: { x: 13, z: -10 }, width: PATH_WIDTH },
+  { id: 'path-park-housing', from: { x: 14, z: 6 }, to: { x: 15, z: -8 }, width: 1.4 },
+];
+
+/**
+ * WORLD-001 — a clearly identifiable nearby forest along the northern hills,
+ * denser and distinct from the sparse street/park trees. Deterministic grid
+ * placement with index-based (non-random) jitter so it is reproducible.
+ */
+function buildForest(): Forest {
+  const trees: TreeInstance[] = [];
+  const minX = -46;
+  const maxX = 46;
+  const minZ = -49;
+  const maxZ = -37;
+  let i = 0;
+  for (let x = minX; x <= maxX; x += 6) {
+    for (let z = minZ; z <= maxZ; z += 4) {
+      const jitterX = (((i * 37) % 7) - 3) * 0.5;
+      const jitterZ = (((i * 53) % 5) - 2) * 0.5;
+      const scale = 1.2 + ((i * 13) % 5) * 0.14;
+      trees.push({ position: { x: x + jitterX, z: z + jitterZ }, scale });
+      i += 1;
+    }
+  }
+  return {
+    id: 'north-woods',
+    label: 'North Woods',
+    area: { id: 'forest-area', label: 'North Woods', center: { x: 0, z: -43 }, width: 96, depth: 14, color: '#2f5730' },
+    trees,
+  };
+}
+
 const CEMETERY_CENTER: Vec2 = { x: 31, z: 28 };
 
 export const CANONICAL_TOWN: TownLayout = {
@@ -319,8 +454,11 @@ export const CANONICAL_TOWN: TownLayout = {
   name: 'Riverside',
   groundExtent: 50,
   groundColor: '#3c4a34',
+  terrain: TERRAIN,
   buildings,
   roads,
+  sidewalks: buildSidewalks(),
+  paths,
   park: {
     id: 'park',
     label: 'Central Park',
@@ -365,5 +503,6 @@ export const CANONICAL_TOWN: TownLayout = {
     color: '#3f6f8f',
   },
   trees: buildTrees(),
+  forest: buildForest(),
   graves: buildGraves(CEMETERY_CENTER),
 };
