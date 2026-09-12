@@ -62,16 +62,19 @@ describe('WORLD-001 canonical town shell', () => {
     expect(elevated.length).toBeGreaterThan(0);
   });
 
-  it('has modest terrain elevation that is flat in the settled core', () => {
-    expect(TERRAIN.maxHeight).toBeGreaterThan(0);
+  it('has modest but legible terrain elevation that is flat in the settled core', () => {
+    // Legible (clearly readable) yet modest — gentle topography, not mountains.
+    expect(TERRAIN.maxHeight).toBeGreaterThanOrEqual(8);
+    expect(TERRAIN.maxHeight).toBeLessThanOrEqual(14);
     // Core stays flat so buildings/roads sit level.
     expect(terrainHeightAt(0, 0)).toBe(0);
     expect(terrainHeightAt(20, -10)).toBe(0);
-    // Hills rise toward the north/west, bounded by maxHeight.
+    // Hills rise toward the north/west, bounded by maxHeight, and are clearly
+    // raised (at least half the max height) so they read at overview framing.
     const nwPeak = terrainHeightAt(-48, -48);
     const nPeak = terrainHeightAt(0, -48);
-    expect(nwPeak).toBeGreaterThan(0);
-    expect(nPeak).toBeGreaterThan(0);
+    expect(nwPeak).toBeGreaterThanOrEqual(TERRAIN.maxHeight * 0.5);
+    expect(nPeak).toBeGreaterThanOrEqual(TERRAIN.maxHeight * 0.4);
     expect(nwPeak).toBeLessThanOrEqual(TERRAIN.maxHeight);
     // The eastern river valley stays low (river must not run uphill).
     expect(terrainHeightAt(40, 0)).toBe(0);
