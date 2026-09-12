@@ -22,7 +22,7 @@ const DAY_SKY = new Color('#7fb4e8');
 const SUN_DISTANCE = 60;
 
 export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
-  const { sunPosition, dirIntensity, ambientIntensity, skyColor } = useMemo(() => {
+  const { sunPosition, dirIntensity, ambientIntensity, hemiIntensity, skyColor } = useMemo(() => {
     // Sun angle: 0 at 06:00 (east horizon), π/2 at noon (overhead),
     // π at 18:00 (west horizon), -π/2 at midnight (below).
     const sunAngle = (timeOfDay - 0.25) * Math.PI * 2;
@@ -45,8 +45,9 @@ export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
 
     return {
       sunPosition: sunPos,
-      dirIntensity: 0.12 + dayFactor * 1.15,
-      ambientIntensity: 0.22 + dayFactor * 0.4,
+      dirIntensity: 0.3 + dayFactor * 1.1,
+      ambientIntensity: 0.42 + dayFactor * 0.4,
+      hemiIntensity: 0.35 + dayFactor * 0.45,
       skyColor: `#${sky.getHexString()}`,
     };
   }, [timeOfDay]);
@@ -54,7 +55,7 @@ export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
   return (
     <group>
       <color attach="background" args={[skyColor]} />
-      <hemisphereLight args={['#bcd4f0', '#40402f', 0.25 + Math.max(0, ambientIntensity - 0.22)]} />
+      <hemisphereLight args={['#cfe0f2', '#4a4a33', hemiIntensity]} />
       <ambientLight intensity={ambientIntensity} />
       <directionalLight
         position={sunPosition}

@@ -2,20 +2,41 @@
  * Town geometry — WORLD-001 / VIS.
  *
  * Plain English: Draws the handcrafted low-poly town from the authored layout
- * (src/world/townLayout.ts): terrain, roads, sidewalks, pedestrian paths, zones,
- * buildings, trees, a nearby forest on the hills, a river, and graves. This is
- * display only; it reads immutable authored geometry (including the deterministic
- * terrain heightfield) and never touches simulation state (ARCH-002).
+ * (src/world/townLayout.ts): shaded terrain hills, a readable river with banks,
+ * roads, sidewalks, pedestrian paths, zones, differentiated low-poly buildings,
+ * an instanced forest/tree set, and instanced graves. Display only — it reads
+ * immutable authored geometry (including the deterministic terrain heightfield)
+ * and never touches simulation state (ARCH-002).
+ *
+ * Performance: repeated static geometry (trees, graves) uses InstancedMesh so
+ * the whole forest costs a couple of draw calls, leaving M2/8GB headroom for the
+ * 20 citizens arriving in M02.
  */
-import { useMemo } from 'react';
-import { PlaneGeometry } from 'three';
+import { useLayoutEffect, useMemo, useRef } from 'react';
 import {
+  BoxGeometry,
+  BufferAttribute,
+  Color,
+  ConeGeometry,
+  CylinderGeometry,
+  ExtrudeGeometry,
+  type InstancedMesh,
+  Matrix4,
+  MeshStandardMaterial,
+  PlaneGeometry,
+  Quaternion,
+  Shape,
+  Vector3,
+} from 'three';
+import {
+  BUILDING_ARCHETYPES,
   CANONICAL_TOWN,
+  collectAllTrees,
+  TERRAIN,
   terrainHeightAt,
   type AreaRect,
   type Building,
   type RoadSegment,
-  type TreeInstance,
   type Vec2,
 } from '@/world/townLayout';
 
@@ -61,88 +82,253 @@ function FlatArea({ area, y }: { area: AreaRect; y: number }) {
 
 /**
  * Ground with modest terrain elevation (WORLD-001, spec §3.2). A segmented plane
- * displaced by the deterministic `terrainHeightAt` heightfield — flat in the
- * settled core, gentle hills at the edges. No physics.
+ * displaced by `terrainHeightAt` and tinted by height (green core → dry-grass
+ * hills) with flat shading so the peripheral hills read clearly. No physics.
  */
 function TerrainGround() {
   const geometry = useMemo(() => {
     const size = CANONICAL_TOWN.groundExtent * 2;
-    const segments = 72;
+    const segments = 96;
     const geo = new PlaneGeometry(size, size, segments, segments);
     const pos = geo.attributes.position;
+    const low = new Color(CANONICAL_TOWN.groundColor);
+    const high = new Color('#8f8659');
+    const colors = new Float32Array(pos.count * 3);
+    const tmp = new Color();
     for (let i = 0; i < pos.count; i += 1) {
       const lx = pos.getX(i);
       const ly = pos.getY(i);
       // After the -90° X rotation below, local (x, y) maps to world (x, -y).
-      pos.setZ(i, terrainHeightAt(lx, -ly));
+      const h = terrainHeightAt(lx, -ly);
+      pos.setZ(i, h);
+      const t = Math.min(1, h / TERRAIN.maxHeight);
+      tmp.copy(low).lerp(high, t);
+      colors[i * 3] = tmp.r;
+      colors[i * 3 + 1] = tmp.g;
+      colors[i * 3 + 2] = tmp.b;
     }
     pos.needsUpdate = true;
+    geo.setAttribute('color', new BufferAttribute(colors, 3));
     geo.computeVertexNormals();
     return geo;
   }, []);
 
   return (
     <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-      <meshStandardMaterial color={CANONICAL_TOWN.groundColor} />
+      <meshStandardMaterial vertexColors flatShading />
+    </mesh>
+  );
+}
+
+function GableRoof({
+  width,
+  depth,
+  height,
+  color,
+}: {
+  width: number;
+  depth: number;
+  height: number;
+  color: string;
+}) {
+  const geometry = useMemo(() => {
+    const shape = new Shape();
+    shape.moveTo(-width / 2, 0);
+    shape.lineTo(width / 2, 0);
+    shape.lineTo(0, height);
+    shape.closePath();
+    const geo = new ExtrudeGeometry(shape, { depth, bevelEnabled: false });
+    geo.translate(0, 0, -depth / 2);
+    return geo;
+  }, [width, depth, height]);
+  return (
+    <mesh geometry={geometry} castShadow>
+      <meshStandardMaterial color={color} />
+    </mesh>
+  );
+}
+
+/** A window or door colour block placed on the front (+Z) face. */
+function FrontBlock({
+  x,
+  y,
+  depth,
+  width,
+  height,
+  color,
+}: {
+  x: number;
+  y: number;
+  depth: number;
+  width: number;
+  height: number;
+  color: string;
+}) {
+  return (
+    <mesh position={[x, y, depth / 2 + 0.03]}>
+      <boxGeometry args={[width, height, 0.08]} />
+      <meshStandardMaterial color={color} />
     </mesh>
   );
 }
 
 function BuildingMesh({ building }: { building: Building }) {
   const { position, size, wallColor, roofColor } = building;
-  const roofRadius = Math.max(size.width, size.depth) * 0.72;
-  const roofHeight = Math.max(1.4, size.height * 0.35);
+  const arch = BUILDING_ARCHETYPES[building.type];
   const baseY = terrainHeightAt(position.x, position.z);
+  const roofHeight = arch.roof === 'flat' ? 0.5 : Math.max(1.6, size.height * 0.42);
+  const hasTwoWindows = size.width >= 6;
+
   return (
     <group position={[position.x, baseY, position.z]}>
+      {/* Walls */}
       <mesh position={[0, size.height / 2, 0]} castShadow receiveShadow>
         <boxGeometry args={[size.width, size.height, size.depth]} />
         <meshStandardMaterial color={wallColor} />
       </mesh>
-      {/* Pyramid roof (4-sided cone) for a readable low-poly silhouette. */}
-      <mesh position={[0, size.height + roofHeight / 2, 0]} rotation={[0, Math.PI / 4, 0]} castShadow>
-        <coneGeometry args={[roofRadius, roofHeight, 4]} />
-        <meshStandardMaterial color={roofColor} />
-      </mesh>
-    </group>
-  );
-}
 
-function Tree({ position, scale }: TreeInstance) {
-  const y = terrainHeightAt(position.x, position.z);
-  return (
-    <group position={[position.x, y, position.z]} scale={scale}>
-      <mesh position={[0, 0.9, 0]} castShadow>
-        <cylinderGeometry args={[0.2, 0.28, 1.8, 6]} />
-        <meshStandardMaterial color="#5b4327" />
-      </mesh>
-      <mesh position={[0, 2.4, 0]} castShadow>
-        <coneGeometry args={[1.3, 2.6, 7]} />
-        <meshStandardMaterial color="#356b34" />
-      </mesh>
-    </group>
-  );
-}
+      {/* Roof by archetype */}
+      {arch.roof === 'hip' && (
+        <mesh
+          position={[0, size.height + roofHeight / 2, 0]}
+          rotation={[0, Math.PI / 4, 0]}
+          castShadow
+        >
+          <coneGeometry args={[Math.max(size.width, size.depth) * 0.72, roofHeight, 4]} />
+          <meshStandardMaterial color={roofColor} />
+        </mesh>
+      )}
+      {arch.roof === 'gable' && (
+        <group position={[0, size.height, 0]}>
+          <GableRoof width={size.width} depth={size.depth} height={roofHeight} color={roofColor} />
+        </group>
+      )}
+      {arch.roof === 'flat' && (
+        <mesh position={[0, size.height + roofHeight / 2, 0]} castShadow>
+          <boxGeometry args={[size.width * 1.04, roofHeight, size.depth * 1.04]} />
+          <meshStandardMaterial color={roofColor} />
+        </mesh>
+      )}
 
-function Grave({ position }: { position: Vec2 }) {
-  const y = terrainHeightAt(position.x, position.z);
-  return (
-    <mesh position={[position.x, y + 0.35, position.z]} castShadow>
-      <boxGeometry args={[0.5, 0.7, 0.15]} />
-      <meshStandardMaterial color="#b7bcc2" />
-    </mesh>
+      {/* Door + windows on the front face */}
+      <FrontBlock x={0} y={1} depth={size.depth} width={1.2} height={2} color={arch.accentColor} />
+      {hasTwoWindows ? (
+        <>
+          <FrontBlock x={-size.width * 0.28} y={size.height * 0.6} depth={size.depth} width={1.4} height={1.2} color={arch.windowColor} />
+          <FrontBlock x={size.width * 0.28} y={size.height * 0.6} depth={size.depth} width={1.4} height={1.2} color={arch.windowColor} />
+        </>
+      ) : (
+        <FrontBlock x={size.width * 0.22} y={size.height * 0.6} depth={size.depth} width={1.2} height={1.1} color={arch.windowColor} />
+      )}
+
+      {/* Storefront awning */}
+      {arch.canopy && (
+        <mesh position={[0, size.height * 0.55, size.depth / 2 + 0.9]} castShadow>
+          <boxGeometry args={[Math.min(size.width, 5), 0.16, 1.8]} />
+          <meshStandardMaterial color={arch.accentColor} />
+        </mesh>
+      )}
+
+      {/* Protruding entry volume (civic) */}
+      {arch.entry && (
+        <mesh position={[0, size.height * 0.35, size.depth / 2 + 0.8]} castShadow receiveShadow>
+          <boxGeometry args={[size.width * 0.42, size.height * 0.7, 1.6]} />
+          <meshStandardMaterial color={wallColor} />
+        </mesh>
+      )}
+
+      {/* Rooftop tank/tower (utility) */}
+      {arch.tower && (
+        <mesh position={[size.width * 0.2, size.height + 1.4, 0]} castShadow>
+          <cylinderGeometry args={[1.1, 1.1, 2.6, 10]} />
+          <meshStandardMaterial color={arch.accentColor} />
+        </mesh>
+      )}
+    </group>
   );
 }
 
 function River() {
-  const { points, width, color } = CANONICAL_TOWN.river;
-  const strips = [];
+  const { points, width, color, bankWidth, bankColor } = CANONICAL_TOWN.river;
+  const banks = [];
+  const water = [];
   for (let i = 0; i < points.length - 1; i += 1) {
-    strips.push(
-      <FlatStrip key={`river-${i}`} from={points[i]} to={points[i + 1]} width={width} color={color} y={0.04} />,
+    banks.push(
+      <FlatStrip key={`bank-${i}`} from={points[i]} to={points[i + 1]} width={bankWidth} color={bankColor} y={0.03} />,
+    );
+    water.push(
+      <FlatStrip key={`water-${i}`} from={points[i]} to={points[i + 1]} width={width} color={color} y={0.07} />,
     );
   }
-  return <group>{strips}</group>;
+  return (
+    <group>
+      {banks}
+      {water}
+    </group>
+  );
+}
+
+/** All trees (town + forest) as two InstancedMesh draw calls (trunks, canopies). */
+function InstancedTrees() {
+  const trees = useMemo(() => collectAllTrees(), []);
+  const count = trees.length;
+  const trunkGeo = useMemo(() => new CylinderGeometry(0.2, 0.28, 1.8, 6), []);
+  const canopyGeo = useMemo(() => new ConeGeometry(1.3, 2.6, 7), []);
+  const trunkMat = useMemo(() => new MeshStandardMaterial({ color: '#5b4327' }), []);
+  const canopyMat = useMemo(() => new MeshStandardMaterial({ color: '#356b34' }), []);
+  const trunkRef = useRef<InstancedMesh>(null);
+  const canopyRef = useRef<InstancedMesh>(null);
+
+  useLayoutEffect(() => {
+    const trunk = trunkRef.current;
+    const canopy = canopyRef.current;
+    if (!trunk || !canopy) return;
+    const matrix = new Matrix4();
+    const quat = new Quaternion();
+    trees.forEach((tree, i) => {
+      const y = terrainHeightAt(tree.position.x, tree.position.z);
+      const s = tree.scale;
+      const scale = new Vector3(s, s, s);
+      matrix.compose(new Vector3(tree.position.x, y + 0.9 * s, tree.position.z), quat, scale);
+      trunk.setMatrixAt(i, matrix);
+      matrix.compose(new Vector3(tree.position.x, y + 2.4 * s, tree.position.z), quat, scale);
+      canopy.setMatrixAt(i, matrix);
+    });
+    trunk.instanceMatrix.needsUpdate = true;
+    canopy.instanceMatrix.needsUpdate = true;
+  }, [trees]);
+
+  return (
+    <group>
+      <instancedMesh ref={trunkRef} args={[trunkGeo, trunkMat, count]} castShadow receiveShadow />
+      <instancedMesh ref={canopyRef} args={[canopyGeo, canopyMat, count]} castShadow receiveShadow />
+    </group>
+  );
+}
+
+/** All graves as a single InstancedMesh. */
+function InstancedGraves() {
+  const graves = CANONICAL_TOWN.graves;
+  const count = graves.length;
+  const geometry = useMemo(() => new BoxGeometry(0.5, 0.7, 0.15), []);
+  const material = useMemo(() => new MeshStandardMaterial({ color: '#b7bcc2' }), []);
+  const ref = useRef<InstancedMesh>(null);
+
+  useLayoutEffect(() => {
+    const mesh = ref.current;
+    if (!mesh) return;
+    const matrix = new Matrix4();
+    const quat = new Quaternion();
+    const scale = new Vector3(1, 1, 1);
+    graves.forEach((grave, i) => {
+      const y = terrainHeightAt(grave.position.x, grave.position.z);
+      matrix.compose(new Vector3(grave.position.x, y + 0.35, grave.position.z), quat, scale);
+      mesh.setMatrixAt(i, matrix);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+  }, [graves]);
+
+  return <instancedMesh ref={ref} args={[geometry, material, count]} castShadow />;
 }
 
 export function Town() {
@@ -169,12 +355,12 @@ export function Town() {
         <FlatStrip key={sw.id} from={sw.from} to={sw.to} width={sw.width} color="#9aa0a6" y={0.045} />
       ))}
       {roads.map((road) => (
-        <FlatStrip key={road.id} from={road.from} to={road.to} width={road.width} color="#4a4a4a" y={0.05} />
+        <FlatStrip key={road.id} from={road.from} to={road.to} width={road.width} color="#43454a" y={0.05} />
       ))}
 
       {/* Pedestrian paths linking key places */}
       {town.paths.map((path) => (
-        <FlatStrip key={path.id} from={path.from} to={path.to} width={path.width} color="#b8a67f" y={0.05} />
+        <FlatStrip key={path.id} from={path.from} to={path.to} width={path.width} color="#c2ac74" y={0.052} />
       ))}
 
       <River />
@@ -184,20 +370,8 @@ export function Town() {
         <BuildingMesh key={building.id} building={building} />
       ))}
 
-      {/* Town trees (sparse) */}
-      {town.trees.map((tree, index) => (
-        <Tree key={`tree-${index}`} position={tree.position} scale={tree.scale} />
-      ))}
-
-      {/* Nearby forest on the northern hills (denser, distinct) */}
-      {town.forest.trees.map((tree, index) => (
-        <Tree key={`forest-${index}`} position={tree.position} scale={tree.scale} />
-      ))}
-
-      {/* Graves */}
-      {town.graves.map((grave, index) => (
-        <Grave key={`grave-${index}`} position={grave.position} />
-      ))}
+      <InstancedTrees />
+      <InstancedGraves />
     </group>
   );
 }

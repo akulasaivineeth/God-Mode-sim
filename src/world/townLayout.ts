@@ -119,33 +119,92 @@ export interface TownLayout {
   farmPlots: readonly AreaRect[];
   vacantPlots: readonly AreaRect[];
   cemetery: AreaRect;
-  river: { points: readonly RiverPoint[]; width: number; color: string };
+  river: {
+    points: readonly RiverPoint[];
+    width: number;
+    color: string;
+    /** Wider riverbank strip drawn beneath the water for readability. */
+    bankWidth: number;
+    bankColor: string;
+  };
   trees: readonly TreeInstance[];
   forest: Forest;
   graves: readonly GraveInstance[];
 }
 
+/** Low-poly building silhouette archetypes (WORLD-001 visual differentiation). */
+export type RoofStyle = 'gable' | 'hip' | 'flat';
+
+export interface BuildingArchetype {
+  roof: RoofStyle;
+  /** Storefront awning over the entrance. */
+  canopy: boolean;
+  /** Protruding entry volume (civic buildings). */
+  entry: boolean;
+  /** Rooftop tank/tower (utility). */
+  tower: boolean;
+  windowColor: string;
+  accentColor: string;
+}
+
+/**
+ * A small reusable set of archetypes so major facilities read differently at
+ * gameplay zoom without importing any heavyweight asset pack. Same fictional
+ * modern-town language, differentiated by roof style + light add-ons.
+ */
+export const BUILDING_ARCHETYPES: Record<BuildingType, BuildingArchetype> = {
+  house: { roof: 'gable', canopy: false, entry: false, tower: false, windowColor: '#bcd3e6', accentColor: '#7a4d3a' },
+  apartment: { roof: 'flat', canopy: false, entry: true, tower: false, windowColor: '#cfe0ee', accentColor: '#556170' },
+  store: { roof: 'flat', canopy: true, entry: false, tower: false, windowColor: '#dfe7c8', accentColor: '#b5573a' },
+  cafe: { roof: 'gable', canopy: true, entry: false, tower: false, windowColor: '#f0dcae', accentColor: '#6e5238' },
+  clinic: { roof: 'hip', canopy: false, entry: true, tower: false, windowColor: '#e8f0f4', accentColor: '#3f8f86' },
+  school: { roof: 'hip', canopy: false, entry: true, tower: false, windowColor: '#dfe7ef', accentColor: '#8a6d3a' },
+  community: { roof: 'hip', canopy: false, entry: true, tower: false, windowColor: '#e6ddc7', accentColor: '#6b7f8c' },
+  workshop: { roof: 'gable', canopy: false, entry: false, tower: false, windowColor: '#d8cbb0', accentColor: '#5f5647' },
+  warehouse: { roof: 'gable', canopy: false, entry: false, tower: false, windowColor: '#c3b9a3', accentColor: '#5f5647' },
+  utility: { roof: 'flat', canopy: false, entry: false, tower: true, windowColor: '#aab2b8', accentColor: '#5b6169' },
+  farmhouse: { roof: 'gable', canopy: false, entry: false, tower: false, windowColor: '#e6d6a8', accentColor: '#8f6b3f' },
+};
+
 export const TERRAIN: TerrainConfig = {
   flatRadius: 34,
-  blend: 16,
-  maxHeight: 5,
+  blend: 15,
+  maxHeight: 7,
 };
 
 /**
  * WORLD-001 — deterministic ground height at a world (x, z). Returns 0 in the
- * flat settled core and gentle, bounded hills toward the edges. Pure function of
- * its inputs (uses only trigonometry, never randomness), so the town and the
- * renderer agree on terrain and it is safe to assert in tests.
+ * flat settled core. Hills are concentrated to the NORTH and WEST (where the
+ * nearby forest sits) so they read clearly as a silhouette, while the EASTERN
+ * river valley is kept low so the river never runs uphill. Pure function of its
+ * inputs (only trigonometry, never randomness), so the town and the renderer
+ * agree on terrain and it is safe to assert in tests.
  */
 export function terrainHeightAt(x: number, z: number): number {
-  const dx = Math.max(0, Math.abs(x) - TERRAIN.flatRadius);
-  const dz = Math.max(0, Math.abs(z) - TERRAIN.flatRadius);
-  const outside = Math.min(1, Math.hypot(dx, dz) / TERRAIN.blend);
-  if (outside <= 0) {
+  const north = Math.max(0, -z - TERRAIN.flatRadius);
+  const west = Math.max(0, -x - TERRAIN.flatRadius);
+  let reach = Math.min(1, Math.max(north, west) / TERRAIN.blend);
+  if (reach <= 0) {
     return 0;
   }
-  const undulation = 0.5 * (Math.sin(x * 0.11) * Math.cos(z * 0.09) + Math.sin((x + z) * 0.05));
-  return outside * TERRAIN.maxHeight * (0.7 + 0.3 * undulation);
+  // Keep the eastern river valley flat so the river reads as water, not a slope.
+  if (x > 22) {
+    reach *= Math.max(0, 1 - (x - 22) / 12);
+  }
+  if (reach <= 0) {
+    return 0;
+  }
+  const undulation = 0.5 * (Math.sin(x * 0.13) * Math.cos(z * 0.11) + Math.sin((x + z) * 0.05));
+  return reach * TERRAIN.maxHeight * (0.7 + 0.3 * undulation);
+}
+
+/**
+ * All authored trees (town + forest) combined — the single source the renderer
+ * uses to build shared/instanced tree geometry (one draw call per part instead
+ * of one per tree).
+ */
+export function collectAllTrees(): TreeInstance[] {
+  return [...CANONICAL_TOWN.trees, ...CANONICAL_TOWN.forest.trees];
 }
 
 const WALL = {
@@ -447,7 +506,7 @@ function buildForest(): Forest {
   };
 }
 
-const CEMETERY_CENTER: Vec2 = { x: 31, z: 28 };
+const CEMETERY_CENTER: Vec2 = { x: -8, z: 40 };
 
 export const CANONICAL_TOWN: TownLayout = {
   id: 'canonical-town-v1',
@@ -481,7 +540,7 @@ export const CANONICAL_TOWN: TownLayout = {
   ],
   vacantPlots: [
     { id: 'plot-1', label: 'Vacant Plot 1', center: { x: -22, z: -22 }, width: 8, depth: 8, color: '#5a5140' },
-    { id: 'plot-2', label: 'Vacant Plot 2', center: { x: 30, z: 8 }, width: 8, depth: 8, color: '#5a5140' },
+    { id: 'plot-2', label: 'Vacant Plot 2', center: { x: -32, z: 30 }, width: 8, depth: 8, color: '#5a5140' },
   ],
   cemetery: {
     id: 'cemetery',
@@ -492,15 +551,20 @@ export const CANONICAL_TOWN: TownLayout = {
     color: '#4c5540',
   },
   river: {
+    // A broad river that bends inward past the town's eastern edge so Riverside
+    // reads as an actual riverside town from Overview/Angled, with visible banks.
     points: [
-      { x: 42, z: -50 },
-      { x: 40, z: -20 },
-      { x: 41, z: 0 },
-      { x: 39, z: 20 },
-      { x: 42, z: 50 },
+      { x: 47, z: -50 },
+      { x: 41, z: -30 },
+      { x: 35, z: -8 },
+      { x: 34, z: 10 },
+      { x: 38, z: 28 },
+      { x: 46, z: 50 },
     ],
-    width: 6,
+    width: 8,
     color: '#3f6f8f',
+    bankWidth: 13,
+    bankColor: '#7c8a5b',
   },
   trees: buildTrees(),
   forest: buildForest(),
