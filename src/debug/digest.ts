@@ -1,3 +1,9 @@
+/**
+ * State fingerprint hashing (M00-GATE).
+ *
+ * Plain English: Produces a short hex fingerprint of canonical JSON so tests
+ * can prove two runs match without diffing large files.
+ */
 import { canonicalize } from './canonicalize';
 
 /** FNV-1a 32-bit hash over canonical UTF-8 bytes. */

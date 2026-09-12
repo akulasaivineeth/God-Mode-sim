@@ -1,6 +1,12 @@
 /**
- * Deterministic canonical JSON serialization for digests and equality checks.
- * Keys are sorted recursively; arrays preserve order.
+ * Canonical JSON for deterministic digests (M00-GATE).
+ *
+ * Plain English: JavaScript object key order is not guaranteed. Before hashing
+ * simulation state, we sort keys recursively so the same logical state always
+ * produces the same string. Changing sort rules changes digest values and
+ * breaks regression tests — treat as schema-level change.
+ *
+ * Arrays keep element order (event sequences matter).
  */
 export function canonicalize(value: unknown): string {
   return JSON.stringify(sortValue(value));

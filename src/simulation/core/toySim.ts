@@ -1,3 +1,13 @@
+/**
+ * M00 toy simulation — determinism proof only, not gameplay.
+ *
+ * Plain English: Steps counters forward using the PRNG so tests can prove
+ * same seed → same outcome. Replace toy logic with real systems in later
+ * milestones without moving authority out of the worker.
+ *
+ * WorldSnapshot is the full authoritative state; never send this entire object
+ * to React except for explicit save/export (ARCH-002).
+ */
 import { advanceClock, type SimulationClock } from './clock';
 import { createDomainEvent, type DomainEvent } from './events';
 import { Mulberry32Prng, type PrngState } from './prng';

@@ -1,3 +1,11 @@
+/**
+ * Authoritative simulation worker (ARCH-002).
+ *
+ * Plain English: This background thread owns the real world state. The visible
+ * app may only send commands (init, step, save, load) and receive display
+ * snapshots. If this file began updating React state or reading mesh positions
+ * as truth, determinism and save integrity would break.
+ */
 /// <reference lib="webworker" />
 import { digestWorldSnapshot } from '@/debug/worldDigest';
 import { toRenderSnapshot } from '@/rendering/types';

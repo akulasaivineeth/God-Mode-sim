@@ -1,3 +1,9 @@
+/**
+ * Render snapshot boundary — ADR-003 / ARCH-002.
+ *
+ * Plain English: The 3D layer may only read these fields. It must never write
+ * back into simulation state. visualPhase is 0..1 and drives placeholder motion only.
+ */
 import type { SimMinute } from '@/simulation/core/types';
 
 /** Read-only render DTO — no simulation authority. */

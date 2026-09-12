@@ -1,3 +1,9 @@
+/**
+ * Main-thread bridge to the simulation worker (ARCH-002).
+ *
+ * Plain English: React talks to this class, not to worker globals. Keeps
+ * postMessage types in one place so UI cannot accidentally mutate snapshots.
+ */
 import type { RenderSnapshot } from '@/rendering/types';
 import type { WorkerRequest, WorkerResponse } from './messages';
 import type { WorldSnapshot } from './core/toySim';

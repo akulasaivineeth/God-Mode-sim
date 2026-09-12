@@ -1,3 +1,10 @@
+/**
+ * Worker message protocol (ARCH-002).
+ *
+ * Plain English: Typed commands between the UI and simulation worker.
+ * Adding a new command requires handling it in simulation.worker.ts and
+ * documenting the flow in Docs/architecture/DATA_FLOW.md.
+ */
 import type { RenderSnapshot } from '@/rendering/types';
 import type { WorldSnapshot } from './core/toySim';
 

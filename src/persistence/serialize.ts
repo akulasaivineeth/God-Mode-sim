@@ -1,3 +1,10 @@
+/**
+ * Save bundle export — ARCH-004.
+ *
+ * Plain English: Packages worker snapshot + metadata into versioned JSON validated
+ * by Zod. digest field fingerprints logical state for reviewer checks.
+ * exportedAt is metadata only and does not affect simulation determinism.
+ */
 import { digestCanonical } from '@/debug/digest';
 import { BUILD_VERSION, MILESTONE, SCHEMA_VERSION } from '@/shared/version';
 import type { DomainEvent } from '@/simulation/core/events';

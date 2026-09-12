@@ -1,3 +1,14 @@
+/**
+ * Seeded pseudo-random number generator — ARCH-003.
+ *
+ * Plain English: Simulation "luck" must be reproducible from a seed. This module
+ * is the only approved source of randomness for simulation outcomes.
+ *
+ * Algorithm ID `mulberry32-v1` is frozen in save files. Changing the algorithm
+ * or state shape without a schema migration would invalidate existing worlds.
+ *
+ * State is one unsigned 32-bit integer; snapshot/restore must preserve it exactly.
+ */
 import type { Weighted } from './types';
 
 /**

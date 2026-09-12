@@ -1,3 +1,11 @@
+/**
+ * Domain event envelope — ARCH-004.
+ *
+ * Plain English: When something meaningful happens in simulation, we append a
+ * structured log entry (not every animation frame). Events power future history,
+ * replay, and reviewer inspection. branchId is included now so timeline branches
+ * do not require retrofitting the envelope later (EXP-001 scaffold).
+ */
 import { z } from 'zod';
 import type { EntityId, SimMinute } from './types';
 
