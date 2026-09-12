@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { CANONICAL_TOWN, TERRAIN, terrainHeightAt, type Building } from '@/world/townLayout';
+import {
+  BUILDING_ARCHETYPES,
+  CANONICAL_TOWN,
+  collectAllTrees,
+  TERRAIN,
+  terrainHeightAt,
+  type Building,
+} from '@/world/townLayout';
 
 /**
  * WORLD-001 — lock the canonical town shell so the required day-one world
@@ -60,20 +67,65 @@ describe('WORLD-001 canonical town shell', () => {
     // Core stays flat so buildings/roads sit level.
     expect(terrainHeightAt(0, 0)).toBe(0);
     expect(terrainHeightAt(20, -10)).toBe(0);
-    // Periphery rises into modest hills, bounded by maxHeight.
-    const peak = terrainHeightAt(48, 48);
-    expect(peak).toBeGreaterThan(0);
-    expect(peak).toBeLessThanOrEqual(TERRAIN.maxHeight);
+    // Hills rise toward the north/west, bounded by maxHeight.
+    const nwPeak = terrainHeightAt(-48, -48);
+    const nPeak = terrainHeightAt(0, -48);
+    expect(nwPeak).toBeGreaterThan(0);
+    expect(nPeak).toBeGreaterThan(0);
+    expect(nwPeak).toBeLessThanOrEqual(TERRAIN.maxHeight);
+    // The eastern river valley stays low (river must not run uphill).
+    expect(terrainHeightAt(40, 0)).toBe(0);
   });
 
   it('terrainHeightAt is deterministic', () => {
-    expect(terrainHeightAt(41, -44)).toBe(terrainHeightAt(41, -44));
+    expect(terrainHeightAt(-41, -44)).toBe(terrainHeightAt(-41, -44));
   });
 
   it('keeps every building on the flat core so none float or sink', () => {
     for (const b of CANONICAL_TOWN.buildings) {
       expect(terrainHeightAt(b.position.x, b.position.z)).toBe(0);
     }
+  });
+});
+
+describe('WORLD-001 river readability', () => {
+  it('is a non-trivial river that bends inward (not a tiny edge strip)', () => {
+    const { points, width, bankWidth } = CANONICAL_TOWN.river;
+    expect(points.length).toBeGreaterThanOrEqual(5);
+    expect(width).toBeGreaterThanOrEqual(7);
+    expect(bankWidth).toBeGreaterThan(width);
+    const xs = points.map((p) => p.x);
+    const zs = points.map((p) => p.z);
+    // Bends inward from the map edge (groundExtent 50) rather than hugging it.
+    expect(Math.min(...xs)).toBeLessThanOrEqual(38);
+    // Runs the length of the map so it reads from an overview.
+    expect(Math.min(...zs)).toBeLessThanOrEqual(-40);
+    expect(Math.max(...zs)).toBeGreaterThanOrEqual(40);
+  });
+});
+
+describe('WORLD-001 building archetypes', () => {
+  it('defines an archetype for every building type in use', () => {
+    for (const b of CANONICAL_TOWN.buildings) {
+      expect(BUILDING_ARCHETYPES[b.type]).toBeDefined();
+    }
+  });
+
+  it('differentiates silhouettes across facility groups', () => {
+    const roofs = new Set(Object.values(BUILDING_ARCHETYPES).map((a) => a.roof));
+    expect(roofs.size).toBeGreaterThanOrEqual(2);
+    expect(BUILDING_ARCHETYPES.house.roof).not.toBe(BUILDING_ARCHETYPES.apartment.roof);
+    expect(BUILDING_ARCHETYPES.store.canopy).toBe(true);
+    expect(BUILDING_ARCHETYPES.utility.tower).toBe(true);
+    expect(BUILDING_ARCHETYPES.community.entry).toBe(true);
+  });
+});
+
+describe('WORLD-001 tree instancing source', () => {
+  it('exposes a combined tree collection for shared/instanced geometry', () => {
+    const all = collectAllTrees();
+    expect(all.length).toBe(CANONICAL_TOWN.trees.length + CANONICAL_TOWN.forest.trees.length);
+    expect(all.length).toBeGreaterThan(CANONICAL_TOWN.trees.length);
   });
 });
 
