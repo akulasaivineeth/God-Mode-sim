@@ -89,24 +89,24 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
     setCitizenPresentationPose(citizen.pose);
   }, [citizen.pose, setCitizenPresentationPose]);
 
-  useEffect(() => {
-    const clipName = pickClip(clipNames, citizen.pose);
-    activeClipName.current = clipName;
-    setCitizenPresentationClip(clipName);
-    const next = clipName ? actions[clipName] : null;
-    if (next && next !== currentAction.current) {
-      next.reset().fadeIn(0.25).play();
-      currentAction.current?.fadeOut(0.25);
-      currentAction.current = next;
-    }
-  }, [citizen.pose, actions, clipNames, setCitizenPresentationClip]);
-
   useFrame((_, delta) => {
     const root = rootRef.current;
     if (!root) return;
     const y = terrainHeightAt(citizen.x, citizen.z);
     root.position.set(citizen.x, y, citizen.z);
     root.rotation.y = citizen.facingRadians;
+
+    const clipName = pickClip(clipNames, citizen.pose);
+    if (clipName !== activeClipName.current) {
+      activeClipName.current = clipName;
+      setCitizenPresentationClip(clipName);
+      const next = clipName ? actions[clipName] : null;
+      if (next && next !== currentAction.current) {
+        next.reset().fadeIn(0.25).play();
+        currentAction.current?.fadeOut(0.25);
+        currentAction.current = next;
+      }
+    }
 
     if (animationsSuppressed) {
       return;

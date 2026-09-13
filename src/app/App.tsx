@@ -13,6 +13,7 @@ export interface GodModeEvidenceApi {
   setCamera: (position: [number, number, number], target: [number, number, number]) => void;
   applyPreset: (view: CameraView) => void;
   clearCameraOverride: () => void;
+  setSpeed: (speed: SimSpeed) => void;
   getCaptureMeta: () => {
     activity: string;
     pose: string | null;
@@ -76,15 +77,18 @@ export function App() {
         useDiagnosticsStore.getState().setCameraOverride(null);
         setCameraNonce((n) => n + 1);
       },
+      setSpeed: (speed) => {
+        driverRef.current?.setSpeed(speed);
+      },
       getCaptureMeta: () => {
         const state = useDiagnosticsStore.getState();
         const citizen = state.renderSnapshot?.citizens?.[0] ?? null;
         return {
           activity: citizen?.activity ?? '',
-          pose: state.citizenPresentationPose,
+          pose: citizen?.pose ?? state.citizenPresentationPose,
           clip: state.citizenPresentationClip,
           simMinute: state.renderSnapshot?.simMinute ?? 0,
-          speed: state.speed,
+          speed: driverRef.current?.getSpeed() ?? state.speed,
           animationsSuppressed: state.animationsSuppressed,
           citizenPosition: citizen
             ? { x: citizen.x, z: citizen.z, facingRadians: citizen.facingRadians }
