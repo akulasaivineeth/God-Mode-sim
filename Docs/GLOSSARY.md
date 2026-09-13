@@ -180,7 +180,7 @@ A simulation event with a standard envelope (id, time, type, actors, payload). D
 
 ## Render snapshot
 
-The small, read-only package of numbers the 3D layer is allowed to see (e.g. visual phase, tick count). Prevents the renderer from needing — or mutating — full simulation state.
+The small, read-only package of numbers the 3D layer is allowed to see (e.g. visual phase, tick count, derived calendar, and M02 citizen presentation fields). M02 adds `citizens[]` (position, action, pose, facing, needs, appearance), `selectedCitizenId`, and `inspectorTrace` (utility breakdown for the selected citizen). Prevents the renderer from needing — or mutating — full simulation state.
 
 ---
 

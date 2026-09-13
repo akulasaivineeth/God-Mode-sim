@@ -196,6 +196,17 @@ export function positionAlongPath(nodeIds: readonly string[], traversedDistance:
   return last?.position ?? { x: 0, z: 0 };
 }
 
+/** Three.js Y rotation (radians) facing along a path segment at traversed distance. */
+export function facingAlongPath(nodeIds: readonly string[], traversedDistance: number): number {
+  if (nodeIds.length < 2) return 0;
+  const pos = positionAlongPath(nodeIds, traversedDistance);
+  const ahead = positionAlongPath(nodeIds, traversedDistance + 0.6);
+  const dx = ahead.x - pos.x;
+  const dz = ahead.z - pos.z;
+  if (Math.abs(dx) < 0.001 && Math.abs(dz) < 0.001) return 0;
+  return Math.atan2(dx, dz);
+}
+
 export function pathDistance(nodeIds: readonly string[]): number {
   let total = 0;
   for (let i = 0; i < nodeIds.length - 1; i += 1) {

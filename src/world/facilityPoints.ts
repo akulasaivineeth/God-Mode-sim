@@ -8,6 +8,8 @@
 import type { Vec2 } from './townLayout';
 import { CANONICAL_TOWN } from './townLayout';
 
+export type FacilityPresentationKind = 'chair' | 'counter' | 'workbench';
+
 export interface FacilityPoint {
   /** Matches Building.id in townLayout. */
   facilityId: string;
@@ -16,6 +18,11 @@ export interface FacilityPoint {
   entrance: Vec2;
   /** Simple interior anchor used while performing indoor actions. */
   interior: Vec2;
+  /** Authored spot for sit/work presentation props (near interior, visible from gameplay cameras). */
+  presentationSpot: Vec2;
+  presentationKind: FacilityPresentationKind;
+  /** Direction citizen faces while using the facility (Three.js Y radians). */
+  indoorFacingRadians: number;
 }
 
 /** M02 vertical slice — one citizen's home, store, and workplace. */
@@ -35,18 +42,27 @@ export const FACILITY_POINTS: readonly FacilityPoint[] = [
     label: 'House 1',
     entrance: { x: 11, z: -7.6 },
     interior: { x: 11, z: -8.5 },
+    presentationSpot: { x: 10.55, z: -8.9 },
+    presentationKind: 'chair',
+    indoorFacingRadians: Math.PI,
   },
   {
     facilityId: 'store',
     label: 'General Store',
     entrance: { x: -11, z: 7.6 },
     interior: { x: -11, z: 9.2 },
+    presentationSpot: { x: -10.55, z: 9.0 },
+    presentationKind: 'counter',
+    indoorFacingRadians: Math.PI,
   },
   {
     facilityId: 'workshop',
     label: 'Workshop',
     entrance: { x: -11, z: 20.2 },
     interior: { x: -11, z: 21.5 },
+    presentationSpot: { x: -10.6, z: 21.2 },
+    presentationKind: 'workbench',
+    indoorFacingRadians: Math.PI,
   },
 ];
 

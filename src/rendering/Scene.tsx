@@ -9,6 +9,7 @@ import { CameraControls } from './CameraControls';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
 import { CitizenMesh } from './CitizenMesh';
 import { DayNightLighting } from './DayNightLighting';
+import { FacilityInteractionSpots } from './FacilityInteractionSpots';
 import { RouteMarkers } from './RouteMarkers';
 import { Town } from './Town';
 import type { RenderSnapshot } from './types';
@@ -92,6 +93,7 @@ export function Scene({
       <CameraControls view={cameraView} applyNonce={cameraNonce} />
       <DayNightLighting timeOfDay={timeOfDay} />
       <Town />
+      <FacilityInteractionSpots />
       <RouteMarkers />
       {citizens.map((citizen) => (
         <CitizenMesh

@@ -10,6 +10,10 @@ import type { UtilityTrace } from '@/simulation/core/citizens/types';
 import type { SimMinute } from '@/simulation/core/types';
 import type { CitizenState } from '@/simulation/core/citizens/types';
 import type { WorldSnapshot } from '@/simulation/core/toySim';
+import { getFacilityPoint } from '@/world/facilityPoints';
+import { facingAlongPath } from '@/world/navigation';
+import type { CitizenPose } from './citizenPresentation';
+import { poseForAction } from './citizenPresentation';
 
 export interface RenderCitizen {
   id: string;
@@ -18,11 +22,24 @@ export interface RenderCitizen {
   z: number;
   y: number;
   action: ActionKind;
+  pose: CitizenPose;
+  facingRadians: number;
   targetFacilityId: string | null;
   currentFacilityId: string | null;
   appearance: CitizenState['appearance'];
   needs: CitizenState['needs'];
   selected: boolean;
+}
+
+function facingForCitizen(citizen: CitizenState): number {
+  const action = citizen.activeAction;
+  if (action.kind === 'travel' && action.pathNodeIds && action.pathNodeIds.length >= 2) {
+    return facingAlongPath(action.pathNodeIds, action.traversedDistance ?? 0);
+  }
+  if (citizen.currentFacilityId) {
+    return getFacilityPoint(citizen.currentFacilityId).indoorFacingRadians;
+  }
+  return 0;
 }
 
 export interface RenderSnapshot {
@@ -51,6 +68,8 @@ export function toRenderSnapshot(
     z: citizen.position.z,
     y: 0,
     action: citizen.activeAction.kind,
+    pose: poseForAction(citizen.activeAction.kind),
+    facingRadians: facingForCitizen(citizen),
     targetFacilityId: citizen.activeAction.targetFacilityId,
     currentFacilityId: citizen.currentFacilityId,
     appearance: citizen.appearance,
