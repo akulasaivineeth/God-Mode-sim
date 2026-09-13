@@ -14,7 +14,9 @@ import type { CitizenPose } from '../citizenPresentation';
 import { MAT } from '../sharedMaterials';
 import type { RenderCitizen } from '../types';
 
-const ALEX_GLB = '/assets/glb/kenney/alex-character.glb';
+import { KENNEY_ASSETS } from './EnvironmentAssetRegistry';
+
+const ALEX_GLB = KENNEY_ASSETS.alexCharacter;
 
 interface CitizenVisualProps {
   citizen: RenderCitizen;

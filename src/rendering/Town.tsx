@@ -15,15 +15,10 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import {
   BoxGeometry,
-  BufferAttribute,
-  Color,
-  ConeGeometry,
-  CylinderGeometry,
   ExtrudeGeometry,
   type InstancedMesh,
   Matrix4,
   MeshStandardMaterial,
-  PlaneGeometry,
   Quaternion,
   Shape,
   Vector3,
@@ -31,8 +26,6 @@ import {
 import {
   BUILDING_ARCHETYPES,
   CANONICAL_TOWN,
-  collectAllTrees,
-  TERRAIN,
   terrainHeightAt,
   type AreaRect,
   type Building,
@@ -78,53 +71,6 @@ function FlatArea({ area, y }: { area: AreaRect; y: number }) {
     <mesh position={[area.center.x, y, area.center.z]} receiveShadow>
       <boxGeometry args={[area.width, 0.05, area.depth]} />
       <meshStandardMaterial color={area.color} />
-    </mesh>
-  );
-}
-
-/**
- * Ground with modest terrain elevation (WORLD-001, spec §3.2). A segmented plane
- * displaced by `terrainHeightAt` and tinted by height (green core → dry-grass
- * hills) with flat shading so the peripheral hills read clearly. No physics.
- */
-function TerrainGround() {
-  const geometry = useMemo(() => {
-    const size = CANONICAL_TOWN.groundExtent * 2;
-    const segments = 48;
-    const geo = new PlaneGeometry(size, size, segments, segments);
-    const pos = geo.attributes.position;
-    // Three-stop height tint (grass → olive slope → dry-grass hilltop) so the
-    // relief reads clearly even at overview framing. Saturates before the peak.
-    const grass = new Color(CANONICAL_TOWN.groundColor);
-    const slope = new Color('#6f713f');
-    const hilltop = new Color('#b0995f');
-    const colors = new Float32Array(pos.count * 3);
-    const tmp = new Color();
-    for (let i = 0; i < pos.count; i += 1) {
-      const lx = pos.getX(i);
-      const ly = pos.getY(i);
-      // After the -90° X rotation below, local (x, y) maps to world (x, -y).
-      const h = terrainHeightAt(lx, -ly);
-      pos.setZ(i, h);
-      const t = Math.min(1, h / (TERRAIN.maxHeight * 0.8));
-      if (t < 0.5) {
-        tmp.copy(grass).lerp(slope, t / 0.5);
-      } else {
-        tmp.copy(slope).lerp(hilltop, (t - 0.5) / 0.5);
-      }
-      colors[i * 3] = tmp.r;
-      colors[i * 3 + 1] = tmp.g;
-      colors[i * 3 + 2] = tmp.b;
-    }
-    pos.needsUpdate = true;
-    geo.setAttribute('color', new BufferAttribute(colors, 3));
-    geo.computeVertexNormals();
-    return geo;
-  }, []);
-
-  return (
-    <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-      <meshStandardMaterial vertexColors flatShading />
     </mesh>
   );
 }
@@ -258,44 +204,6 @@ function BuildingMesh({ building }: { building: Building }) {
   );
 }
 
-/** All trees (town + forest) as two InstancedMesh draw calls (trunks, canopies). */
-function InstancedTrees() {
-  const trees = useMemo(() => collectAllTrees(), []);
-  const count = trees.length;
-  const trunkGeo = useMemo(() => new CylinderGeometry(0.2, 0.28, 1.8, 6), []);
-  const canopyGeo = useMemo(() => new ConeGeometry(1.3, 2.6, 7), []);
-  const trunkMat = MAT.trunk;
-  const canopyMat = MAT.treeCanopy;
-  const trunkRef = useRef<InstancedMesh>(null);
-  const canopyRef = useRef<InstancedMesh>(null);
-
-  useLayoutEffect(() => {
-    const trunk = trunkRef.current;
-    const canopy = canopyRef.current;
-    if (!trunk || !canopy) return;
-    const matrix = new Matrix4();
-    const quat = new Quaternion();
-    trees.forEach((tree, i) => {
-      const y = terrainHeightAt(tree.position.x, tree.position.z);
-      const s = tree.scale;
-      const scale = new Vector3(s, s, s);
-      matrix.compose(new Vector3(tree.position.x, y + 0.9 * s, tree.position.z), quat, scale);
-      trunk.setMatrixAt(i, matrix);
-      matrix.compose(new Vector3(tree.position.x, y + 2.4 * s, tree.position.z), quat, scale);
-      canopy.setMatrixAt(i, matrix);
-    });
-    trunk.instanceMatrix.needsUpdate = true;
-    canopy.instanceMatrix.needsUpdate = true;
-  }, [trees]);
-
-  return (
-    <group>
-      <instancedMesh ref={trunkRef} args={[trunkGeo, trunkMat, count]} castShadow receiveShadow />
-      <instancedMesh ref={canopyRef} args={[canopyGeo, canopyMat, count]} castShadow receiveShadow />
-    </group>
-  );
-}
-
 /** All graves as a single InstancedMesh. */
 function InstancedGraves() {
   const graves = CANONICAL_TOWN.graves;
@@ -327,9 +235,7 @@ export function Town() {
 
   return (
     <group>
-      <TerrainGround />
-
-      {/* Zones */}
+      {/* Zones — terrain rendered by TownLandscape unified mesh */}
       <FlatArea area={town.park} y={0.03} />
       <FlatArea area={town.square} y={0.035} />
       {town.farmPlots.map((plot) => (
@@ -360,7 +266,6 @@ export function Town() {
           <BuildingMesh key={building.id} building={building} />
         ))}
 
-      <InstancedTrees />
       <InstancedGraves />
     </group>
   );

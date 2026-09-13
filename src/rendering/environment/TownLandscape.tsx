@@ -1,5 +1,5 @@
 /**
- * Overview landscape frame — terrain skirt, river banks, bridge (presentation only).
+ * Unified terrain + river ribbon + bridge — presentation only (M02 R6).
  */
 import { useMemo } from 'react';
 import { BufferAttribute, Color, PlaneGeometry } from 'three';
@@ -7,24 +7,33 @@ import { CANONICAL_TOWN, TERRAIN, terrainHeightAt } from '@/world/townLayout';
 import { ModelAsset } from '../assets/ModelAsset';
 import { KENNEY_ASSETS } from '../assets/EnvironmentAssetRegistry';
 import { MAT } from '../sharedMaterials';
+import { buildRiverRibbonGeometry } from './riverGeometry';
 
-function LandscapeSkirt() {
+function UnifiedTerrain() {
   const geometry = useMemo(() => {
-    const size = CANONICAL_TOWN.groundExtent * 2.6;
-    const segments = 32;
+    const extent = CANONICAL_TOWN.groundExtent;
+    const size = extent * 2.8;
+    const segments = 40;
     const geo = new PlaneGeometry(size, size, segments, segments);
     const pos = geo.attributes.position;
-    const grass = new Color('#4a6a38');
+    const grass = new Color(CANONICAL_TOWN.groundColor);
     const slope = new Color('#6f713f');
     const hilltop = new Color('#b0995f');
     const colors = new Float32Array(pos.count * 3);
     const tmp = new Color();
+    const edgeFade = extent * 2.2;
+
     for (let i = 0; i < pos.count; i += 1) {
       const lx = pos.getX(i);
       const ly = pos.getY(i);
-      const h = terrainHeightAt(lx, -ly) * 0.85;
-      pos.setZ(i, h - 0.5);
-      const t = Math.min(1, Math.max(0, h / (TERRAIN.maxHeight * 0.9)));
+      const wx = lx;
+      const wz = -ly;
+      const dist = Math.hypot(wx, wz);
+      const edgeLift = Math.max(0, (dist - edgeFade * 0.55) / (edgeFade * 0.45));
+      const h = terrainHeightAt(wx, wz) + edgeLift * TERRAIN.maxHeight * 0.35;
+      pos.setZ(i, h - 0.08 * edgeLift);
+
+      const t = Math.min(1, h / (TERRAIN.maxHeight * 0.85));
       if (t < 0.5) tmp.copy(grass).lerp(slope, t / 0.5);
       else tmp.copy(slope).lerp(hilltop, (t - 0.5) / 0.5);
       colors[i * 3] = tmp.r;
@@ -38,51 +47,43 @@ function LandscapeSkirt() {
   }, []);
 
   return (
-    <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, -0.15, 0]}>
+    <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, -0.05, 0]}>
       <meshStandardMaterial vertexColors flatShading />
     </mesh>
   );
 }
 
-function RiverBanks() {
+function RiverRibbon() {
   const { points, width, bankWidth } = CANONICAL_TOWN.river;
-  const segments = [];
-  for (let i = 0; i < points.length - 1; i += 1) {
-    const from = points[i];
-    const to = points[i + 1];
-    const dx = to.x - from.x;
-    const dz = to.z - from.z;
-    const len = Math.hypot(dx, dz);
-    const angle = Math.atan2(dz, dx);
-    const cx = (from.x + to.x) / 2;
-    const cz = (from.z + to.z) / 2;
-    const y = terrainHeightAt(cx, cz);
-    segments.push(
-      <group key={i} position={[cx, y + 0.04, cz]} rotation={[0, -angle, 0]}>
-        <mesh receiveShadow>
-          <boxGeometry args={[len, 0.12, bankWidth]} />
-          <primitive object={MAT.bank} attach="material" />
-        </mesh>
-      </group>,
-    );
-    segments.push(
-      <group key={`${i}-water`} position={[cx, y + 0.1, cz]} rotation={[0, -angle, 0]}>
-        <mesh receiveShadow>
-          <boxGeometry args={[len * 0.92, 0.06, width]} />
-          <primitive object={MAT.water} attach="material" />
-        </mesh>
-      </group>,
-    );
-  }
-  return <group>{segments}</group>;
+  const { water, bank } = useMemo(
+    () => buildRiverRibbonGeometry(points, width, bankWidth),
+    [points, width, bankWidth],
+  );
+
+  return (
+    <group>
+      <mesh geometry={bank} receiveShadow>
+        <meshStandardMaterial vertexColors roughness={0.88} />
+      </mesh>
+      <mesh geometry={water} receiveShadow>
+        <primitive object={MAT.water} attach="material" />
+      </mesh>
+    </group>
+  );
 }
 
 export function TownLandscape() {
   return (
     <group>
-      <LandscapeSkirt />
-      <RiverBanks />
-      <ModelAsset url={KENNEY_ASSETS.roadBridge} position={[22, terrainHeightAt(22, 0), 0]} rotation={[0, Math.PI / 2, 0]} scale={2.2} castShadow={false} />
+      <UnifiedTerrain />
+      <RiverRibbon />
+      <ModelAsset
+        url={KENNEY_ASSETS.roadBridge}
+        position={[22, terrainHeightAt(22, 0), 0]}
+        rotation={[0, Math.PI / 2, 0]}
+        scale={2.2}
+        castShadow={false}
+      />
     </group>
   );
 }

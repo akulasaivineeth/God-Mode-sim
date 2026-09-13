@@ -11,6 +11,8 @@ import { CameraControls } from './CameraControls';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
 import { DayNightLighting } from './DayNightLighting';
 import { FacilityInteractionSpots } from './FacilityInteractionSpots';
+import { CorridorPresentation } from './environment/CorridorPresentation';
+import { PracticalLighting } from './environment/PracticalLighting';
 import { TownAmenities } from './environment/TownAmenities';
 import { TownLandscape } from './environment/TownLandscape';
 import { VegetationLayer } from './environment/VegetationLayer';
@@ -90,8 +92,10 @@ function SceneContent({
       <FpsTracker />
       <CameraControls view={cameraView} applyNonce={cameraNonce} />
       <DayNightLighting timeOfDay={timeOfDay} />
+      <PracticalLighting timeOfDay={timeOfDay} />
       <TownLandscape />
       <Town />
+      <CorridorPresentation />
       <TownAmenities />
       <DedicatedBuildings />
       <VegetationLayer />
