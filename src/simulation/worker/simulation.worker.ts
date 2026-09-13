@@ -7,15 +7,12 @@
  * as truth, determinism and save integrity would break.
  */
 /// <reference lib="webworker" />
-import { digestWorldSnapshot } from '@/debug/worldDigest';
+import { digestCitizenWorld } from '@/debug/worldDigest';
 import { toRenderSnapshot } from '@/rendering/types';
 import { SCHEMA_VERSION } from '@/shared/version';
 import type { WorkerRequest, WorkerResponse } from '../messages';
-import {
-  createWorldSnapshot,
-  stepToySimulation,
-  type WorldSnapshot,
-} from '../core/toySim';
+import { type WorldSnapshot } from '../core/toySim';
+import { createCitizenWorld, stepCitizenWorld } from '../model/world';
 
 let snapshot: WorldSnapshot | null = null;
 
@@ -31,7 +28,7 @@ function ensureSnapshot(): WorldSnapshot {
 }
 
 function handleInit(seed: string): void {
-  snapshot = createWorldSnapshot(seed, SCHEMA_VERSION);
+  snapshot = createCitizenWorld(seed, SCHEMA_VERSION);
   post({ type: 'READY', seed });
 }
 
@@ -40,7 +37,7 @@ function handleStep(count = 1): void {
   const current = ensureSnapshot();
   let next = current;
   for (let i = 0; i < count; i += 1) {
-    next = stepToySimulation(next).snapshot;
+    next = stepCitizenWorld(next);
   }
   snapshot = next;
   const stepMs = performance.now() - started;
@@ -74,7 +71,7 @@ self.onmessage = (event: MessageEvent<WorkerRequest>) => {
         post({ type: 'SNAPSHOT', snapshot: ensureSnapshot() });
         break;
       case 'GET_DIGEST':
-        post({ type: 'DIGEST', digest: digestWorldSnapshot(ensureSnapshot()) });
+        post({ type: 'DIGEST', digest: digestCitizenWorld(ensureSnapshot()) });
         break;
       case 'LOAD_SNAPSHOT':
         handleLoadSnapshot(request.snapshot);
