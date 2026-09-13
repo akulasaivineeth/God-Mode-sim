@@ -68,6 +68,8 @@ sequenceDiagram
 
 **M01 update — derived calendar:** `toRenderSnapshot` runs `deriveCalendar(simMinute)` so the snapshot carries the human date/clock/season plus `timeOfDay` (drives day/night lighting) and `isDaytime`. The calendar is derived, never stored, so it cannot drift from the authoritative counter and never enters the save digest. The static town geometry (`src/world/townLayout.ts`) is authored content read directly by the renderer, not streamed per frame (ADR-006).
 
+**M02 update — citizens in render snapshot:** `toRenderSnapshot` maps each `CitizenState` to a `RenderCitizen` (position, action, needs, appearance, selection flag). When a citizen is selected, `inspectorTrace` carries the read-only `lastUtilityTrace` for the God inspector panel. The renderer never receives full utility candidate lists for unselected citizens.
+
 ---
 
 ## 3. Simulation authority
@@ -120,21 +122,75 @@ sequenceDiagram
 ## 5. Event creation flow
 
 ```text
-  stepToySimulation()
+  stepWorldSimulation()
       │
-      ├──► PRNG draws choice + increment
+      ├──► stepCitizens() — needs decay, travel advance, utility decisions
       │
-      ├──► update ToySimState counters
+      ├──► stepToySimulation() — toy counter (M00 regression)
       │
-      └──► createDomainEvent({ type: 'TOY_STEP', … })
+      └──► createDomainEvent({ type: 'CITIZEN_ACTION_SELECTED', … })
               │
               ▼
            append to snapshot.events[]
 ```
 
-**Plain English:** When something meaningful changes, the worker appends a **domain event** — a structured log entry with id, simulation time, type, and payload. M00 emits one event per toy step. Later milestones emit events for purchases, conversations, deaths, etc. We do **not** log every graphics frame.
+**Plain English:** When something meaningful changes, the worker appends a **domain event** — a structured log entry with id, simulation time, type, and payload. M00 emits `TOY_STEP` per toy tick. M02 emits `CITIZEN_ACTION_SELECTED` when a citizen begins a new action (including travel). We do **not** log every graphics frame.
 
 **Init event:** `TOY_WORLD_INITIALIZED` at simMinute 0 records world creation.
+
+---
+
+## 5b. M02 citizen stepping flow
+
+```text
+  stepCitizen(state, simMinute, prng)
+      │
+      ├──► decayNeedsForMinute()
+      │
+      ├──► if activeAction.kind === 'travel'
+      │         advance along pathNodeIds → arrive at facility entrance
+      │         → buildIndoorAction(followUpAction)
+      │
+      ├──► elif action duration complete
+      │         applyNeedSatisfaction() → planNextAction()
+      │
+      └──► elif reflex need (Layer 1) interrupts non-sleep action
+                planNextAction() with reflex candidate
+
+  planNextAction()
+      │
+      ├──► Layer 1: reflex threshold breached → urgent action
+      │
+      └──► Layer 2: score all candidates (need, goal, travel, time, noise)
+                → select highest → travel or indoor action
+                → store UtilityTrace on citizen.lastUtilityTrace
+```
+
+**Plain English:** Each simulated minute, Alex's needs drift. If traveling, position advances along the A* path. When an action finishes, the utility planner scores candidates and picks the best. Urgent needs (bladder, thirst, hunger, exhaustion) bypass normal scoring via Layer 1. The full score breakdown is saved for the inspector.
+
+---
+
+## 5c. M02 citizen selection / inspector flow
+
+```text
+  UI click CitizenMesh
+      │
+      │  SimulationClient.selectCitizen(id)
+      ▼
+  postMessage({ type: 'SELECT_CITIZEN', citizenId })
+      │
+      ▼
+  worker updates selectedCitizenId
+      │
+      │  toRenderSnapshot(snapshot, selectedCitizenId)
+      ▼
+  postMessage({ type: 'INSPECTOR_UPDATED', renderSnapshot })
+      │
+      ▼
+  CitizenInspector reads inspectorTrace + needs from snapshot
+```
+
+**Plain English:** Clicking a citizen sends a selection command to the worker. The worker marks which citizen is selected and returns an updated render snapshot. The inspector panel shows need bars and the utility score breakdown from the last decision — it never computes scores itself.
 
 ---
 
@@ -165,6 +221,9 @@ sequenceDiagram
 **Digest payload fields (canonical order via sorted keys):**
 
 - `schemaVersion`, `worldSeed`, `branchId`, `clock`, `prng`, `toy`, `eventIds`
+- M02 adds citizen summary fields to digest when present (see `worldDigest.ts`)
+
+**M02 save boundary:** `citizens[]` is optional in schema `m02.1`. Restoring a save with citizens rehydrates full citizen state including `activeAction`, `needs`, `workMinutesToday`, and `lastUtilityTrace`. M00 golden digest regression still pins literal `m00.1` without citizens.
 
 ---
 
@@ -189,17 +248,18 @@ sequenceDiagram
 
 ---
 
-## Message protocol reference (M00)
+## Message protocol reference
 
 ### Requests (main → worker)
 
 | Type | Purpose |
 |------|---------|
 | `INIT` | Create world from seed |
-| `STEP` | Advance N toy ticks |
+| `STEP` | Advance N simulated minutes |
 | `GET_SNAPSHOT` | Export full `WorldSnapshot` |
 | `GET_DIGEST` | Export fingerprint |
 | `LOAD_SNAPSHOT` | Replace worker state from save |
+| `SELECT_CITIZEN` | Set inspector target citizen (M02) |
 
 ### Responses (worker → main)
 
@@ -209,13 +269,14 @@ sequenceDiagram
 | `STEP_COMPLETE` | Includes `RenderSnapshot` + step timing |
 | `SNAPSHOT` | Full snapshot |
 | `DIGEST` | Fingerprint string |
+| `INSPECTOR_UPDATED` | Render snapshot after citizen selection (M02) |
 | `ERROR` | Failure message |
 
 Types live in `src/simulation/messages.ts`.
 
 ---
 
-## What is intentionally not in M00 data flow
+## What is intentionally not in M02 data flow
 
 - UI commands that patch citizen fields directly
 - Renderer → worker state writes

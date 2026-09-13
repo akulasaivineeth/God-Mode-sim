@@ -114,13 +114,43 @@ The ordered sequence of simulation time and events in one world line. Branching 
 
 ## Causal trace
 
-A structured explanation of **why** a character chose an action: needs, beliefs, emotions, scored options, and the winner. M00 defines the data shape; real traces arrive with NPC decision systems in later milestones.
+A structured explanation of **why** a character chose an action: needs, beliefs, emotions, scored options, and the winner. M02 implements utility contributor traces (`UtilityTrace`) for Layer-1/Layer-2 decisions; full belief/emotion traces arrive in later milestones.
+
+---
+
+## Citizen
+
+An autonomous simulated person whose needs, decisions, and movement are computed in the simulation worker. M02 ships one citizen (Alex) with five physical needs and utility-driven action selection.
+
+---
+
+## Need (physiology)
+
+A physical drive tracked per citizen: hunger, thirst, bladder, energy, hygiene. Needs decay each simulated minute and rise in urgency until the citizen satisfies them through actions (eat, drink, sleep, etc.). NPC-NEED-001.
+
+---
+
+## Utility scoring
+
+A deterministic method for choosing the best next action by summing weighted factors (need pressure, schedule goals, travel cost, time cost, seeded noise). M02 Layer-2 scoring exposes a full contributor breakdown in the inspector. NPC-DEC-001.
+
+---
+
+## Waypoint graph
+
+An authored network of walkable nodes (roads, sidewalks, paths, facility entrances) used for A* pathfinding. Citizens travel along this graph; the renderer shows their position but does not own routing. PATH-001.
+
+---
+
+## Facility anchor
+
+A deterministic entrance and interior point for a building (`facilityPoints.ts`). Citizens arrive at the entrance when traveling and use the interior anchor while performing indoor actions.
 
 ---
 
 ## Milestone
 
-A vertical slice of the project with clear deliverables and a review gate. M00 is foundation; M01 adds town and time; later milestones add citizens, economy, God tools, and more.
+A vertical slice of the project with clear deliverables and a review gate. M00 is foundation; M01 adds town and time; M02 adds one autonomous citizen; later milestones add population, economy, God tools, and more.
 
 ---
 

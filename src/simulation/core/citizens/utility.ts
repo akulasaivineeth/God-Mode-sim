@@ -30,15 +30,11 @@ function facilityForAction(state: CitizenState, action: ActionKind): string | nu
     case 'sleep':
     case 'use_toilet':
     case 'shower':
+    case 'drink':
       return state.assignments.homeId;
     case 'eat':
     case 'shop':
-    case 'drink':
-      return action === 'drink' && state.currentFacilityId === state.assignments.homeId
-        ? state.assignments.homeId
-        : action === 'drink'
-          ? state.assignments.homeId
-          : state.assignments.storeId;
+      return state.assignments.storeId;
     case 'work':
       return state.assignments.workplaceId;
     default:
@@ -73,21 +69,32 @@ function needPressure(state: CitizenState, action: ActionKind): number {
     case 'shower':
       return Math.max(0, 70 - needs.hygiene) * 0.7;
     case 'work':
-      return Math.max(0, 55 - needs.energy) * -0.35;
+      // Fatigue penalty only when energy is genuinely low — keeps work viable on a full day.
+      return Math.max(0, 45 - needs.energy) * -0.2;
     default:
       return 0;
   }
+}
+
+/** Target work minutes per weekday — NPC-DEC-001 schedule pressure (M02). */
+const DAILY_WORK_TARGET_MINUTES = 240;
+
+function isWorkHours(hour: number, weekday: number): boolean {
+  return hour >= 9 && hour < 17 && weekday < 5;
 }
 
 function goalValue(state: CitizenState, action: ActionKind, simMinute: number): number {
   const calendar = deriveCalendar(simMinute);
   const hour = calendar.hourOfDay;
   const weekday = calendar.weekdayIndex;
+  const workHours = isWorkHours(hour, weekday);
 
   if (action === 'work') {
-    const workHours = hour >= 9 && hour < 17 && weekday < 5;
     const conscientiousBoost = state.personality.conscientiousness / 100;
-    return workHours ? 28 * conscientiousBoost : -12;
+    if (!workHours) return -15;
+    const quotaGap = Math.max(0, DAILY_WORK_TARGET_MINUTES - state.workMinutesToday);
+    const quotaBoost = (quotaGap / DAILY_WORK_TARGET_MINUTES) * 48;
+    return 34 * conscientiousBoost + quotaBoost;
   }
 
   if (action === 'sleep') {
@@ -96,12 +103,24 @@ function goalValue(state: CitizenState, action: ActionKind, simMinute: number): 
   }
 
   if (action === 'eat' || action === 'shop') {
-    const mealTime = (hour >= 7 && hour < 9) || (hour >= 12 && hour < 14) || (hour >= 18 && hour < 20);
-    return mealTime ? 16 : 4;
+    const mealTime =
+      (hour >= 7 && hour < 9) || (hour >= 12 && hour < 14) || (hour >= 18 && hour < 20);
+    if (mealTime) return 16;
+    if (workHours) return -3;
+    return 4;
   }
 
   if (action === 'shower') {
+    if (workHours) return -5;
     return hour >= 6 && hour < 9 ? 10 : 1;
+  }
+
+  if (action === 'drink' && workHours) {
+    return -2;
+  }
+
+  if (action === 'use_toilet') {
+    return Math.max(0, state.needs.bladder - 40) * 0.35;
   }
 
   return 0;
@@ -153,8 +172,18 @@ export function buildLayer2Candidates(state: CitizenState, simMinute: number): A
     { action: 'shop', targetFacilityId: state.assignments.storeId },
   ];
 
+  if (state.needs.bladder >= 50) {
+    candidates.push({
+      action: 'use_toilet',
+      targetFacilityId: state.assignments.homeId,
+    });
+  }
+
   if (calendar.hourOfDay >= 22 || calendar.hourOfDay < 6) {
-    return candidates.filter((entry) => entry.action === 'sleep' || entry.action === 'use_toilet' || entry.action === 'drink');
+    return candidates.filter(
+      (entry) =>
+        entry.action === 'sleep' || entry.action === 'use_toilet' || entry.action === 'drink',
+    );
   }
 
   return candidates;

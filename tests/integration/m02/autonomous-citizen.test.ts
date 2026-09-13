@@ -7,6 +7,18 @@ import { SCHEMA_VERSION } from '@/shared/version';
 
 const M02_SEED = 'GODMODE_M02_CANONICAL_2026';
 
+/** Count CITIZEN_ACTION_SELECTED events by action kind. */
+function countCitizenActions(snapshot: ReturnType<typeof runWorldSteps>): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const event of snapshot.events) {
+    if (event.type === 'CITIZEN_ACTION_SELECTED') {
+      const action = (event.payload as { action?: string }).action;
+      if (action) counts[action] = (counts[action] ?? 0) + 1;
+    }
+  }
+  return counts;
+}
+
 describe('M02-GATE autonomous citizen', () => {
   it('completes three simulated days without player commands or deadlock', () => {
     const snapshot = runWorldSteps(createM02WorldSnapshot(M02_SEED, SCHEMA_VERSION), MINUTES_PER_DAY * 3);
@@ -15,17 +27,12 @@ describe('M02-GATE autonomous citizen', () => {
     expect(citizen!.id).toBe(M02_CANONICAL_CITIZEN_ID);
     expect(snapshot.clock.simMinute).toBe(MINUTES_PER_DAY * 3);
 
-    const actions = new Set<string>();
-    for (const event of snapshot.events) {
-      if (event.type === 'CITIZEN_ACTION_SELECTED') {
-        const payload = event.payload as { action?: string };
-        if (payload.action) actions.add(payload.action);
-      }
-    }
+    const counts = countCitizenActions(snapshot);
 
-    expect(actions.has('sleep')).toBe(true);
-    expect(actions.has('eat') || actions.has('shop')).toBe(true);
-    expect(actions.has('work')).toBe(true);
+    expect(counts.sleep).toBeGreaterThan(0);
+    expect((counts.eat ?? 0) + (counts.shop ?? 0)).toBeGreaterThan(0);
+    // UAT-NPC-001: credible weekday work rhythm — at least two work sessions across three days.
+    expect(counts.work ?? 0).toBeGreaterThanOrEqual(2);
     expect(citizen!.needs.hunger).toBeLessThan(95);
     expect(citizen!.needs.energy).toBeGreaterThan(5);
   });

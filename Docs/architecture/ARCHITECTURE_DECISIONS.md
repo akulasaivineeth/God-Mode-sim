@@ -294,6 +294,46 @@ issues `STEP { count }`. The human calendar is a **pure derivation** of
 
 ---
 
+## ADR-008 — M02 citizen autonomy boundary (utility, pathing, render)
+
+**Status:** Accepted (M02)
+
+### Decision
+
+Citizen simulation (needs, utility scoring, pathing, action progression) runs entirely in the worker via `citizenStep` / `utility.ts`. The renderer receives a thin `RenderCitizen` projection. Citizen selection flows through `SELECT_CITIZEN` worker command; the inspector reads `inspectorTrace` from the render snapshot.
+
+### Reason
+
+- Preserves ARCH-002: UI and renderer cannot mutate citizen truth.
+- Utility traces are simulation artifacts stored on `CitizenState.lastUtilityTrace`, not computed in React.
+- Pathfinding uses authored waypoint graph (`navigation.ts`) separate from visual mesh.
+- Presentation animation (walk bob, limb swing) uses `performance.now()` and is explicitly non-authoritative.
+
+### Alternatives considered
+
+| Alternative | Summary |
+|-------------|---------|
+| Main-thread citizen AI | Simpler debugging |
+| Renderer-driven movement | Lerp citizen mesh to target |
+| Script daily schedule table | Fixed teleport timetable |
+
+### Why alternatives were rejected
+
+- Main-thread AI would break worker authority and high-speed determinism.
+- Renderer-driven movement would decouple displayed position from simulation position.
+- Scripted schedules bypass Layer-2 utility and violate NPC-DEC-001 traceability.
+
+### Consequences
+
+- `RenderSnapshot` grows with citizen fields but remains a read-only projection.
+- `CITIZEN_ACTION_SELECTED` domain events log action changes for UAT/review.
+- Work schedule pressure is utility-driven (goal + quota factors), not hard-coded teleport.
+- Schema `m02.1` adds optional `citizens[]` to save bundles.
+
+**Requirement:** NPC-NEED-001, NPC-DEC-001, PATH-001, VIS-001, VIS-004, ARCH-002
+
+---
+
 ## ADR template (for future entries)
 
 ```markdown

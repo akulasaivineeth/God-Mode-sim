@@ -33,13 +33,21 @@ export function RouteMarkers() {
         return (
           <group key={facilityId} position={[x, y, z]}>
             <mesh rotation={[-Math.PI / 2, 0, 0]}>
-              <ringGeometry args={[0.55, 0.85, 24]} />
-              <meshStandardMaterial color={colors[facilityId] ?? '#ffffff'} transparent opacity={0.75} />
+              <ringGeometry args={[0.38, 0.48, 20]} />
+              <meshStandardMaterial
+                color={colors[facilityId] ?? '#ffffff'}
+                transparent
+                opacity={0.45}
+              />
             </mesh>
             {building ? (
-              <mesh position={[0, 0.05, -1.2]}>
-                <boxGeometry args={[0.8, 0.08, 0.35]} />
-                <meshStandardMaterial color={colors[facilityId] ?? '#ffffff'} />
+              <mesh position={[0, 0.08, -0.85]}>
+                <boxGeometry args={[0.5, 0.05, 0.18]} />
+                <meshStandardMaterial
+                  color={colors[facilityId] ?? '#ffffff'}
+                  transparent
+                  opacity={0.55}
+                />
               </mesh>
             ) : null}
           </group>

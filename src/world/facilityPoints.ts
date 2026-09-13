@@ -34,19 +34,19 @@ export const FACILITY_POINTS: readonly FacilityPoint[] = [
     facilityId: 'house-1',
     label: 'House 1',
     entrance: { x: 11, z: -7.6 },
-    interior: { x: 11, z: -10 },
+    interior: { x: 11, z: -8.5 },
   },
   {
     facilityId: 'store',
     label: 'General Store',
     entrance: { x: -11, z: 7.6 },
-    interior: { x: -11, z: 11 },
+    interior: { x: -11, z: 9.2 },
   },
   {
     facilityId: 'workshop',
     label: 'Workshop',
     entrance: { x: -11, z: 20.2 },
-    interior: { x: -11, z: 23 },
+    interior: { x: -11, z: 21.5 },
   },
 ];
 
