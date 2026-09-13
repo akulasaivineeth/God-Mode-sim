@@ -1,15 +1,18 @@
 /**
  * Procedural stylized citizen mesh — VIS-001 / M02 shared humanoid pipeline.
  *
- * Plain English: One lightweight reusable body with idle/walk/sit/work poses,
- * path-facing travel orientation, and palette variation. Presentation only.
+ * Plain English: Polished reusable body with idle/walk/sit/work poses, path-facing
+ * travel, improved proportions/silhouette, and shared materials for performance.
  */
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { MeshStandardMaterial } from 'three';
 import type { Group, Mesh } from 'three';
 import { terrainHeightAt } from '@/world/townLayout';
 import type { CitizenPose } from './citizenPresentation';
 import type { RenderCitizen } from './types';
+
+const SHOE_MAT = new MeshStandardMaterial({ color: '#3a3840', roughness: 0.85 });
 
 interface CitizenMeshProps {
   citizen: RenderCitizen;
@@ -46,40 +49,40 @@ function applyPose(
   switch (pose) {
     case 'walk': {
       const phase = walkPhase(t);
-      bodyGroup.position.y = Math.abs(phase) * 0.06;
-      torso.rotation.x = 0.08;
-      leftLeg.rotation.x = phase * 0.55;
-      rightLeg.rotation.x = -phase * 0.55;
-      leftArm.rotation.x = -phase * 0.35;
-      rightArm.rotation.x = phase * 0.35;
+      bodyGroup.position.y = Math.abs(phase) * 0.05;
+      torso.rotation.x = 0.06;
+      leftLeg.rotation.x = phase * 0.6;
+      rightLeg.rotation.x = -phase * 0.6;
+      leftArm.rotation.x = -phase * 0.4;
+      rightArm.rotation.x = phase * 0.4;
       break;
     }
     case 'work': {
-      const bob = Math.sin(t * 2.5) * 0.04;
-      torso.rotation.x = 0.12 + bob;
-      leftArm.rotation.x = -0.4 + bob;
-      rightArm.rotation.x = -0.4 - bob;
+      const bob = Math.sin(t * 2.5) * 0.03;
+      torso.rotation.x = 0.1 + bob;
+      leftArm.rotation.x = -0.5 + bob;
+      rightArm.rotation.x = -0.5 - bob;
       leftLeg.rotation.x = 0;
       rightLeg.rotation.x = 0;
       break;
     }
     case 'sit': {
-      bodyGroup.position.y = -0.28;
-      torso.position.y = baseTorsoY - 0.12;
-      torso.rotation.x = -0.08;
-      leftLeg.rotation.x = -1.35;
-      rightLeg.rotation.x = -1.35;
-      leftArm.rotation.x = -0.25;
-      rightArm.rotation.x = -0.25;
+      bodyGroup.position.y = -0.32;
+      torso.position.y = baseTorsoY - 0.14;
+      torso.rotation.x = -0.1;
+      leftLeg.rotation.x = -1.4;
+      rightLeg.rotation.x = -1.4;
+      leftArm.rotation.x = -0.3;
+      rightArm.rotation.x = -0.3;
       break;
     }
     default: {
-      const breathe = Math.sin(t * 1.8) * 0.02;
+      const breathe = Math.sin(t * 1.8) * 0.015;
       torso.rotation.x = breathe;
       leftLeg.rotation.x = 0;
       rightLeg.rotation.x = 0;
-      leftArm.rotation.x = breathe * 0.5;
-      rightArm.rotation.x = -breathe * 0.5;
+      leftArm.rotation.x = breathe * 0.4;
+      rightArm.rotation.x = -breathe * 0.4;
       break;
     }
   }
@@ -107,9 +110,26 @@ export function CitizenMesh({ citizen, animationsSuppressed, onSelect }: Citizen
   const rightArmRef = useRef<Mesh>(null);
   const lastPoseRef = useRef<CitizenPose>('idle');
 
-  const baseY = terrainHeightAt(citizen.x, citizen.z) + 0.05;
-  const baseTorsoY = 0.95;
-  const scale = citizen.selected ? 1.04 : 1;
+  const baseY = terrainHeightAt(citizen.x, citizen.z) + 0.02;
+  const baseTorsoY = 1.05;
+  const bodyScale = citizen.selected ? 1.22 : 1.18;
+
+  const shirtMat = useMemo(
+    () => new MeshStandardMaterial({ color: citizen.appearance.shirtColor, roughness: 0.8 }),
+    [citizen.appearance.shirtColor],
+  );
+  const pantsMat = useMemo(
+    () => new MeshStandardMaterial({ color: citizen.appearance.pantsColor, roughness: 0.85 }),
+    [citizen.appearance.pantsColor],
+  );
+  const hairMat = useMemo(
+    () => new MeshStandardMaterial({ color: citizen.appearance.hairColor, roughness: 0.9 }),
+    [citizen.appearance.hairColor],
+  );
+  const skinMat = useMemo(
+    () => new MeshStandardMaterial({ color: citizen.appearance.skinColor, roughness: 0.75 }),
+    [citizen.appearance.skinColor],
+  );
 
   useFrame(() => {
     const root = rootRef.current;
@@ -144,51 +164,72 @@ export function CitizenMesh({ citizen, animationsSuppressed, onSelect }: Citizen
     <group
       ref={rootRef}
       position={[citizen.x, baseY, citizen.z]}
-      scale={scale}
+      scale={bodyScale}
       onClick={(event) => {
         event.stopPropagation();
         onSelect(citizen.id);
       }}
     >
       {citizen.selected ? (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.04, 0]}>
-          <ringGeometry args={[0.42, 0.52, 24]} />
-          <meshStandardMaterial color="#f0d060" emissive="#806820" emissiveIntensity={0.35} />
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
+          <ringGeometry args={[0.38, 0.46, 20]} />
+          <meshStandardMaterial
+            color="#f0d060"
+            emissive="#806820"
+            emissiveIntensity={0.25}
+            transparent
+            opacity={0.85}
+          />
         </mesh>
       ) : null}
 
       <group ref={bodyGroupRef}>
+        {/* Torso — box for clearer silhouette */}
         <mesh ref={torsoRef} castShadow position={[0, baseTorsoY, 0]}>
-          <capsuleGeometry args={[0.2, 0.75, 4, 8]} />
-          <meshStandardMaterial color={citizen.appearance.shirtColor} />
+          <boxGeometry args={[0.42, 0.72, 0.28]} />
+          <primitive object={shirtMat} attach="material" />
         </mesh>
 
-        <mesh ref={leftLegRef} castShadow position={[-0.1, 0.38, 0]}>
-          <capsuleGeometry args={[0.08, 0.38, 4, 6]} />
-          <meshStandardMaterial color={citizen.appearance.pantsColor} />
+        {/* Legs */}
+        <mesh ref={leftLegRef} castShadow position={[-0.11, 0.42, 0]}>
+          <boxGeometry args={[0.14, 0.48, 0.16]} />
+          <primitive object={pantsMat} attach="material" />
         </mesh>
-        <mesh ref={rightLegRef} castShadow position={[0.1, 0.38, 0]}>
-          <capsuleGeometry args={[0.08, 0.38, 4, 6]} />
-          <meshStandardMaterial color={citizen.appearance.pantsColor} />
-        </mesh>
-
-        <mesh ref={leftArmRef} castShadow position={[-0.28, 1.05, 0]} rotation={[0, 0, 0.15]}>
-          <capsuleGeometry args={[0.06, 0.32, 4, 6]} />
-          <meshStandardMaterial color={citizen.appearance.shirtColor} />
-        </mesh>
-        <mesh ref={rightArmRef} castShadow position={[0.28, 1.05, 0]} rotation={[0, 0, -0.15]}>
-          <capsuleGeometry args={[0.06, 0.32, 4, 6]} />
-          <meshStandardMaterial color={citizen.appearance.shirtColor} />
+        <mesh ref={rightLegRef} castShadow position={[0.11, 0.42, 0]}>
+          <boxGeometry args={[0.14, 0.48, 0.16]} />
+          <primitive object={pantsMat} attach="material" />
         </mesh>
 
-        <mesh castShadow position={[0, 1.58, 0]}>
+        {/* Shoes — ground contact */}
+        <mesh castShadow position={[-0.11, 0.06, 0.04]}>
+          <boxGeometry args={[0.16, 0.1, 0.24]} />
+          <primitive object={SHOE_MAT} attach="material" />
+        </mesh>
+        <mesh castShadow position={[0.11, 0.06, 0.04]}>
+          <boxGeometry args={[0.16, 0.1, 0.24]} />
+          <primitive object={SHOE_MAT} attach="material" />
+        </mesh>
+
+        {/* Arms */}
+        <mesh ref={leftArmRef} castShadow position={[-0.3, 1.08, 0]} rotation={[0, 0, 0.12]}>
+          <boxGeometry args={[0.12, 0.42, 0.14]} />
+          <primitive object={shirtMat} attach="material" />
+        </mesh>
+        <mesh ref={rightArmRef} castShadow position={[0.3, 1.08, 0]} rotation={[0, 0, -0.12]}>
+          <boxGeometry args={[0.12, 0.42, 0.14]} />
+          <primitive object={shirtMat} attach="material" />
+        </mesh>
+
+        {/* Head */}
+        <mesh castShadow position={[0, 1.62, 0]}>
           <sphereGeometry args={[0.2, 10, 10]} />
-          <meshStandardMaterial color={citizen.appearance.skinColor} />
+          <primitive object={skinMat} attach="material" />
         </mesh>
 
-        <mesh castShadow position={[0, 1.8, -0.02]}>
-          <boxGeometry args={[0.3, 0.1, 0.24]} />
-          <meshStandardMaterial color={citizen.appearance.hairColor} />
+        {/* Hair */}
+        <mesh castShadow position={[0, 1.82, -0.03]}>
+          <boxGeometry args={[0.34, 0.14, 0.3]} />
+          <primitive object={hairMat} attach="material" />
         </mesh>
       </group>
     </group>

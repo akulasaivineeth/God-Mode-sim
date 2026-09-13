@@ -10,6 +10,7 @@ import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
 import { CitizenMesh } from './CitizenMesh';
 import { DayNightLighting } from './DayNightLighting';
 import { FacilityInteractionSpots } from './FacilityInteractionSpots';
+import { M02CorridorPolish } from './M02CorridorPolish';
 import { RouteMarkers } from './RouteMarkers';
 import { Town } from './Town';
 import type { RenderSnapshot } from './types';
@@ -64,9 +65,9 @@ function SimBeacon({
   });
 
   return (
-    <mesh ref={meshRef} position={[0, 16, 0]} castShadow>
-      <octahedronGeometry args={[1.1, 0]} />
-      <meshStandardMaterial color="#e8c15a" emissive="#7a5f10" emissiveIntensity={0.4} />
+    <mesh ref={meshRef} position={[0, 24, 0]} visible={false}>
+      <octahedronGeometry args={[0.4, 0]} />
+      <meshStandardMaterial color="#e8c15a" emissive="#7a5f10" emissiveIntensity={0.1} />
     </mesh>
   );
 }
@@ -93,6 +94,7 @@ export function Scene({
       <CameraControls view={cameraView} applyNonce={cameraNonce} />
       <DayNightLighting timeOfDay={timeOfDay} />
       <Town />
+      <M02CorridorPolish />
       <FacilityInteractionSpots />
       <RouteMarkers />
       {citizens.map((citizen) => (

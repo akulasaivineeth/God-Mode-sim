@@ -49,24 +49,30 @@ function segmentTransform(from: Vec2, to: Vec2) {
   return { length, angle, center };
 }
 
+const ROAD_MAT = new MeshStandardMaterial({ color: '#3a3c42', roughness: 0.92 });
+const SIDEWALK_MAT = new MeshStandardMaterial({ color: '#b8bcc2', roughness: 0.88 });
+const PATH_MAT = new MeshStandardMaterial({ color: '#c9b07a', roughness: 0.9 });
+const WATER_MAT = new MeshStandardMaterial({ color: '#4a8ab0', roughness: 0.2, metalness: 0.1 });
+const BANK_MAT = new MeshStandardMaterial({ color: '#8a9a70', roughness: 0.88 });
+
 function FlatStrip({
   from,
   to,
   width,
-  color,
+  material,
   y,
 }: {
   from: Vec2;
   to: Vec2;
   width: number;
-  color: string;
+  material: MeshStandardMaterial;
   y: number;
 }) {
   const { length, angle, center } = segmentTransform(from, to);
   return (
     <mesh position={[center[0], y, center[1]]} rotation={[0, -angle, 0]} receiveShadow>
       <boxGeometry args={[length, 0.06, width]} />
-      <meshStandardMaterial color={color} />
+      <primitive object={material} attach="material" />
     </mesh>
   );
 }
@@ -88,7 +94,7 @@ function FlatArea({ area, y }: { area: AreaRect; y: number }) {
 function TerrainGround() {
   const geometry = useMemo(() => {
     const size = CANONICAL_TOWN.groundExtent * 2;
-    const segments = 96;
+    const segments = 64;
     const geo = new PlaneGeometry(size, size, segments, segments);
     const pos = geo.attributes.position;
     // Three-stop height tint (grass → olive slope → dry-grass hilltop) so the
@@ -256,15 +262,15 @@ function BuildingMesh({ building }: { building: Building }) {
 }
 
 function River() {
-  const { points, width, color, bankWidth, bankColor } = CANONICAL_TOWN.river;
+  const { points, width, bankWidth } = CANONICAL_TOWN.river;
   const banks = [];
   const water = [];
   for (let i = 0; i < points.length - 1; i += 1) {
     banks.push(
-      <FlatStrip key={`bank-${i}`} from={points[i]} to={points[i + 1]} width={bankWidth} color={bankColor} y={0.03} />,
+      <FlatStrip key={`bank-${i}`} from={points[i]} to={points[i + 1]} width={bankWidth} material={BANK_MAT} y={0.03} />,
     );
     water.push(
-      <FlatStrip key={`water-${i}`} from={points[i]} to={points[i + 1]} width={width} color={color} y={0.07} />,
+      <FlatStrip key={`water-${i}`} from={points[i]} to={points[i + 1]} width={width} material={WATER_MAT} y={0.07} />,
     );
   }
   return (
@@ -359,15 +365,15 @@ export function Town() {
 
       {/* Sidewalks (flanking streets) then roads on top */}
       {town.sidewalks.map((sw) => (
-        <FlatStrip key={sw.id} from={sw.from} to={sw.to} width={sw.width} color="#9aa0a6" y={0.045} />
+        <FlatStrip key={sw.id} from={sw.from} to={sw.to} width={sw.width} material={SIDEWALK_MAT} y={0.045} />
       ))}
       {roads.map((road) => (
-        <FlatStrip key={road.id} from={road.from} to={road.to} width={road.width} color="#43454a" y={0.05} />
+        <FlatStrip key={road.id} from={road.from} to={road.to} width={road.width} material={ROAD_MAT} y={0.05} />
       ))}
 
       {/* Pedestrian paths linking key places */}
       {town.paths.map((path) => (
-        <FlatStrip key={path.id} from={path.from} to={path.to} width={path.width} color="#c2ac74" y={0.052} />
+        <FlatStrip key={path.id} from={path.from} to={path.to} width={path.width} material={PATH_MAT} y={0.052} />
       ))}
 
       <River />

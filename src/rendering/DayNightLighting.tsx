@@ -45,9 +45,9 @@ export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
 
     return {
       sunPosition: sunPos,
-      dirIntensity: 0.3 + dayFactor * 1.1,
-      ambientIntensity: 0.42 + dayFactor * 0.4,
-      hemiIntensity: 0.35 + dayFactor * 0.45,
+      dirIntensity: 0.5 + dayFactor * 1.4,
+      ambientIntensity: 0.35 + dayFactor * 0.35,
+      hemiIntensity: 0.4 + dayFactor * 0.5,
       skyColor: `#${sky.getHexString()}`,
     };
   }, [timeOfDay]);
@@ -61,8 +61,8 @@ export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
         position={sunPosition}
         intensity={dirIntensity}
         castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
+        shadow-mapSize-width={512}
+        shadow-mapSize-height={512}
         shadow-camera-near={1}
         shadow-camera-far={200}
         shadow-camera-left={-60}
