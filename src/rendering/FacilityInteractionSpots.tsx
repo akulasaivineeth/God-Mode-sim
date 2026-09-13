@@ -14,7 +14,7 @@ function propForKind(kind: FacilityPresentationKind) {
     case 'chair':
       return (
         <group>
-          <mesh position={[0, 0.22, 0]} castShadow>
+          <mesh position={[0, 0.22, 0]}>
             <boxGeometry args={[0.42, 0.08, 0.42]} />
             <primitive object={MAT.wood} attach="material" />
           </mesh>
@@ -63,28 +63,15 @@ export function FacilityInteractionSpots() {
   return (
     <group>
       {points.map((point) => {
-        const entranceY = terrainHeightAt(point.entrance.x, point.entrance.z);
         const spotY = terrainHeightAt(point.presentationSpot.x, point.presentationSpot.z);
 
         return (
-          <group key={point.facilityId}>
-            <group position={[point.entrance.x, entranceY, point.entrance.z]}>
-              <mesh position={[0, 0.55, 0]} castShadow>
-                <boxGeometry args={[0.95, 1.15, 0.1]} />
-                <primitive object={MAT.trimWhite} attach="material" />
-              </mesh>
-              <mesh position={[0, 0.02, 0.14]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-                <planeGeometry args={[0.8, 0.38]} />
-                <primitive object={MAT.doorDark} attach="material" />
-              </mesh>
-            </group>
-
-            <group
-              position={[point.presentationSpot.x, spotY, point.presentationSpot.z]}
-              rotation={[0, point.indoorFacingRadians, 0]}
-            >
-              {propForKind(point.presentationKind)}
-            </group>
+          <group
+            key={point.facilityId}
+            position={[point.presentationSpot.x, spotY, point.presentationSpot.z]}
+            rotation={[0, point.indoorFacingRadians, 0]}
+          >
+            {propForKind(point.presentationKind)}
           </group>
         );
       })}

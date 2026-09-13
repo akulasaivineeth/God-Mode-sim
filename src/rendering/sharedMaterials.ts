@@ -45,4 +45,6 @@ export const MAT = {
   trunk: new MeshStandardMaterial({ color: '#5b4327', roughness: 0.88 }),
   treeCanopy: new MeshStandardMaterial({ color: '#356b34', roughness: 0.9 }),
   grave: new MeshStandardMaterial({ color: '#b7bcc2', roughness: 0.8 }),
+  farmRowA: new MeshStandardMaterial({ color: '#6a8a3a', roughness: 0.9 }),
+  farmRowB: new MeshStandardMaterial({ color: '#7a9a48', roughness: 0.9 }),
 };

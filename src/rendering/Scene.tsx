@@ -1,16 +1,19 @@
 /**
- * 3D scene composition — VIS / WORLD-001 / M02 citizens.
+ * 3D scene composition — VIS / WORLD-001 / M02 citizens (R5 visual foundation).
  */
-import { useRef } from 'react';
+import { Suspense, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import type { Mesh } from 'three';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
+import { DedicatedBuildings } from './assets/BuildingVisualRegistry';
+import { CitizenVisual } from './assets/CitizenVisual';
 import { CameraControls } from './CameraControls';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
-import { CitizenMesh } from './CitizenMesh';
 import { DayNightLighting } from './DayNightLighting';
 import { FacilityInteractionSpots } from './FacilityInteractionSpots';
-import { M02CorridorPolish } from './M02CorridorPolish';
+import { TownAmenities } from './environment/TownAmenities';
+import { TownLandscape } from './environment/TownLandscape';
+import { VegetationLayer } from './environment/VegetationLayer';
 import { Town } from './Town';
 import type { RenderSnapshot } from './types';
 
@@ -71,7 +74,7 @@ function SimBeacon({
   );
 }
 
-export function Scene({
+function SceneContent({
   renderSnapshot,
   cameraView,
   cameraNonce,
@@ -83,20 +86,18 @@ export function Scene({
   const citizens = renderSnapshot?.citizens ?? [];
 
   return (
-    <Canvas
-      data-testid="r3f-canvas"
-      style={{ width: '100%', height: '100%' }}
-      camera={{ position: CAMERA_PRESETS.angled.position, fov: 45, near: 0.1, far: 500 }}
-      shadows
-    >
+    <>
       <FpsTracker />
       <CameraControls view={cameraView} applyNonce={cameraNonce} />
       <DayNightLighting timeOfDay={timeOfDay} />
+      <TownLandscape />
       <Town />
-      <M02CorridorPolish />
+      <TownAmenities />
+      <DedicatedBuildings />
+      <VegetationLayer />
       <FacilityInteractionSpots />
       {citizens.map((citizen) => (
-        <CitizenMesh
+        <CitizenVisual
           key={citizen.id}
           citizen={citizen}
           animationsSuppressed={animationsSuppressed}
@@ -104,6 +105,33 @@ export function Scene({
         />
       ))}
       <SimBeacon visualPhase={visualPhase} suppressed={animationsSuppressed} />
+    </>
+  );
+}
+
+export function Scene({
+  renderSnapshot,
+  cameraView,
+  cameraNonce,
+  animationsSuppressed,
+  onSelectCitizen,
+}: SceneProps) {
+  return (
+    <Canvas
+      data-testid="r3f-canvas"
+      style={{ width: '100%', height: '100%' }}
+      camera={{ position: CAMERA_PRESETS.angled.position, fov: 45, near: 0.1, far: 500 }}
+      shadows
+    >
+      <Suspense fallback={null}>
+        <SceneContent
+          renderSnapshot={renderSnapshot}
+          cameraView={cameraView}
+          cameraNonce={cameraNonce}
+          animationsSuppressed={animationsSuppressed}
+          onSelectCitizen={onSelectCitizen}
+        />
+      </Suspense>
     </Canvas>
   );
 }

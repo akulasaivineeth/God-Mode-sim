@@ -13,7 +13,7 @@
 ### Rendering / UI
 
 - `CitizenMesh` procedural humanoid with palette variation.
-- `M02CorridorPolish` entrance pavers + facility facades along Alex's route.
+- `BuildingVisualRegistry` + Kenney GLB dedicated visuals for home/store/workshop.
 - `CitizenInspector` panel with need bars + utility contributor breakdown.
 - Worker `SELECT_CITIZEN` message; inspector reads worker snapshot only.
 

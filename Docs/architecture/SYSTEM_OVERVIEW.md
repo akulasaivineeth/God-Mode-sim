@@ -37,7 +37,7 @@ No cloud server. No runtime AI. M02 delivers one worker-authoritative citizen wi
                    │ RenderSnapshot (read-only)
 ┌──────────────────▼──────────────────────┐
 │  Rendering (React Three Fiber + Three.js)│
-│  Town, CitizenMesh, M02CorridorPolish    │
+│  Town, BuildingVisualRegistry, CitizenVisual │
 └─────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────┐

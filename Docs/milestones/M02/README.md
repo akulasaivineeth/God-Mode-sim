@@ -15,10 +15,13 @@ The M01 town, clock, camera, day/night, and determinism foundations are preserve
 
 After **three simulated days** with no player input, Alex continues to sleep, eat, drink, work, and travel without deadlock. Automated tests lock navigation connectivity, utility traces, and deterministic replay.
 
-## Visual slice
+## Visual slice (R5)
 
-- Procedural shared humanoid mesh (original, lightweight)
-- Route markers at home, store, and workplace entrances
-- M01 town shell unchanged
+- **Dedicated facility visuals** — Kenney CC0 GLB cottages/commercial/industrial for `house-1`, `store`, and `workshop` via `BuildingVisualRegistry` (generic `BuildingMesh` skipped for those IDs)
+- **Kenney character GLB** for Alex (interim; Quaternius Universal Base Characters blocked on download)
+- **Quaternius Stylized Nature** glTF subset for trees/shrubs/rocks (instanced where practical)
+- **Corridor + landscape frame** — asphalt roads, sidewalks, crosswalk, river banks, bridge, town square/park/farm presentation
+- **Outdoor presentation anchors** — Alex visible at porch/store/workshop during facility actions
+- M01 town coordinates preserved; simulation authority unchanged
 
 See `PLAN.md` for architecture detail and `KNOWN_LIMITATIONS.md` for deferred items.
