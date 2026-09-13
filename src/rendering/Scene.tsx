@@ -11,7 +11,6 @@ import { CitizenMesh } from './CitizenMesh';
 import { DayNightLighting } from './DayNightLighting';
 import { FacilityInteractionSpots } from './FacilityInteractionSpots';
 import { M02CorridorPolish } from './M02CorridorPolish';
-import { RouteMarkers } from './RouteMarkers';
 import { Town } from './Town';
 import type { RenderSnapshot } from './types';
 
@@ -96,7 +95,6 @@ export function Scene({
       <Town />
       <M02CorridorPolish />
       <FacilityInteractionSpots />
-      <RouteMarkers />
       {citizens.map((citizen) => (
         <CitizenMesh
           key={citizen.id}

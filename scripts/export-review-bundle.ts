@@ -141,7 +141,7 @@ Future milestones will export structured trace bundles here for offline review.
 - **Simulation worker**: authoritative clock, toy counters, citizen state, PRNG, events.
 - **Citizens** (\`src/simulation/core/citizens/\`): needs, utility scoring, pathing, autonomy.
 - **Navigation** (\`src/world/navigation.ts\`): authored waypoint graph + A*.
-- **Rendering**: procedural \`CitizenMesh\`, route markers; read-only \`RenderSnapshot\`.
+- **Rendering**: procedural \`CitizenMesh\`, M02 corridor polish; read-only \`RenderSnapshot\`.
 - **Inspector** (\`CitizenInspector\`): need bars + utility contributor breakdown.
 
 ## Time model (M01)

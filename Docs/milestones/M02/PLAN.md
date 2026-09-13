@@ -83,7 +83,7 @@ Route proven: home → sidewalk/path network → store/workshop → return home.
 - `src/world/navigation.ts` — graph + A*
 
 **New rendering / UI**
-- `src/rendering/CitizenMesh.tsx`, `RouteMarkers.tsx`
+- `src/rendering/CitizenMesh.tsx`, `M02CorridorPolish.tsx`, `sharedMaterials.ts`
 - `src/ui/components/CitizenInspector.tsx`
 
 **Modified**

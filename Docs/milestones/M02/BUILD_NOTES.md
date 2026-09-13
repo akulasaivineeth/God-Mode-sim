@@ -13,7 +13,7 @@
 ### Rendering / UI
 
 - `CitizenMesh` procedural humanoid with palette variation.
-- `RouteMarkers` at M02 facilities.
+- `M02CorridorPolish` entrance pavers + facility facades along Alex's route.
 - `CitizenInspector` panel with need bars + utility contributor breakdown.
 - Worker `SELECT_CITIZEN` message; inspector reads worker snapshot only.
 
@@ -24,7 +24,7 @@
 
 ### Assets
 
-- Procedural citizen + route markers (see `Docs/assets/ASSET_REGISTER.md`)
+- Procedural citizen + corridor polish + shared materials (see `Docs/assets/ASSET_REGISTER.md`)
 - No third-party GLB packs imported in R1
 
 ### Tests added

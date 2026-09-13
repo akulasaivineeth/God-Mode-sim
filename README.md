@@ -89,7 +89,7 @@ Open the URL shown in the terminal (usually `http://localhost:5173`).
 
 You should see:
 
-- A **handcrafted low-poly 3D town** with **Alex**, one stylized citizen (procedural humanoid) near House 1, plus route markers at home, the general store, and the workshop
+- A **handcrafted low-poly 3D town** with **Alex**, one stylized citizen (procedural humanoid) near House 1, plus corridor polish and facility interaction spots at home, the general store, and the workshop
 - **Day/night lighting** that follows the clock
 - A **citizen inspector** (top-right) with need bars and utility score breakdown when Alex is selected
 - A diagnostics panel (bottom-right) with the **date, clock, season, day/night, speed**, FPS, **draw calls · triangles**, worker step time, seed, and state **digest**

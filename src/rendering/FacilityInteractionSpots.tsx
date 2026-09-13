@@ -5,13 +5,9 @@
  * at Angled/Street zoom without full interiors (VIS-003 deferred).
  */
 import { useMemo } from 'react';
-import { MeshStandardMaterial } from 'three';
 import { FACILITY_POINTS, type FacilityPresentationKind } from '@/world/facilityPoints';
 import { terrainHeightAt } from '@/world/townLayout';
-
-const WOOD = new MeshStandardMaterial({ color: '#7a5a42', roughness: 0.82 });
-const WOOD_DARK = new MeshStandardMaterial({ color: '#5a4030', roughness: 0.8 });
-const METAL = new MeshStandardMaterial({ color: '#6a6e74', metalness: 0.35, roughness: 0.55 });
+import { MAT } from './sharedMaterials';
 
 function propForKind(kind: FacilityPresentationKind) {
   switch (kind) {
@@ -20,11 +16,11 @@ function propForKind(kind: FacilityPresentationKind) {
         <group>
           <mesh position={[0, 0.22, 0]} castShadow>
             <boxGeometry args={[0.42, 0.08, 0.42]} />
-            <primitive object={WOOD} attach="material" />
+            <primitive object={MAT.wood} attach="material" />
           </mesh>
           <mesh position={[0, 0.5, -0.1]} castShadow>
             <boxGeometry args={[0.4, 0.48, 0.1]} />
-            <primitive object={WOOD_DARK} attach="material" />
+            <primitive object={MAT.woodDark} attach="material" />
           </mesh>
         </group>
       );
@@ -33,11 +29,11 @@ function propForKind(kind: FacilityPresentationKind) {
         <group>
           <mesh position={[0, 0.55, 0]} castShadow>
             <boxGeometry args={[0.8, 0.95, 0.38]} />
-            <primitive object={WOOD} attach="material" />
+            <primitive object={MAT.wood} attach="material" />
           </mesh>
           <mesh position={[0, 1.05, -0.1]} castShadow>
             <boxGeometry args={[0.7, 0.08, 0.3]} />
-            <primitive object={WOOD_DARK} attach="material" />
+            <primitive object={MAT.woodDark} attach="material" />
           </mesh>
         </group>
       );
@@ -46,15 +42,15 @@ function propForKind(kind: FacilityPresentationKind) {
         <group>
           <mesh position={[0, 0.42, 0]} castShadow>
             <boxGeometry args={[0.85, 0.14, 0.5]} />
-            <primitive object={WOOD} attach="material" />
+            <primitive object={MAT.wood} attach="material" />
           </mesh>
           <mesh position={[0, 0.65, -0.18]} castShadow>
             <boxGeometry args={[0.55, 0.38, 0.14]} />
-            <primitive object={METAL} attach="material" />
+            <primitive object={MAT.metal} attach="material" />
           </mesh>
           <mesh position={[0.3, 0.72, 0.05]} rotation={[0.4, 0, -0.3]} castShadow>
             <boxGeometry args={[0.06, 0.5, 0.06]} />
-            <primitive object={METAL} attach="material" />
+            <primitive object={MAT.metal} attach="material" />
           </mesh>
         </group>
       );
@@ -75,11 +71,11 @@ export function FacilityInteractionSpots() {
             <group position={[point.entrance.x, entranceY, point.entrance.z]}>
               <mesh position={[0, 0.55, 0]} castShadow>
                 <boxGeometry args={[0.95, 1.15, 0.1]} />
-                <meshStandardMaterial color="#d8cbb8" roughness={0.8} />
+                <primitive object={MAT.trimWhite} attach="material" />
               </mesh>
               <mesh position={[0, 0.02, 0.14]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
                 <planeGeometry args={[0.8, 0.38]} />
-                <meshStandardMaterial color="#5a5048" roughness={0.9} />
+                <primitive object={MAT.doorDark} attach="material" />
               </mesh>
             </group>
 

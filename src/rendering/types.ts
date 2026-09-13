@@ -56,16 +56,28 @@ export interface RenderSnapshot {
   inspectorTrace: UtilityTrace | null;
 }
 
+function renderPositionForCitizen(citizen: CitizenState): { x: number; z: number } {
+  // Presentation-only: show citizens at visible outdoor interaction spots while
+  // simulation truth remains at interior anchors (ARCH-002).
+  if (citizen.currentFacilityId) {
+    const spot = getFacilityPoint(citizen.currentFacilityId).presentationSpot;
+    return { x: spot.x, z: spot.z };
+  }
+  return { x: citizen.position.x, z: citizen.position.z };
+}
+
 export function toRenderSnapshot(
   input: WorldSnapshot,
   selectedCitizenId: string | null = null,
 ): RenderSnapshot {
   const calendar = deriveCalendar(input.clock.simMinute);
-  const citizens = (input.citizens ?? []).map((citizen) => ({
+  const citizens = (input.citizens ?? []).map((citizen) => {
+    const renderPos = renderPositionForCitizen(citizen);
+    return {
     id: citizen.id,
     displayName: citizen.displayName,
-    x: citizen.position.x,
-    z: citizen.position.z,
+    x: renderPos.x,
+    z: renderPos.z,
     y: 0,
     action: citizen.activeAction.kind,
     pose: poseForAction(citizen.activeAction.kind),
@@ -75,7 +87,8 @@ export function toRenderSnapshot(
     appearance: citizen.appearance,
     needs: citizen.needs,
     selected: citizen.id === selectedCitizenId,
-  }));
+  };
+  });
 
   const selected = input.citizens?.find((citizen) => citizen.id === selectedCitizenId) ?? null;
 

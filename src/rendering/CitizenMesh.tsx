@@ -10,9 +10,8 @@ import { MeshStandardMaterial } from 'three';
 import type { Group, Mesh } from 'three';
 import { terrainHeightAt } from '@/world/townLayout';
 import type { CitizenPose } from './citizenPresentation';
+import { MAT } from './sharedMaterials';
 import type { RenderCitizen } from './types';
-
-const SHOE_MAT = new MeshStandardMaterial({ color: '#3a3840', roughness: 0.85 });
 
 interface CitizenMeshProps {
   citizen: RenderCitizen;
@@ -111,8 +110,8 @@ export function CitizenMesh({ citizen, animationsSuppressed, onSelect }: Citizen
   const lastPoseRef = useRef<CitizenPose>('idle');
 
   const baseY = terrainHeightAt(citizen.x, citizen.z) + 0.02;
-  const baseTorsoY = 1.05;
-  const bodyScale = citizen.selected ? 1.22 : 1.18;
+  const baseTorsoY = 1.08;
+  const bodyScale = citizen.selected ? 1.28 : 1.22;
 
   const shirtMat = useMemo(
     () => new MeshStandardMaterial({ color: citizen.appearance.shirtColor, roughness: 0.8 }),
@@ -126,10 +125,11 @@ export function CitizenMesh({ citizen, animationsSuppressed, onSelect }: Citizen
     () => new MeshStandardMaterial({ color: citizen.appearance.hairColor, roughness: 0.9 }),
     [citizen.appearance.hairColor],
   );
-  const skinMat = useMemo(
-    () => new MeshStandardMaterial({ color: citizen.appearance.skinColor, roughness: 0.75 }),
-    [citizen.appearance.skinColor],
-  );
+  const skinMat = useMemo(() => {
+    const mat = MAT.skin.clone();
+    mat.color.set(citizen.appearance.skinColor);
+    return mat;
+  }, [citizen.appearance.skinColor]);
 
   useFrame(() => {
     const root = rootRef.current;
@@ -171,16 +171,16 @@ export function CitizenMesh({ citizen, animationsSuppressed, onSelect }: Citizen
       }}
     >
       {citizen.selected ? (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
-          <ringGeometry args={[0.38, 0.46, 20]} />
-          <meshStandardMaterial
-            color="#f0d060"
-            emissive="#806820"
-            emissiveIntensity={0.25}
-            transparent
-            opacity={0.85}
-          />
-        </mesh>
+        <>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
+            <ringGeometry args={[0.42, 0.52, 24]} />
+            <primitive object={MAT.selectRing} attach="material" />
+          </mesh>
+          <mesh position={[0, 2.05, 0]} rotation={[0, 0, Math.PI / 4]}>
+            <boxGeometry args={[0.18, 0.18, 0.18]} />
+            <primitive object={MAT.selectRing} attach="material" />
+          </mesh>
+        </>
       ) : null}
 
       <group ref={bodyGroupRef}>
@@ -203,11 +203,11 @@ export function CitizenMesh({ citizen, animationsSuppressed, onSelect }: Citizen
         {/* Shoes — ground contact */}
         <mesh castShadow position={[-0.11, 0.06, 0.04]}>
           <boxGeometry args={[0.16, 0.1, 0.24]} />
-          <primitive object={SHOE_MAT} attach="material" />
+          <primitive object={MAT.shoe} attach="material" />
         </mesh>
         <mesh castShadow position={[0.11, 0.06, 0.04]}>
           <boxGeometry args={[0.16, 0.1, 0.24]} />
-          <primitive object={SHOE_MAT} attach="material" />
+          <primitive object={MAT.shoe} attach="material" />
         </mesh>
 
         {/* Arms */}
@@ -221,8 +221,8 @@ export function CitizenMesh({ citizen, animationsSuppressed, onSelect }: Citizen
         </mesh>
 
         {/* Head */}
-        <mesh castShadow position={[0, 1.62, 0]}>
-          <sphereGeometry args={[0.2, 10, 10]} />
+        <mesh castShadow position={[0, 1.68, 0]}>
+          <sphereGeometry args={[0.22, 10, 10]} />
           <primitive object={skinMat} attach="material" />
         </mesh>
 

@@ -39,6 +39,8 @@ import {
   type RoadSegment,
   type Vec2,
 } from '@/world/townLayout';
+import { M02_CITIZEN_ASSIGNMENTS } from '@/world/facilityPoints';
+import { MAT } from './sharedMaterials';
 
 function segmentTransform(from: Vec2, to: Vec2) {
   const dx = to.x - from.x;
@@ -49,11 +51,11 @@ function segmentTransform(from: Vec2, to: Vec2) {
   return { length, angle, center };
 }
 
-const ROAD_MAT = new MeshStandardMaterial({ color: '#3a3c42', roughness: 0.92 });
-const SIDEWALK_MAT = new MeshStandardMaterial({ color: '#b8bcc2', roughness: 0.88 });
-const PATH_MAT = new MeshStandardMaterial({ color: '#c9b07a', roughness: 0.9 });
-const WATER_MAT = new MeshStandardMaterial({ color: '#4a8ab0', roughness: 0.2, metalness: 0.1 });
-const BANK_MAT = new MeshStandardMaterial({ color: '#8a9a70', roughness: 0.88 });
+const M02_FACILITY_IDS = new Set<string>([
+  M02_CITIZEN_ASSIGNMENTS.homeId,
+  M02_CITIZEN_ASSIGNMENTS.storeId,
+  M02_CITIZEN_ASSIGNMENTS.workplaceId,
+]);
 
 function FlatStrip({
   from,
@@ -168,19 +170,19 @@ function FrontBlock({
   depth,
   width,
   height,
-  color,
+  material,
 }: {
   x: number;
   y: number;
   depth: number;
   width: number;
   height: number;
-  color: string;
+  material: MeshStandardMaterial;
 }) {
   return (
     <mesh position={[x, y, depth / 2 + 0.03]}>
       <boxGeometry args={[width, height, 0.08]} />
-      <meshStandardMaterial color={color} />
+      <primitive object={material} attach="material" />
     </mesh>
   );
 }
@@ -191,14 +193,53 @@ function BuildingMesh({ building }: { building: Building }) {
   const baseY = terrainHeightAt(position.x, position.z);
   const roofHeight = arch.roof === 'flat' ? 0.5 : Math.max(1.6, size.height * 0.42);
   const hasTwoWindows = size.width >= 6;
+  const isM02Facility = M02_FACILITY_IDS.has(building.id);
+  const wallMat = useMemo(
+    () =>
+      isM02Facility
+        ? building.id === M02_CITIZEN_ASSIGNMENTS.homeId
+          ? MAT.wallCream
+          : building.id === M02_CITIZEN_ASSIGNMENTS.workplaceId
+            ? MAT.industrial
+            : MAT.wallBrick
+        : new MeshStandardMaterial({ color: wallColor }),
+    [building.id, isM02Facility, wallColor],
+  );
+  const roofMat = useMemo(
+    () =>
+      isM02Facility
+        ? building.id === M02_CITIZEN_ASSIGNMENTS.workplaceId
+          ? MAT.roofSlate
+          : building.id === M02_CITIZEN_ASSIGNMENTS.homeId
+            ? MAT.roofBrown
+            : MAT.roofBrown
+        : new MeshStandardMaterial({ color: roofColor }),
+    [building.id, isM02Facility, roofColor],
+  );
 
   return (
     <group position={[position.x, baseY, position.z]}>
       {/* Walls */}
       <mesh position={[0, size.height / 2, 0]} castShadow receiveShadow>
         <boxGeometry args={[size.width, size.height, size.depth]} />
-        <meshStandardMaterial color={wallColor} />
+        <primitive object={wallMat} attach="material" />
       </mesh>
+
+      {/* M02 home: side wing for cottage silhouette */}
+      {building.id === M02_CITIZEN_ASSIGNMENTS.homeId && (
+        <mesh position={[-1.8, size.height * 0.35, -0.8]} castShadow receiveShadow>
+          <boxGeometry args={[1.6, size.height * 0.7, 2.2]} />
+          <primitive object={MAT.wallCream} attach="material" />
+        </mesh>
+      )}
+
+      {/* M02 workshop: taller utility volume */}
+      {building.id === M02_CITIZEN_ASSIGNMENTS.workplaceId && (
+        <mesh position={[2, size.height * 0.55, -0.5]} castShadow receiveShadow>
+          <boxGeometry args={[2.2, size.height * 1.1, 3]} />
+          <primitive object={MAT.metalDark} attach="material" />
+        </mesh>
+      )}
 
       {/* Roof by archetype */}
       {arch.roof === 'hip' && (
@@ -208,7 +249,7 @@ function BuildingMesh({ building }: { building: Building }) {
           castShadow
         >
           <coneGeometry args={[Math.max(size.width, size.depth) * 0.72, roofHeight, 4]} />
-          <meshStandardMaterial color={roofColor} />
+          <primitive object={roofMat} attach="material" />
         </mesh>
       )}
       {arch.roof === 'gable' && (
@@ -219,23 +260,23 @@ function BuildingMesh({ building }: { building: Building }) {
       {arch.roof === 'flat' && (
         <mesh position={[0, size.height + roofHeight / 2, 0]} castShadow>
           <boxGeometry args={[size.width * 1.04, roofHeight, size.depth * 1.04]} />
-          <meshStandardMaterial color={roofColor} />
+          <primitive object={roofMat} attach="material" />
         </mesh>
       )}
 
       {/* Door + windows on the front face */}
-      <FrontBlock x={0} y={1} depth={size.depth} width={1.2} height={2} color={arch.accentColor} />
+      <FrontBlock x={0} y={1} depth={size.depth} width={1.2} height={2} material={MAT.door} />
       {hasTwoWindows ? (
         <>
-          <FrontBlock x={-size.width * 0.28} y={size.height * 0.6} depth={size.depth} width={1.4} height={1.2} color={arch.windowColor} />
-          <FrontBlock x={size.width * 0.28} y={size.height * 0.6} depth={size.depth} width={1.4} height={1.2} color={arch.windowColor} />
+          <FrontBlock x={-size.width * 0.28} y={size.height * 0.6} depth={size.depth} width={1.4} height={1.2} material={MAT.window} />
+          <FrontBlock x={size.width * 0.28} y={size.height * 0.6} depth={size.depth} width={1.4} height={1.2} material={MAT.window} />
         </>
       ) : (
-        <FrontBlock x={size.width * 0.22} y={size.height * 0.6} depth={size.depth} width={1.2} height={1.1} color={arch.windowColor} />
+        <FrontBlock x={size.width * 0.22} y={size.height * 0.6} depth={size.depth} width={1.2} height={1.1} material={MAT.window} />
       )}
 
-      {/* Storefront awning */}
-      {arch.canopy && (
+      {/* Storefront awning — base layer; M02CorridorPolish adds striped detail */}
+      {arch.canopy && !isM02Facility && (
         <mesh position={[0, size.height * 0.55, size.depth / 2 + 0.9]} castShadow>
           <boxGeometry args={[Math.min(size.width, 5), 0.16, 1.8]} />
           <meshStandardMaterial color={arch.accentColor} />
@@ -246,7 +287,7 @@ function BuildingMesh({ building }: { building: Building }) {
       {arch.entry && (
         <mesh position={[0, size.height * 0.35, size.depth / 2 + 0.8]} castShadow receiveShadow>
           <boxGeometry args={[size.width * 0.42, size.height * 0.7, 1.6]} />
-          <meshStandardMaterial color={wallColor} />
+          <primitive object={wallMat} attach="material" />
         </mesh>
       )}
 
@@ -267,10 +308,10 @@ function River() {
   const water = [];
   for (let i = 0; i < points.length - 1; i += 1) {
     banks.push(
-      <FlatStrip key={`bank-${i}`} from={points[i]} to={points[i + 1]} width={bankWidth} material={BANK_MAT} y={0.03} />,
+      <FlatStrip key={`bank-${i}`} from={points[i]} to={points[i + 1]} width={bankWidth} material={MAT.bank} y={0.03} />,
     );
     water.push(
-      <FlatStrip key={`water-${i}`} from={points[i]} to={points[i + 1]} width={width} material={WATER_MAT} y={0.07} />,
+      <FlatStrip key={`water-${i}`} from={points[i]} to={points[i + 1]} width={width} material={MAT.water} y={0.07} />,
     );
   }
   return (
@@ -287,8 +328,8 @@ function InstancedTrees() {
   const count = trees.length;
   const trunkGeo = useMemo(() => new CylinderGeometry(0.2, 0.28, 1.8, 6), []);
   const canopyGeo = useMemo(() => new ConeGeometry(1.3, 2.6, 7), []);
-  const trunkMat = useMemo(() => new MeshStandardMaterial({ color: '#5b4327' }), []);
-  const canopyMat = useMemo(() => new MeshStandardMaterial({ color: '#356b34' }), []);
+  const trunkMat = MAT.trunk;
+  const canopyMat = MAT.treeCanopy;
   const trunkRef = useRef<InstancedMesh>(null);
   const canopyRef = useRef<InstancedMesh>(null);
 
@@ -324,7 +365,7 @@ function InstancedGraves() {
   const graves = CANONICAL_TOWN.graves;
   const count = graves.length;
   const geometry = useMemo(() => new BoxGeometry(0.5, 0.7, 0.15), []);
-  const material = useMemo(() => new MeshStandardMaterial({ color: '#b7bcc2' }), []);
+  const material = MAT.grave;
   const ref = useRef<InstancedMesh>(null);
 
   useLayoutEffect(() => {
@@ -365,15 +406,15 @@ export function Town() {
 
       {/* Sidewalks (flanking streets) then roads on top */}
       {town.sidewalks.map((sw) => (
-        <FlatStrip key={sw.id} from={sw.from} to={sw.to} width={sw.width} material={SIDEWALK_MAT} y={0.045} />
+        <FlatStrip key={sw.id} from={sw.from} to={sw.to} width={sw.width} material={MAT.sidewalk} y={0.045} />
       ))}
       {roads.map((road) => (
-        <FlatStrip key={road.id} from={road.from} to={road.to} width={road.width} material={ROAD_MAT} y={0.05} />
+        <FlatStrip key={road.id} from={road.from} to={road.to} width={road.width} material={MAT.road} y={0.05} />
       ))}
 
       {/* Pedestrian paths linking key places */}
       {town.paths.map((path) => (
-        <FlatStrip key={path.id} from={path.from} to={path.to} width={path.width} material={PATH_MAT} y={0.052} />
+        <FlatStrip key={path.id} from={path.from} to={path.to} width={path.width} material={MAT.path} y={0.052} />
       ))}
 
       <River />
