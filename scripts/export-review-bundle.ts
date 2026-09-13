@@ -4,13 +4,16 @@ import { join } from 'node:path';
 import { digestWorldSnapshot } from '../src/debug/worldDigest';
 import { buildSaveBundle, serializeSaveBundle } from '../src/persistence/serialize';
 import {
-  M00_ACCEPTANCE_REQUIREMENTS,
-  M00_SCAFFOLDED_REQUIREMENTS,
+  M01_ACCEPTANCE_REQUIREMENTS,
+  M01_REGRESSION_REQUIREMENTS,
 } from '../src/shared/requirements';
 import { BUILD_VERSION, MILESTONE, SCHEMA_VERSION } from '../src/shared/version';
+import { deriveCalendar, MINUTES_PER_DAY } from '../src/simulation/core/calendar';
 import { createWorldSnapshot, runToySteps } from '../src/simulation/core/toySim';
 
-const CANONICAL_SEED = 'GODMODE_M00_CANONICAL_2026';
+const CANONICAL_SEED = 'GODMODE_M01_CANONICAL_2026';
+const M00_CANONICAL_SEED = 'GODMODE_M00_CANONICAL_2026';
+const M00_LOCKED_SCHEMA_VERSION = 'm00.1';
 const OUTPUT_DIR = 'review-bundle';
 
 function run(command: string): string {
@@ -23,11 +26,18 @@ function main(): void {
   mkdirSync(join(OUTPUT_DIR, 'screenshots'), { recursive: true });
 
   const gitCommit = run('git rev-parse HEAD');
-  const snapshot = runToySteps(createWorldSnapshot(CANONICAL_SEED, SCHEMA_VERSION), 100);
+  // M01 scenario: advance a full simulated day (1440 minutes) to exercise the
+  // clock/calendar and demonstrate deterministic stepping.
+  const snapshot = runToySteps(createWorldSnapshot(CANONICAL_SEED, SCHEMA_VERSION), MINUTES_PER_DAY);
   const bundle = buildSaveBundle({
     snapshot,
     exportedAt: new Date().toISOString(),
   });
+  const endCalendar = deriveCalendar(snapshot.clock.simMinute);
+  // M00 regression artifact: the historical golden digest at schema m00.1.
+  const m00Digest = digestWorldSnapshot(
+    runToySteps(createWorldSnapshot(M00_CANONICAL_SEED, M00_LOCKED_SCHEMA_VERSION), 100),
+  );
 
   writeFileSync(
     join(OUTPUT_DIR, 'build-manifest.json'),
@@ -50,13 +60,13 @@ function main(): void {
     JSON.stringify(
       {
         milestone: MILESTONE,
-        acceptance: M00_ACCEPTANCE_REQUIREMENTS.map((id) => ({
+        acceptance: M01_ACCEPTANCE_REQUIREMENTS.map((id) => ({
           id,
           status: 'IMPLEMENTED_AND_TESTED',
         })),
-        scaffolded: M00_SCAFFOLDED_REQUIREMENTS.map((id) => ({
+        regression: M01_REGRESSION_REQUIREMENTS.map((id) => ({
           id,
-          status: 'SCAFFOLDED / DEFERRED_ACCEPTANCE',
+          status: 'PRESERVED_FROM_M00',
         })),
       },
       null,
@@ -80,9 +90,11 @@ function main(): void {
     JSON.stringify(
       {
         target: 'Apple M2 MacBook Pro, 8 GB unified memory',
-        scenario: 'M00 toy simulation (100 steps, in-process)',
+        scenario: 'M01 3D town + clock (1 simulated day = 1440 steps, in-process)',
+        endClock: endCalendar.clockLabel,
+        endDate: `${endCalendar.weekday}, ${endCalendar.monthName} ${endCalendar.dayOfMonth}, Year ${endCalendar.year}`,
         workerStepMs: 'see runtime diagnostics HUD during dev',
-        note: 'M00 establishes instrumentation; 20-citizen perf is deferred to later milestones.',
+        note: 'High-speed (1000×) batches minutes per frame and suppresses animation; time/state remain exact. 20-citizen perf is deferred to later milestones.',
       },
       null,
       2,
@@ -98,36 +110,46 @@ function main(): void {
 
   writeFileSync(
     join(OUTPUT_DIR, 'causal-traces', 'README.md'),
-    `# Causal traces (M00)
+    `# Causal traces (M01)
 
-HIST-002 is scaffolded only in M00. No NPC decision traces exist yet.
+HIST-002 is scaffolded only. No NPC decision traces exist yet (no NPCs until M02).
 Future milestones will export structured utility contributor traces here.
 `,
   );
 
   writeFileSync(
     join(OUTPUT_DIR, 'known-issues.md'),
-    `# M00 Known Issues / Limitations
+    `# M01 Known Issues / Limitations
 
-- No town, NPCs, economy, God tools, or simulation speed controls (M01+).
+- No NPCs/citizens, needs, movement, economy, or God tools yet (M02+).
+- Town buildings are exterior shells only; interiors and roof-fade viewing (VIS-003) are deferred to M02.
+- Seasons are labelled from the clock but do not yet drive weather/environmental effects (M10).
 - No real event replay, branching execution, or experiment comparison (schemas only).
 - Dexie/IndexedDB persistence is not installed; save bundles are JSON schema + round-trip only.
-- ARCH-005 high-speed rendering independence is deferred to M01.
 - Playwright screenshots are not auto-captured in this script; reviewer may capture manually.
 `,
   );
 
   writeFileSync(
     join(OUTPUT_DIR, 'architecture-summary.md'),
-    `# M00 Architecture Summary
+    `# M01 Architecture Summary
 
 ## Boundaries
 
-- **Simulation worker** (\`src/simulation/worker/\`): authoritative toy state, PRNG, events.
-- **Rendering** (\`src/rendering/\`): R3F placeholder scene; read-only \`RenderSnapshot\`.
-- **UI** (\`src/ui/\`): diagnostics HUD via Zustand (UI-only metrics).
+- **Simulation worker** (\`src/simulation/worker/\`): authoritative clock/toy state, PRNG, events.
+- **Simulation core** (\`src/simulation/core/\`): PRNG, events, clock, calendar (SIM-TIME-001/004), speed + pacing math (SIM-TIME-002/003, ARCH-005).
+- **Driver** (\`src/simulation/SimulationDriver.ts\`): main-thread real-time pacing → STEP{count}.
+- **World** (\`src/world/townLayout.ts\`): immutable authored town geometry (WORLD-001).
+- **Rendering** (\`src/rendering/\`): R3F town, day/night lighting, free camera; read-only \`RenderSnapshot\`.
+- **UI** (\`src/ui/\`): diagnostics HUD + time controls via Zustand (UI-only state).
 - **Persistence** (\`src/persistence/\`): Zod save-bundle schemas; serialize/deserialize only.
 - **Debug** (\`src/debug/\`): canonical digest + canonical JSON serialization.
+
+## Time model (M01)
+
+- Authoritative counter: \`clock.simMinute\` (integer). Calendar is a pure derivation (never stored).
+- Mapping: 1 real second = 1 sim minute at 1×. Speeds: Pause, 0.25×, 1×, 5×, 20×, 100×, 1000×.
+- ARCH-005: state depends only on total minutes stepped, so speed/batching never change outcomes.
 
 ## PRNG
 
@@ -153,9 +175,13 @@ npm run dev
 
 Clean install command: **\`npm ci\`** (uses committed \`package-lock.json\`).
 
-## Canonical digest at 100 steps
+## M00 regression digest (historical lock, schema m00.1, 100 steps)
 
-\`${digestWorldSnapshot(snapshot)}\`
+\`${m00Digest}\`
+
+## M01 scenario digest (seed ${CANONICAL_SEED}, 1 simulated day)
+
+\`${digestWorldSnapshot(snapshot)}\`  (ends ${endCalendar.clockLabel}, day index ${endCalendar.dayIndex})
 `,
   );
 

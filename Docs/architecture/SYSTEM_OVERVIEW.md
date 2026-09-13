@@ -8,15 +8,16 @@
 
 GOD MODE is a local web application with one golden rule: **the simulation owns truth; everything else displays or stores it.**
 
-When you run the app today (M00):
+When you run the app today (M01):
 
-1. A **background worker** runs a tiny deterministic simulation (toy counters, not people).
-2. The worker sends a **render snapshot** to the main thread — only what the 3D view needs.
-3. **React** draws the page; **Three.js** draws the placeholder 3D scene.
-4. A diagnostics panel shows performance and a **digest** (fingerprint) of simulation state.
-5. **Save schemas** describe how to export and restore state as JSON, validated by **Zod**.
+1. A **background worker** runs the deterministic simulation and owns the **clock**.
+2. A main-thread **driver** paces real time into simulated minutes based on the selected **speed** (Pause … 1000×) and asks the worker to advance.
+3. The worker sends a **render snapshot** (including the derived calendar and time-of-day) to the main thread — only what the 3D view needs.
+4. **React** + **Three.js** draw a **handcrafted 3D town** with **day/night lighting** and a **free camera**.
+5. A diagnostics panel shows the date/clock/season/speed, performance, and a **digest** (fingerprint) of simulation state.
+6. **Save schemas** describe how to export and restore state as JSON, validated by **Zod**.
 
-No cloud server. No runtime AI. No gameplay systems yet — only the foundation future milestones plug into.
+No cloud server. No runtime AI. No citizens yet (M02) — M01 delivers the world and its clock; the toy counter from M00 still runs underneath to keep proving determinism.
 
 ---
 
@@ -59,11 +60,13 @@ No cloud server. No runtime AI. No gameplay systems yet — only the foundation 
 | Path | Responsibility | Authority |
 |------|----------------|-----------|
 | `src/simulation/worker/` | Simulation loop, stepping, snapshots | **Authoritative** |
-| `src/simulation/core/` | PRNG, events, toy logic, clock types | **Authoritative** |
+| `src/simulation/core/` | PRNG, events, toy logic, clock, calendar, speed | **Authoritative** |
 | `src/simulation/messages.ts` | Worker ↔ main protocol types | Contract |
 | `src/simulation/SimulationClient.ts` | Main-thread worker API | Bridge |
-| `src/rendering/` | 3D scene from `RenderSnapshot` | Display only |
-| `src/ui/` | Diagnostics HUD, Zustand store | UI only |
+| `src/simulation/SimulationDriver.ts` | Real-time pacing → STEP{count} | Pacing (main) |
+| `src/world/townLayout.ts` | Immutable authored town geometry | Authored asset |
+| `src/rendering/` | 3D town, day/night, camera from `RenderSnapshot` | Display only |
+| `src/ui/` | Diagnostics HUD, time controls, Zustand store | UI only |
 | `src/persistence/` | Save bundle schemas, serialize/deserialize | Storage format |
 | `src/debug/` | Canonical JSON + digest hashing | Test/review tooling |
 | `src/shared/` | Version IDs, requirement constants | Metadata |
@@ -80,6 +83,7 @@ These must hold in every milestone:
 | ARCH-002 | Simulation state lives in worker domain, not React |
 | ARCH-003 | All simulation randomness via seeded `mulberry32-v1` PRNG |
 | ARCH-004 | Domain events + versioned snapshots support future replay |
+| ARCH-005 | High-speed runs equal slow runs: state = f(total simulated minutes) |
 
 **Anti-patterns (never allowed):**
 
@@ -105,7 +109,13 @@ Changing the algorithm ID or core stepping logic without a version migration wou
 | Milestone | Time model |
 |-----------|------------|
 | M00 | `simMinute` integer increments 1 per toy step |
-| M01+ | Calendar, day/night, speed multipliers per spec |
+| M01 | `simMinute` authoritative; calendar **derived** (`deriveCalendar`); real-time pacing on main thread; speeds Pause–1000×; day/night from clock |
+| M02+ | NPC action scheduling against the clock |
+
+**M01 time rule:** the worker owns `simMinute`; the main-thread `SimulationDriver`
+decides how many minutes to advance per real second from the selected speed. The
+calendar (hours/days/months/seasons/day-night) is a pure function of `simMinute`,
+so it never drifts and never enters the save digest.
 
 ---
 
@@ -120,13 +130,14 @@ Scaffolded types for branches (`EXP-001`) and history/causal traces (`HIST-001`,
 
 ## Performance target
 
-Apple M2 MacBook Pro, 8 GB unified memory. M00 is lightweight; instrumentation (FPS, worker step ms) exists early so later milestones can detect regressions.
+Apple M2 MacBook Pro, 8 GB unified memory. M01 renders a low-poly town with shared materials; instrumentation (FPS, worker step ms) is shown live in the HUD. At high speed the driver batches many minutes per frame and animation is suppressed to protect responsiveness while simulated time stays exact.
 
 ---
 
 ## Related documents
 
 - `DATA_FLOW.md` — message and data paths with diagrams
-- `ARCHITECTURE_DECISIONS.md` — ADR log
-- `Docs/milestones/M00/` — milestone-specific detail
+- `ARCHITECTURE_DECISIONS.md` — ADR log (ADR-006 authored geometry, ADR-007 time/pacing)
+- `Docs/milestones/M00/` — foundation milestone detail
+- `Docs/milestones/M01/` — 3D world and time milestone detail
 - `Docs/specs/GOD_MODE_Canonical_Build_Specification.md` — full product spec

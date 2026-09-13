@@ -38,11 +38,11 @@ The canonical product specification lives in `Docs/specs/GOD_MODE_Canonical_Buil
 
 | Status | Milestone | Plain-English summary |
 |--------|-----------|------------------------|
-| **Complete (awaiting independent review)** | **M00 — Foundation** | The project runs locally. A hidden **simulation engine** (see Glossary) steps a simple toy world deterministically. The 3D view and diagnostics panel display results but do not own truth. Saves use a versioned format. Tests prove same seed → same outcome. |
-| **Not started** | M01 | 3D town shell, camera, day/night, simulation clock, speed controls |
+| **Complete (merged to `main`)** | **M00 — Foundation** | The project runs locally. A hidden **simulation engine** (see Glossary) steps a simple toy world deterministically. The 3D view and diagnostics panel display results but do not own truth. Saves use a versioned format. Tests prove same seed → same outcome. |
+| **Complete (awaiting independent review)** | **M01 — 3D World and Time** | A small **handcrafted 3D town**, a **free camera** (rotate/pan/zoom + presets), a **simulation clock** with a full calendar and **day/night**, and **all speed controls** (Pause, 0.25×, 1×, 5×, 20×, 100×, 1000×). At 1000× animation is skipped but time/state stay exact. |
 | **Not started** | M02+ | Citizens, needs, economy, social systems, God tools, experiments, and all gameplay described in the spec |
 
-**M00 is foundation only.** There is no town, no people, no shopping, no God menu, and no timeline branching yet. Those are deliberate limits, not missing bugs.
+**M01 is the world and its clock — still no people.** There are no citizens, shopping, God menu, or timeline branching yet. Those are deliberate limits, not missing bugs.
 
 ---
 
@@ -50,13 +50,17 @@ The canonical product specification lives in `Docs/specs/GOD_MODE_Canonical_Buil
 
 Do not expect these in the current build:
 
-- A playable town or NPCs
+- NPCs / citizens (the town is intentionally empty until M02)
 - Hunger, jobs, money, relationships, or conversations
 - God intervention tools
-- Pause / speed controls (0.25× through 1000×)
+- Building interiors (exterior shells only in M01)
+- Weather or seasonal effects (the season is shown but has no effects yet)
 - Real save-to-disk gameplay UI (schemas exist; full persistence UI comes later)
 - Timeline branches or experiment comparison
 - Any dependency on ChatGPT, Ollama, or other runtime AI services
+
+Speed controls (Pause, 0.25× … 1000×), the 3D town, the free camera, and
+day/night **are** in this build as of M01.
 
 ---
 
@@ -67,7 +71,7 @@ You need **Node.js** (version 20 or newer recommended) and **npm** on your Mac.
 ```bash
 git clone https://github.com/akulasaivineeth/God-Mode-sim.git
 cd God-Mode-sim
-git checkout milestone/m00-foundation
+git checkout milestone/m01-world-and-time   # current build (M01); M00 is merged to main
 npm ci
 ```
 
@@ -85,10 +89,17 @@ Open the URL shown in the terminal (usually `http://localhost:5173`).
 
 You should see:
 
-- A simple 3D placeholder scene (ground + rotating cube)
-- A diagnostics panel with FPS, worker step time, seed, and a state **digest** (fingerprint)
+- A **handcrafted low-poly 3D town** (differentiated houses/store/clinic/school/cafe/workshop/warehouse/farm/community hall, park, square, cemetery, roads with sidewalks, pedestrian paths, trees, a nearby forest on gently rolling hills, and a readable river with banks) under an angled camera
+- **Day/night lighting** that follows the clock
+- A diagnostics panel with the **date, clock, season, day/night, speed**, FPS, **draw calls · triangles** (renderer stats), worker step time, seed, and a state **digest** (fingerprint)
+- **Speed buttons** (bottom) and **camera buttons** (top-left)
 
-The toy simulation steps automatically every half second. This proves the engine works; it is not gameplay.
+Try it: click **1000×** to make the clock race and watch the sun cross the sky;
+click **Pause** to freeze simulated time while the camera still moves; drag to
+rotate, right-drag to pan, and scroll to zoom.
+
+Underneath, the M00 toy counter still steps deterministically — that is how the
+engine proves same-seed → same-outcome; it is not gameplay.
 
 ---
 
@@ -133,6 +144,7 @@ More detail: `Docs/architecture/SYSTEM_OVERVIEW.md` and `Docs/architecture/DATA_
 | `Docs/architecture/DATA_FLOW.md` | PO + builders | How data moves (with diagrams) |
 | `Docs/architecture/ARCHITECTURE_DECISIONS.md` | PO + builders | Why key decisions were made (ADRs) |
 | `Docs/milestones/M00/` | PO + reviewers | Everything specific to milestone M00 |
+| `Docs/milestones/M01/` | PO + reviewers | Everything specific to milestone M01 (3D world and time) |
 | `Docs/specs/GOD_MODE_Canonical_Build_Specification.md` | Builders + reviewers | Full product specification |
 | `Docs/qa/GOD_MODE_Independent_Validation_UAT.md` | Reviewer (Grok) | Validation and UAT procedures |
 | `Docs/agents/` | AI agents | Builder and reviewer operating prompts |
@@ -167,6 +179,7 @@ More detail: `Docs/architecture/SYSTEM_OVERVIEW.md` and `Docs/architecture/DATA_
 
 ## Current branch
 
-Active milestone work: **`milestone/m00-foundation`**
+Active milestone work: **`milestone/m01-world-and-time`**
 
-Do not merge to `main` until independent review marks M00 **PASS**.
+M00 has passed independent review and is merged to `main`. Do not merge M01 to
+`main` until independent review marks M01 **PASS**.

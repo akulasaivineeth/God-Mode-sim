@@ -198,6 +198,102 @@ Core NPC autonomy, conversation, memory, planning, and social behavior must run 
 
 ---
 
+## ADR-006 — Static world geometry is authored content, not simulation state
+
+**Status:** Accepted (M01)
+
+### Decision
+
+The canonical town layout (`src/world/townLayout.ts`) is **immutable authored
+data** imported directly by the renderer for geometry. Dynamic per-frame data
+(time, lighting inputs, and later NPC transforms) continues to flow only through
+the read-only `RenderSnapshot`.
+
+### Reason
+
+- The town shell is fixed content in M01, analogous to a 3D asset or texture.
+- Sending a large static layout over `postMessage` every frame would waste
+  bandwidth and add no value while it cannot change.
+- Dynamic truth still crosses the boundary only as a read-only snapshot, so
+  ARCH-002 is preserved.
+
+### Alternatives considered
+
+| Alternative | Summary |
+|-------------|---------|
+| Store town in `WorldSnapshot` and stream it | Uniform "everything via snapshot" |
+| Generate town in the worker from the seed | Procedural, fully in simulation |
+
+### Why alternatives were rejected
+
+- Streaming immutable geometry each frame is pure overhead for M01.
+- Procedural town generation is unnecessary scope now; when buildings become
+  mutable (construction/decay, M07/M10) their **dynamic** state will move into
+  the authoritative snapshot while static base geometry can remain an asset.
+
+### Consequences
+
+- The renderer imports `CANONICAL_TOWN` directly; it must treat it as read-only.
+- When buildings gain mutable state, that state (not the base mesh) becomes
+  authoritative worker state.
+- The deterministic terrain heightfield (`terrainHeightAt`) is authored content
+  under this decision too: it is a pure function shared by the layout (to place
+  trees/buildings) and the renderer (to displace the ground). It carries no
+  simulation authority and is safe to assert in tests.
+
+**Requirement:** WORLD-001 (preserves ARCH-002)
+
+---
+
+## ADR-007 — Worker owns time; main thread owns real-time pacing
+
+**Status:** Accepted (M01)
+
+### Decision
+
+The simulation worker remains the sole owner of the clock (`clock.simMinute`).
+Real-time pacing and speed live on the main thread in `SimulationDriver`, which
+converts elapsed real time × selected speed into whole simulated minutes and
+issues `STEP { count }`. The human calendar is a **pure derivation** of
+`simMinute` (`deriveCalendar`), never stored.
+
+### Reason
+
+- Makes ARCH-005 automatic: world state is a function of the **total minutes
+  stepped**, independent of speed or how minutes are batched, so 1× and 1000×
+  produce identical worlds for the same simulated duration.
+- Keeps the worker free of any real-time/`requestAnimationFrame` concept.
+- Deriving the calendar prevents clock/counter drift and avoids enlarging the
+  save schema or determinism digest.
+
+### Alternatives considered
+
+| Alternative | Summary |
+|-------------|---------|
+| Worker tracks real time + speed | Worker imports timing |
+| Store the full calendar in the snapshot | No re-derivation |
+| Advance fractional minutes | Sub-minute stepping |
+
+### Why alternatives were rejected
+
+- A real-time-aware worker couples determinism to wall-clock behaviour and
+  complicates headless/deterministic tests.
+- A stored calendar can drift from `simMinute` and bloats saves/digests.
+- Fractional-minute stepping breaks the clean "state = f(total minutes)" model
+  that guarantees speed independence.
+
+### Consequences
+
+- Pause is simply "advance zero minutes"; the camera/UI loop keeps running.
+- A safety clamp bounds real-time catch-up after stalls (approximate real-time
+  tracking, always-correct simulated state).
+- The save `SCHEMA_VERSION` is unchanged (`m00.1`) because time added no
+  persisted fields.
+
+**Requirement:** SIM-TIME-001/002/003/004, ARCH-005
+
+---
+
 ## ADR template (for future entries)
 
 ```markdown

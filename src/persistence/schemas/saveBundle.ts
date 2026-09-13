@@ -33,7 +33,7 @@ export const worldSnapshotSchema = z.object({
 export const saveBundleSchema = z.object({
   schemaVersion: z.string(),
   buildVersion: z.string(),
-  milestone: z.literal('M00'),
+  milestone: z.enum(['M00', 'M01']),
   worldSeed: z.string(),
   branch: branchMetadataSchema,
   snapshot: worldSnapshotSchema,
