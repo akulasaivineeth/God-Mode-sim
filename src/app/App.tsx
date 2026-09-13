@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Scene } from '@/rendering/Scene';
-import type { CameraView } from '@/rendering/cameraPresets';
+import { cameraViewFromQuery, type CameraView } from '@/rendering/cameraPresets';
 import { SimulationDriver } from '@/simulation/SimulationDriver';
 import type { SimSpeed } from '@/simulation/core/speed';
 import { CitizenInspector } from '@/ui/components/CitizenInspector';
@@ -27,8 +27,18 @@ export function App() {
   const setSpeedStatus = useDiagnosticsStore((state) => state.setSpeedStatus);
   const setCitizenSelected = useDiagnosticsStore((state) => state.setCitizenSelected);
 
-  const [cameraView, setCameraView] = useState<CameraView>('angled');
+  const [cameraView, setCameraView] = useState<CameraView>(
+    () => cameraViewFromQuery(window.location.search) ?? 'angled',
+  );
   const [cameraNonce, setCameraNonce] = useState(0);
+
+  useEffect(() => {
+    const fromQuery = cameraViewFromQuery(window.location.search);
+    if (fromQuery) {
+      setCameraView(fromQuery);
+      setCameraNonce((n) => n + 1);
+    }
+  }, []);
 
   useEffect(() => {
     const driver = new SimulationDriver({

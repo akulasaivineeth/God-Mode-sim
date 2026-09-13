@@ -9,7 +9,7 @@ export const MAT = {
   road: new MeshStandardMaterial({ color: '#3a3c42', roughness: 0.92 }),
   sidewalk: new MeshStandardMaterial({ color: '#b8bcc2', roughness: 0.88 }),
   path: new MeshStandardMaterial({ color: '#c9b07a', roughness: 0.9 }),
-  water: new MeshStandardMaterial({ color: '#4a8ab0', roughness: 0.2, metalness: 0.1 }),
+  water: new MeshStandardMaterial({ color: '#3f6f8f', roughness: 0.18, metalness: 0.12 }),
   bank: new MeshStandardMaterial({ color: '#8a9a70', roughness: 0.88 }),
   curb: new MeshStandardMaterial({ color: '#8a8e94', roughness: 0.85 }),
   wood: new MeshStandardMaterial({ color: '#7a5a42', roughness: 0.82 }),

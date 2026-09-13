@@ -144,3 +144,21 @@ The M00 toy sim, PRNG, canonical JSON, digest, and event envelope are unchanged;
 the golden digest `fac095d1` (schema `m00.1`) stays locked, and the M01
 time-scaling + townLayout suites remain green. Citizen state advances only in
 whole sim-minutes via the seeded PRNG, so 1× and 1000× produce identical worlds.
+
+## R8 visual polish (M02-009 FIX_REQUIRED)
+
+Presentation-only corrections on top of R7 — simulation authority unchanged:
+
+- **North-star docs:** all art-direction references point to
+  `Docs/art-direction/references/god-mode-town-north-star.png` (JPG retired);
+  removed accidental `.tmp/northstar` chunk artifacts.
+- **River/periphery:** ribbon uses authored colors, 1.28× presentation width,
+  bank/water height separation, bridge placed on the polyline at `z=0`; denser
+  east-edge + riverbank vegetation; overview/angled cameras biased toward the river.
+- **Facility identity:** larger store awning/sign/apron; workshop sign + four yard
+  props; home path/fence/garden tree; dedicated evidence cameras (`home-street`,
+  `store-street`, `workshop-street`, `river`, `square`).
+- **Character clips:** `pickClip` maps to exact Kenney Alex names (`walk`, `sit`,
+  `interact-right`/`pick-up` for work — no attack fallback).
+- **Civic warmth:** square/park ground consolidated in `TownAmenities`; taller
+  lamp posts; slightly warmer daylight.

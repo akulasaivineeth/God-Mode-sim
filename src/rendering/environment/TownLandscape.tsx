@@ -1,13 +1,12 @@
 /**
- * Unified terrain + river ribbon + bridge — presentation only (M02 R6).
+ * Unified terrain + river ribbon + bridge — presentation only (M02 R6/R8).
  */
 import { useMemo } from 'react';
 import { BufferAttribute, Color, PlaneGeometry } from 'three';
 import { CANONICAL_TOWN, TERRAIN, terrainHeightAt } from '@/world/townLayout';
 import { ModelAsset } from '../assets/ModelAsset';
 import { KENNEY_ASSETS } from '../assets/EnvironmentAssetRegistry';
-import { MAT } from '../sharedMaterials';
-import { buildRiverRibbonGeometry } from './riverGeometry';
+import { bridgePlacementOnRiver, buildRiverRibbonGeometry } from './riverGeometry';
 
 function UnifiedTerrain() {
   const geometry = useMemo(() => {
@@ -54,34 +53,50 @@ function UnifiedTerrain() {
 }
 
 function RiverRibbon() {
-  const { points, width, bankWidth } = CANONICAL_TOWN.river;
+  const { points, width, bankWidth, color, bankColor } = CANONICAL_TOWN.river;
   const { water, bank } = useMemo(
-    () => buildRiverRibbonGeometry(points, width, bankWidth),
-    [points, width, bankWidth],
+    () =>
+      buildRiverRibbonGeometry(points, width, bankWidth, {
+        waterColor: color,
+        bankColor,
+      }),
+    [points, width, bankWidth, color, bankColor],
   );
 
   return (
     <group>
       <mesh geometry={bank} receiveShadow>
-        <meshStandardMaterial vertexColors roughness={0.88} />
+        <meshStandardMaterial vertexColors roughness={0.92} metalness={0.02} />
       </mesh>
       <mesh geometry={water} receiveShadow>
-        <primitive object={MAT.water} attach="material" />
+        <meshStandardMaterial
+          color={color}
+          roughness={0.18}
+          metalness={0.12}
+          emissive={color}
+          emissiveIntensity={0.08}
+        />
       </mesh>
     </group>
   );
 }
 
 export function TownLandscape() {
+  const bridge = useMemo(
+    () => bridgePlacementOnRiver(CANONICAL_TOWN.river.points, 0),
+    [],
+  );
+  const bridgeY = terrainHeightAt(bridge.x, bridge.z);
+
   return (
     <group>
       <UnifiedTerrain />
       <RiverRibbon />
       <ModelAsset
         url={KENNEY_ASSETS.roadBridge}
-        position={[22, terrainHeightAt(22, 0), 0]}
-        rotation={[0, Math.PI / 2, 0]}
-        scale={2.2}
+        position={[bridge.x, bridgeY + 0.08, bridge.z]}
+        rotation={[0, bridge.rotY, 0]}
+        scale={2.35}
         castShadow={false}
       />
     </group>

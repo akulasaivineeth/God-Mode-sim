@@ -2,7 +2,7 @@
  * M02 citizen presentation — shared Kenney CC0 character GLB with real clips (VIS-001).
  *
  * Plain English: One shared rig. The character model is loaded once and its
- * embedded animation clips (idle / walk / sit / …) are played via an
+ * embedded animation clips (idle / walk / sit / interact / …) are played via an
  * AnimationMixer, chosen from the citizen's presentation pose. Simulation truth
  * (position/facing/needs/decisions) stays in the worker; this only interpolates
  * and animates presentation (ARCH-002). At high simulation speed the animation is
@@ -29,13 +29,30 @@ interface CitizenVisualProps {
   onSelect: (citizenId: string) => void;
 }
 
-/** Choose the best available clip name for a pose (defensive substring match). */
+/**
+ * Map presentation pose → Kenney Alex clip names (32 embedded clips).
+ * Prefer exact names so walk/sit/work read clearly in screenshots (R8).
+ */
 function pickClip(names: string[], pose: CitizenPose): string | null {
+  const has = (name: string) => (names.includes(name) ? name : null);
   const find = (re: RegExp) => names.find((n) => re.test(n)) ?? null;
-  if (pose === 'walk') return find(/walk|run|move/i) ?? find(/idle|stand/i);
-  if (pose === 'sit') return find(/sit|rest|sleep/i) ?? find(/idle|stand/i);
-  if (pose === 'work') return find(/interact|hold|pick|work|use|attack/i) ?? find(/idle|stand/i);
-  return find(/idle|stand/i) ?? (names[0] ?? null);
+
+  if (pose === 'walk') {
+    return has('walk') ?? find(/^walk$/i) ?? has('idle') ?? has('static');
+  }
+  if (pose === 'sit') {
+    return has('sit') ?? find(/^sit$/i) ?? has('idle');
+  }
+  if (pose === 'work') {
+    return (
+      has('interact-right') ??
+      has('pick-up') ??
+      has('holding-right') ??
+      has('interact-left') ??
+      has('idle')
+    );
+  }
+  return has('idle') ?? has('static') ?? names[0] ?? null;
 }
 
 export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelect }: CitizenVisualProps) {
@@ -82,7 +99,7 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
     root.rotation.y = citizen.facingRadians;
 
     if (animationsSuppressed) {
-      return; // snap: stop advancing animation at high speed
+      return;
     }
     mixer.update(delta);
 

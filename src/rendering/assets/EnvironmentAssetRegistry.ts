@@ -1,5 +1,5 @@
 /**
- * Authored environment asset paths — reusable vegetation/prop vocabulary (M02 R6).
+ * Authored environment asset paths — reusable vegetation/prop vocabulary (M02 R6/R8).
  * Kenney GLBs are repackaged per-pack with matching Textures/colormap.png.
  */
 import type { Vec2 } from '@/world/townLayout';
@@ -58,17 +58,25 @@ export const M02_CORRIDOR_VEGETATION: readonly VegetationPlacement[] = [
   { position: { x: 5, z: -2 }, asset: 'bushFlowers', scale: 1.1, source: 'quaternius' },
   { position: { x: -5, z: 5 }, asset: 'commonTree2', scale: 1.0, source: 'quaternius' },
   { position: { x: -14, z: 18 }, asset: 'pine1', scale: 0.85, source: 'quaternius' },
+  // Facility entrance framing (R8)
+  { position: { x: 14, z: -8 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
+  { position: { x: -8, z: 14 }, asset: 'flowers', scale: 0.95, source: 'quaternius' },
+  { position: { x: -8, z: 26 }, asset: 'bush', scale: 1.05, source: 'quaternius' },
 ];
 
-/** Riverbank rock/shrub accents along the eastern river. */
+/** Riverbank rock/shrub accents — denser eastern frame (R8). */
 export const RIVERBANK_VEGETATION: readonly VegetationPlacement[] = [
   { position: { x: 30, z: -6 }, asset: 'pebble1', scale: 0.8, source: 'quaternius' },
   { position: { x: 32, z: 8 }, asset: 'pebble2', scale: 0.9, source: 'quaternius' },
   { position: { x: 29, z: 22 }, asset: 'bush', scale: 1.0, source: 'quaternius' },
   { position: { x: 33, z: -20 }, asset: 'fern', scale: 0.9, source: 'quaternius' },
+  { position: { x: 42, z: -14 }, asset: 'pine1', scale: 1.05, source: 'quaternius' },
+  { position: { x: 44, z: 12 }, asset: 'commonTree1', scale: 1.0, source: 'quaternius' },
+  { position: { x: 41, z: 28 }, asset: 'pine2', scale: 0.95, source: 'quaternius' },
+  { position: { x: 38, z: -32 }, asset: 'commonTree2', scale: 0.9, source: 'quaternius' },
 ];
 
-/** Dense north/west forest frame — real asset families from registry data. */
+/** Dense north/west/east forest frame — real asset families from registry data. */
 export function buildPeripheryForest(): VegetationPlacement[] {
   const placements: VegetationPlacement[] = [];
   const northEdge = [
@@ -77,6 +85,9 @@ export function buildPeripheryForest(): VegetationPlacement[] {
   const westEdge = [
     { x: -44, z: -30 }, { x: -46, z: 0 }, { x: -44, z: 28 },
   ];
+  const eastEdge = [
+    { x: 48, z: -28 }, { x: 50, z: -8 }, { x: 49, z: 10 }, { x: 48, z: 30 },
+  ];
   const variants: VegetationPlacement[] = [
     { position: { x: 0, z: 0 }, asset: 'pine1', source: 'quaternius' },
     { position: { x: 0, z: 0 }, asset: 'pine2', source: 'quaternius' },
@@ -84,7 +95,7 @@ export function buildPeripheryForest(): VegetationPlacement[] {
     { position: { x: 0, z: 0 }, asset: 'commonTree2', source: 'quaternius' },
   ];
   let i = 0;
-  for (const pos of [...northEdge, ...westEdge]) {
+  for (const pos of [...northEdge, ...westEdge, ...eastEdge]) {
     const variant = variants[i % variants.length];
     placements.push({
       position: pos,

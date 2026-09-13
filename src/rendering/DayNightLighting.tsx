@@ -17,7 +17,7 @@ interface DayNightLightingProps {
 
 const NIGHT_SKY = new Color('#0a1020');
 const HORIZON_SKY = new Color('#e08a4c');
-const DAY_SKY = new Color('#7fb4e8');
+const DAY_SKY = new Color('#8fc0f0');
 
 const SUN_DISTANCE = 60;
 
@@ -45,9 +45,9 @@ export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
 
     return {
       sunPosition: sunPos,
-      dirIntensity: 0.3 + dayFactor * 1.1,
-      ambientIntensity: 0.42 + dayFactor * 0.4,
-      hemiIntensity: 0.35 + dayFactor * 0.45,
+      dirIntensity: 0.35 + dayFactor * 1.15,
+      ambientIntensity: 0.46 + dayFactor * 0.42,
+      hemiIntensity: 0.4 + dayFactor * 0.48,
       skyColor: `#${sky.getHexString()}`,
     };
   }, [timeOfDay]);

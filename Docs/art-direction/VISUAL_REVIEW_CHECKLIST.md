@@ -42,4 +42,4 @@ Flag the milestone if the scene is technically correct but still visibly prototy
 
 ## Reference
 
-Compare against `Docs/art-direction/references/town-visual-reference-board.webp` and `Docs/art-direction/TOWN_VISUAL_DIRECTION.md`. The reference board is inspiration only and must not be copied literally.
+Compare against the primary benchmark `Docs/art-direction/references/god-mode-town-north-star.png`, the secondary board `Docs/art-direction/references/town-visual-reference-board.webp`, and `Docs/art-direction/TOWN_VISUAL_DIRECTION.md`. The reference board is inspiration only and must not be copied literally.

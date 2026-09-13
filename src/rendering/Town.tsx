@@ -229,8 +229,7 @@ export function Town() {
   return (
     <group>
       {/* Zones — terrain rendered by TownLandscape unified mesh */}
-      <FlatArea area={town.park} y={0.03} />
-      <FlatArea area={town.square} y={0.035} />
+      {/* Park/square ground handled by TownAmenities (R8 — avoid duplicate overlays). */}
       {town.farmPlots.map((plot) => (
         <FlatArea key={plot.id} area={plot} y={0.03} />
       ))}
