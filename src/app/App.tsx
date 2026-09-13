@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Scene } from '@/rendering/Scene';
-import { cameraViewFromQuery, type CameraView } from '@/rendering/cameraPresets';
+import { CAMERA_PRESETS, cameraViewFromQuery, type CameraView } from '@/rendering/cameraPresets';
+import { computePortraitCamera } from '@/rendering/evidencePortrait';
 import { SimulationDriver } from '@/simulation/SimulationDriver';
 import type { SimSpeed } from '@/simulation/core/speed';
 import { CitizenInspector } from '@/ui/components/CitizenInspector';
@@ -8,12 +9,26 @@ import { DiagnosticsHud } from '@/ui/components/DiagnosticsHud';
 import { TimeControls } from '@/ui/components/TimeControls';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 
+export interface EvidencePortraitOptions {
+  distance?: number;
+  sideOffset?: number;
+  eyeHeight?: number;
+  chestHeight?: number;
+  worldFixed?: boolean;
+}
+
 /** Read-only evidence harness hooks (presentation only — zero simulation authority). */
 export interface GodModeEvidenceApi {
   setCamera: (position: [number, number, number], target: [number, number, number]) => void;
   applyPreset: (view: CameraView) => void;
   clearCameraOverride: () => void;
   setSpeed: (speed: SimSpeed) => void;
+  setEvidencePortraitMode: (enabled: boolean) => void;
+  frameCitizenPortrait: (opts?: EvidencePortraitOptions) => void;
+  getCameraState: () => {
+    position: [number, number, number];
+    target: [number, number, number];
+  } | null;
   getCaptureMeta: () => {
     activity: string;
     pose: string | null;
@@ -69,7 +84,10 @@ export function App() {
         useDiagnosticsStore.getState().setCameraOverride({ position, target });
       },
       applyPreset: (view) => {
-        useDiagnosticsStore.getState().setCameraOverride(null);
+        const store = useDiagnosticsStore.getState();
+        store.setCameraOverride(null);
+        store.setEvidencePortraitOpts(null);
+        store.setActiveCameraView(view);
         setCameraView(view);
         setCameraNonce((n) => n + 1);
       },
@@ -79,6 +97,31 @@ export function App() {
       },
       setSpeed: (speed) => {
         driverRef.current?.setSpeed(speed);
+      },
+      setEvidencePortraitMode: (enabled) => {
+        useDiagnosticsStore.getState().setEvidencePortraitMode(enabled);
+      },
+      frameCitizenPortrait: (opts = {}) => {
+        const state = useDiagnosticsStore.getState();
+        const citizen = state.renderSnapshot?.citizens?.[0];
+        if (!citizen) {
+          throw new Error('No citizen for portrait framing');
+        }
+        state.setEvidencePortraitOpts(opts);
+        const frame = computePortraitCamera(citizen, opts);
+        state.setCameraOverride(frame);
+      },
+      getCameraState: () => {
+        const state = useDiagnosticsStore.getState();
+        const citizen = state.renderSnapshot?.citizens?.[0];
+        if (state.evidencePortraitOpts && citizen) {
+          return computePortraitCamera(citizen, state.evidencePortraitOpts);
+        }
+        if (state.cameraOverride) {
+          return state.cameraOverride;
+        }
+        const preset = CAMERA_PRESETS[state.activeCameraView];
+        return { position: [...preset.position], target: [...preset.target] };
       },
       getCaptureMeta: () => {
         const state = useDiagnosticsStore.getState();

@@ -68,13 +68,13 @@ function RiverRibbon() {
       <mesh geometry={bank} receiveShadow>
         <meshStandardMaterial vertexColors roughness={0.96} metalness={0.01} />
       </mesh>
-      <mesh geometry={water} receiveShadow>
+      <mesh geometry={water} receiveShadow renderOrder={1}>
         <meshStandardMaterial
-          color={color}
-          roughness={0.1}
-          metalness={0.12}
-          emissive={color}
-          emissiveIntensity={0.2}
+          color="#4a8ec0"
+          roughness={0.06}
+          metalness={0.18}
+          emissive="#3a7aad"
+          emissiveIntensity={0.34}
         />
       </mesh>
     </group>

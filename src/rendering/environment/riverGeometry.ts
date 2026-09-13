@@ -8,7 +8,7 @@ import { BufferAttribute, BufferGeometry, Color } from 'three';
 import { terrainHeightAt } from '@/world/townLayout';
 
 /** Modest visual widening — authored centerline unchanged (R8). */
-export const RIVER_PRESENTATION_SCALE = 1.28;
+export const RIVER_PRESENTATION_SCALE = 1.32;
 
 export interface RiverRibbonColors {
   waterColor: string;
@@ -47,12 +47,12 @@ export function buildRiverRibbonGeometry(
     const bc = bankColor.clone().lerp(bankDark, t * 0.35);
 
     bankVerts.push(
-      curr.x + nx * visualBankHalf, groundY + 0.1, curr.z + nz * visualBankHalf,
-      curr.x - nx * visualBankHalf, groundY + 0.1, curr.z - nz * visualBankHalf,
+      curr.x + nx * visualBankHalf, groundY + 0.14, curr.z + nz * visualBankHalf,
+      curr.x - nx * visualBankHalf, groundY + 0.14, curr.z - nz * visualBankHalf,
     );
     waterVerts.push(
-      curr.x + nx * visualWaterHalf, groundY - 0.12, curr.z + nz * visualWaterHalf,
-      curr.x - nx * visualWaterHalf, groundY - 0.12, curr.z - nz * visualWaterHalf,
+      curr.x + nx * visualWaterHalf, groundY - 0.16, curr.z + nz * visualWaterHalf,
+      curr.x - nx * visualWaterHalf, groundY - 0.16, curr.z - nz * visualWaterHalf,
     );
     bankColors.push(bc.r, bc.g, bc.b, bc.r, bc.g, bc.b);
     waterColors.push(waterColor.r, waterColor.g, waterColor.b, waterColor.r, waterColor.g, waterColor.b);

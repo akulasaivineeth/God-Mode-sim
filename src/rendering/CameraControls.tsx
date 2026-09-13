@@ -14,6 +14,7 @@ import { useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Vector3 } from 'three';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
+import { computePortraitCamera } from './evidencePortrait';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
 
 interface CameraControlsProps {
@@ -47,13 +48,37 @@ export function CameraControls({ view, applyNonce }: CameraControlsProps) {
   }, [controls]);
 
   useEffect(() => {
+    const state = useDiagnosticsStore.getState();
+    if (state.evidencePortraitMode && state.evidencePortraitOpts) {
+      controls.minDistance = 1.2;
+      return;
+    }
     const preset = cameraOverride ?? CAMERA_PRESETS[view];
+    // Evidence portrait framing needs <6 m; default OrbitControls minDistance would clamp it back out.
+    controls.minDistance = cameraOverride ? 1.2 : 6;
     camera.position.set(...preset.position);
     controls.target.copy(new Vector3(...preset.target));
     controls.update();
   }, [view, applyNonce, cameraOverride, cameraOverrideNonce, camera, controls]);
 
   useFrame(() => {
+    const state = useDiagnosticsStore.getState();
+    const citizen = state.renderSnapshot?.citizens?.[0];
+    if (state.evidencePortraitMode && state.evidencePortraitOpts && citizen) {
+      const frame = computePortraitCamera(citizen, state.evidencePortraitOpts);
+      camera.position.set(...frame.position);
+      controls.target.set(...frame.target);
+      controls.minDistance = 1.2;
+      controls.update();
+      return;
+    }
+    // Re-apply every frame so Playwright portrait framing wins before screenshot capture.
+    if (cameraOverride) {
+      camera.position.set(...cameraOverride.position);
+      controls.target.set(...cameraOverride.target);
+      controls.update();
+      return;
+    }
     controls.update();
   });
 

@@ -191,3 +191,19 @@ Bounded presentation + evidence harness fixes — simulation authority unchanged
 - **Oblique cross-river preset:** `river` camera looks diagonally across the ribbon
   near the bridge (not tangent-along); modest water/bank vertical separation and
   stronger water emissive for readability (presentation only).
+
+## R11 proof/readability correction (M02-012 FIX_REQUIRED)
+
+Bounded presentation + evidence harness fixes — simulation authority unchanged:
+
+- **Continuous portrait tracking:** `evidencePortraitOpts` + `computePortraitCamera` re-apply
+  every frame while the citizen moves at 1×; OrbitControls `minDistance` 1.2 m for sub-6 m
+  framing (no clamp-back-out).
+- **Alex readability:** evidence-only 2.2× scale boost + hidden selection chrome; close
+  front/3-quarter framing ~1.5–1.7 m; SIT evidence uses **Eating at the Store** (outdoor
+  counter) instead of Sleeping inside the home mesh.
+- **River subject framing:** cross-river preset `[48,42,42]→[35,2,0]` (R8-readable baseline); brighter
+  presentation water material; bank/water vertical separation + ribbon scale (presentation only).
+- **Evidence harness** (`scripts/capture-r11-evidence.mjs`): strict pose∧activity∧clip;
+  dual-frame WALK/SIT/WORK at 1× with hash-delta check; preset camera-delta verification;
+  publishes GitHub release `review-evidence-m02-013-builder-r11`.

@@ -28,8 +28,8 @@ export const CAMERA_PRESETS: Record<CameraView, CameraPreset> = {
   'home-street': { position: [11, 6, -2], target: [11, 3.5, -10] },
   'store-street': { position: [-11, 5.5, 19], target: [-11, 3.5, 11] },
   'workshop-street': { position: [-15, 6, 34], target: [-11, 3.5, 23] },
-  // Oblique cross-river view near the bridge — diagonal across the ribbon width (R10 evidence).
-  river: { position: [12, 28, -14], target: [40, 0.5, 14] },
+  // Cross-river — southeast elevated toward bridge; restores R8 water readability (R11).
+  river: { position: [48, 42, 42], target: [35, 2, 0] },
   square: { position: [-14, 14, 18], target: [0, 2, 0] },
 };
 

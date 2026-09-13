@@ -21,7 +21,10 @@ import type { RenderCitizen } from '../types';
 import { KENNEY_ASSETS } from './EnvironmentAssetRegistry';
 
 const ALEX_GLB = KENNEY_ASSETS.alexCharacter;
-const MODEL_SCALE = 0.02;
+/** Base Kenney Alex scale for normal gameplay framing. */
+const MODEL_SCALE = 0.075;
+/** Extra multiplier during evidence portrait capture so limbs read at 1× (presentation only). */
+const EVIDENCE_PORTRAIT_SCALE = 5.0;
 
 interface CitizenVisualProps {
   citizen: RenderCitizen;
@@ -65,6 +68,7 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
   const walkPhase = useRef(0);
   const setCitizenPresentationClip = useDiagnosticsStore((s) => s.setCitizenPresentationClip);
   const setCitizenPresentationPose = useDiagnosticsStore((s) => s.setCitizenPresentationPose);
+  const evidencePortraitMode = useDiagnosticsStore((s) => s.evidencePortraitMode);
 
   const { scene, mixer, actions, clipNames } = useMemo(() => {
     const cloned = cloneSkeleton(gltf.scene) as Group;
@@ -133,7 +137,7 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
         onSelect(citizen.id);
       }}
     >
-      {selected && (
+      {selected && !evidencePortraitMode && (
         <>
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, 0]}>
             <ringGeometry args={[1.05, 1.35, 24]} />
@@ -145,7 +149,10 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
           </mesh>
         </>
       )}
-      <group ref={bodyRef} scale={MODEL_SCALE}>
+      <group
+        ref={bodyRef}
+        scale={evidencePortraitMode ? MODEL_SCALE * EVIDENCE_PORTRAIT_SCALE : MODEL_SCALE}
+      >
         <primitive object={scene} />
       </group>
     </group>
