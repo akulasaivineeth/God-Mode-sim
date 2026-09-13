@@ -1,6 +1,13 @@
 import { create } from 'zustand';
+import type { CitizenPose } from '@/rendering/citizenPresentation';
 import type { RenderSnapshot } from '@/rendering/types';
 import { DEFAULT_SPEED, type SimSpeed } from '@/simulation/core/speed';
+
+/** Presentation-only camera override (evidence harness / in-place reframing). */
+export interface CameraOverride {
+  position: [number, number, number];
+  target: [number, number, number];
+}
 
 interface DiagnosticsState {
   seed: string;
@@ -20,7 +27,17 @@ interface DiagnosticsState {
   renderTriangles: number;
   /** Whether the citizen inspector is open (UX-001). */
   citizenSelected: boolean;
+  /** Active Kenney clip name on the live citizen (presentation only, not sim authority). */
+  citizenPresentationClip: string | null;
+  /** Presentation pose mirrored from render snapshot for evidence harness. */
+  citizenPresentationPose: CitizenPose | null;
+  /** In-place camera override — bypasses named preset without reload. */
+  cameraOverride: CameraOverride | null;
+  cameraOverrideNonce: number;
   setCitizenSelected: (selected: boolean) => void;
+  setCitizenPresentationClip: (clip: string | null) => void;
+  setCitizenPresentationPose: (pose: CitizenPose | null) => void;
+  setCameraOverride: (override: CameraOverride | null) => void;
   setSeed: (seed: string) => void;
   setFps: (fps: number) => void;
   setRenderStats: (calls: number, triangles: number) => void;
@@ -48,7 +65,18 @@ export const useDiagnosticsStore = create<DiagnosticsState>((set) => ({
   renderCalls: 0,
   renderTriangles: 0,
   citizenSelected: true,
+  citizenPresentationClip: null,
+  citizenPresentationPose: null,
+  cameraOverride: null,
+  cameraOverrideNonce: 0,
   setCitizenSelected: (selected) => set({ citizenSelected: selected }),
+  setCitizenPresentationClip: (clip) => set({ citizenPresentationClip: clip }),
+  setCitizenPresentationPose: (pose) => set({ citizenPresentationPose: pose }),
+  setCameraOverride: (override) =>
+    set((state) => ({
+      cameraOverride: override,
+      cameraOverrideNonce: state.cameraOverrideNonce + 1,
+    })),
   setSeed: (seed) => set({ seed }),
   setFps: (fps) => set({ fps }),
   setRenderStats: (calls, triangles) => set({ renderCalls: calls, renderTriangles: triangles }),

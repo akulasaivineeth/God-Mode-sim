@@ -28,7 +28,8 @@ export const CAMERA_PRESETS: Record<CameraView, CameraPreset> = {
   'home-street': { position: [11, 6, -2], target: [11, 3.5, -10] },
   'store-street': { position: [-11, 5.5, 19], target: [-11, 3.5, 11] },
   'workshop-street': { position: [-15, 6, 34], target: [-11, 3.5, 23] },
-  river: { position: [48, 42, 42], target: [35, 2, 0] },
+  // Look along the authored river tangent: ribbon enters/leaves frame, bridge near lower third.
+  river: { position: [26, 24, -40], target: [36, 0.5, 34] },
   square: { position: [-14, 14, 18], target: [0, 2, 0] },
 };
 

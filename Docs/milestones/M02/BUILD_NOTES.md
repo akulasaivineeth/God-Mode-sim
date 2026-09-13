@@ -162,3 +162,18 @@ Presentation-only corrections on top of R7 — simulation authority unchanged:
   `interact-right`/`pick-up` for work — no attack fallback).
 - **Civic warmth:** square/park ground consolidated in `TownAmenities`; taller
   lamp posts; slightly warmer daylight.
+
+## R9 proof/readability correction (M02-010 FIX_REQUIRED)
+
+Bounded presentation + evidence harness fixes — simulation authority unchanged:
+
+- **In-place camera API** (`window.__GODMODE_EVIDENCE__` + `diagnosticsStore.cameraOverride`):
+  moves the Three.js camera/target without page reload or simulation restart.
+- **Presentation clip exposure** (`CitizenVisual` → `citizenPresentationClip` /
+  `presentation-clip` test id): read-only for evidence harness; not simulation state.
+- **River evidence framing:** `river` preset looks along the authored tangent
+  (ribbon enters/leaves frame, bridge in lower third); modest water/bank contrast
+  (lower water surface, higher bank roughness, slightly stronger water emissive).
+- **Evidence harness** (`scripts/capture-r9-evidence.mjs`): never navigates after
+  acquiring target activity; reframes citizen in-place at 1×; asserts activity,
+  pose, clip, and speed at capture time; logs metadata to `capture_metadata.json`.

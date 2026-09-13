@@ -13,6 +13,7 @@ import { useEffect, useMemo } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Vector3 } from 'three';
+import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
 
 interface CameraControlsProps {
@@ -22,6 +23,8 @@ interface CameraControlsProps {
 }
 
 export function CameraControls({ view, applyNonce }: CameraControlsProps) {
+  const cameraOverride = useDiagnosticsStore((state) => state.cameraOverride);
+  const cameraOverrideNonce = useDiagnosticsStore((state) => state.cameraOverrideNonce);
   const camera = useThree((state) => state.camera);
   const domElement = useThree((state) => state.gl.domElement);
 
@@ -44,11 +47,11 @@ export function CameraControls({ view, applyNonce }: CameraControlsProps) {
   }, [controls]);
 
   useEffect(() => {
-    const preset = CAMERA_PRESETS[view];
+    const preset = cameraOverride ?? CAMERA_PRESETS[view];
     camera.position.set(...preset.position);
     controls.target.copy(new Vector3(...preset.target));
     controls.update();
-  }, [view, applyNonce, camera, controls]);
+  }, [view, applyNonce, cameraOverride, cameraOverrideNonce, camera, controls]);
 
   useFrame(() => {
     controls.update();

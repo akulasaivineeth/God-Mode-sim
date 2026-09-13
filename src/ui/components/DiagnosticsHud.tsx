@@ -19,6 +19,8 @@ export function DiagnosticsHud() {
     animationsSuppressed,
     renderCalls,
     renderTriangles,
+    citizenPresentationClip,
+    citizenPresentationPose,
   } = useDiagnosticsStore();
 
   const calendar = renderSnapshot?.calendar;
@@ -73,6 +75,12 @@ export function DiagnosticsHud() {
       <div>Worker step: {lastWorkerStepMs.toFixed(2)} ms</div>
       <div>Total step msgs: {totalSteps}</div>
       <div style={{ marginTop: 8, wordBreak: 'break-all' }}>Digest: {lastDigest ?? '—'}</div>
+      <div data-testid="presentation-pose" style={{ display: 'none' }}>
+        {citizenPresentationPose ?? '—'}
+      </div>
+      <div data-testid="presentation-clip" style={{ display: 'none' }}>
+        {citizenPresentationClip ?? '—'}
+      </div>
     </aside>
   );
 }

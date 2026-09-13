@@ -8,6 +8,28 @@ import { DiagnosticsHud } from '@/ui/components/DiagnosticsHud';
 import { TimeControls } from '@/ui/components/TimeControls';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 
+/** Read-only evidence harness hooks (presentation only — zero simulation authority). */
+export interface GodModeEvidenceApi {
+  setCamera: (position: [number, number, number], target: [number, number, number]) => void;
+  applyPreset: (view: CameraView) => void;
+  clearCameraOverride: () => void;
+  getCaptureMeta: () => {
+    activity: string;
+    pose: string | null;
+    clip: string | null;
+    simMinute: number;
+    speed: number;
+    animationsSuppressed: boolean;
+    citizenPosition: { x: number; z: number; facingRadians: number } | null;
+  };
+}
+
+declare global {
+  interface Window {
+    __GODMODE_EVIDENCE__?: GodModeEvidenceApi;
+  }
+}
+
 export const CANONICAL_M02_SEED = 'GODMODE_M02_CANONICAL_2026';
 
 const CAMERA_VIEWS: { id: CameraView; label: string }[] = [
@@ -38,6 +60,41 @@ export function App() {
       setCameraView(fromQuery);
       setCameraNonce((n) => n + 1);
     }
+  }, []);
+
+  useEffect(() => {
+    window.__GODMODE_EVIDENCE__ = {
+      setCamera: (position, target) => {
+        useDiagnosticsStore.getState().setCameraOverride({ position, target });
+      },
+      applyPreset: (view) => {
+        useDiagnosticsStore.getState().setCameraOverride(null);
+        setCameraView(view);
+        setCameraNonce((n) => n + 1);
+      },
+      clearCameraOverride: () => {
+        useDiagnosticsStore.getState().setCameraOverride(null);
+        setCameraNonce((n) => n + 1);
+      },
+      getCaptureMeta: () => {
+        const state = useDiagnosticsStore.getState();
+        const citizen = state.renderSnapshot?.citizens?.[0] ?? null;
+        return {
+          activity: citizen?.activity ?? '',
+          pose: state.citizenPresentationPose,
+          clip: state.citizenPresentationClip,
+          simMinute: state.renderSnapshot?.simMinute ?? 0,
+          speed: state.speed,
+          animationsSuppressed: state.animationsSuppressed,
+          citizenPosition: citizen
+            ? { x: citizen.x, z: citizen.z, facingRadians: citizen.facingRadians }
+            : null,
+        };
+      },
+    };
+    return () => {
+      delete window.__GODMODE_EVIDENCE__;
+    };
   }, []);
 
   useEffect(() => {

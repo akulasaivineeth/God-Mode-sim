@@ -13,6 +13,7 @@ import { useFrame, useLoader } from '@react-three/fiber';
 import { AnimationMixer, type AnimationAction, type Group, LoopRepeat, Mesh } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 import { terrainHeightAt } from '@/world/townLayout';
 import { MAT } from '../sharedMaterials';
 import type { CitizenPose } from '../citizenPresentation';
@@ -60,7 +61,10 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
   const rootRef = useRef<Group>(null);
   const bodyRef = useRef<Group>(null);
   const currentAction = useRef<AnimationAction | null>(null);
+  const activeClipName = useRef<string | null>(null);
   const walkPhase = useRef(0);
+  const setCitizenPresentationClip = useDiagnosticsStore((s) => s.setCitizenPresentationClip);
+  const setCitizenPresentationPose = useDiagnosticsStore((s) => s.setCitizenPresentationPose);
 
   const { scene, mixer, actions, clipNames } = useMemo(() => {
     const cloned = cloneSkeleton(gltf.scene) as Group;
@@ -82,14 +86,20 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
   }, [gltf]);
 
   useEffect(() => {
+    setCitizenPresentationPose(citizen.pose);
+  }, [citizen.pose, setCitizenPresentationPose]);
+
+  useEffect(() => {
     const clipName = pickClip(clipNames, citizen.pose);
+    activeClipName.current = clipName;
+    setCitizenPresentationClip(clipName);
     const next = clipName ? actions[clipName] : null;
     if (next && next !== currentAction.current) {
       next.reset().fadeIn(0.25).play();
       currentAction.current?.fadeOut(0.25);
       currentAction.current = next;
     }
-  }, [citizen.pose, actions, clipNames]);
+  }, [citizen.pose, actions, clipNames, setCitizenPresentationClip]);
 
   useFrame((_, delta) => {
     const root = rootRef.current;
