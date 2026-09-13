@@ -30,12 +30,12 @@ test('SIM-TIME-002/003 — speed advances simulated time and pause halts it', as
 test('UX-001 / NPC-DEC-001 — inspector shows the citizen acting autonomously with scores', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByTestId('citizen-inspector')).toBeVisible();
-  // A selected action is exposed with a candidate score breakdown.
-  await expect(page.getByTestId('inspector-selected')).not.toBeEmpty();
 
-  // Run fast; the citizen keeps acting with no player commands (activity present).
+  // Run fast so the citizen makes decisions with no player commands, then confirm
+  // the inspector exposes a selected action with its candidate score breakdown.
   await page.getByTestId('speed-1000').click();
-  await page.waitForTimeout(1500);
+  await expect(page.getByTestId('inspector-selected')).toBeVisible();
+  await expect(page.getByTestId('inspector-selected')).not.toBeEmpty();
   await expect(page.getByTestId('inspector-activity')).not.toBeEmpty();
 });
 

@@ -2,30 +2,31 @@
  * Render snapshot boundary — ADR-003 / ARCH-002.
  *
  * Plain English: The 3D layer may only read these fields. It must never write
- * back into simulation state. M02 adds a compact, read-only `citizen` summary
- * (position, action label, needs, and the last decision trace for the inspector);
- * full internal state stays in the worker.
+ * back into simulation state. M02 exposes a compact, read-only citizen list
+ * (position, facing, pose, activity, needs, last decision). Full internal state
+ * stays in the worker.
  */
 import { deriveCalendar, type CalendarView } from '@/simulation/core/calendar';
 import type { WorldSnapshot } from '@/simulation/core/toySim';
 import type { SimMinute } from '@/simulation/core/types';
 import type { ActionType, DecisionTrace, NeedsState } from '@/simulation/model/types';
-import type { Vec2 } from '@/world/townLayout';
+import { poseForAction, type CitizenPose } from './citizenPresentation';
 
 export interface RenderCitizen {
   id: string;
   name: string;
-  position: Vec2;
-  facing: number;
+  x: number;
+  z: number;
+  facingRadians: number;
+  pose: CitizenPose;
   action: ActionType;
   phase: 'travel' | 'perform' | 'idle';
-  /** Human-readable current-activity label. */
+  /** Human-readable current-activity label (inspector + labels). */
   activity: string;
   needs: NeedsState;
   lastDecision: DecisionTrace | null;
 }
 
-/** Read-only render DTO — no simulation authority. */
 export interface RenderSnapshot {
   simMinute: SimMinute;
   visualPhase: number;
@@ -35,7 +36,7 @@ export interface RenderSnapshot {
   calendar: CalendarView;
   timeOfDay: number;
   isDaytime: boolean;
-  citizen: RenderCitizen | null;
+  citizens: RenderCitizen[];
 }
 
 const LOCATION_LABEL: Record<string, string> = {
@@ -65,24 +66,28 @@ function activityLabel(
   return PERFORM_LABEL[action];
 }
 
-export function toRenderSnapshot(input: Pick<WorldSnapshot, 'clock' | 'toy' | 'citizens'>): RenderSnapshot {
+export function toRenderSnapshot(
+  input: Pick<WorldSnapshot, 'clock' | 'toy' | 'citizens'>,
+): RenderSnapshot {
   const calendar = deriveCalendar(input.clock.simMinute);
-  const first = input.citizens?.[0] ?? null;
-  const citizen: RenderCitizen | null = first
-    ? {
-        id: first.id,
-        name: first.name,
-        position: first.position,
-        facing: first.facing,
-        action: first.action?.type ?? 'idle',
-        phase: first.action ? first.action.phase : 'idle',
-        activity: first.action
-          ? activityLabel(first.action.type, first.action.phase, first.action.locationId)
-          : 'Idle',
-        needs: first.needs,
-        lastDecision: first.lastDecision,
-      }
-    : null;
+  const citizens: RenderCitizen[] = (input.citizens ?? []).map((c) => {
+    const action = c.action?.type ?? 'idle';
+    const phase: 'travel' | 'perform' | 'idle' = c.action ? c.action.phase : 'idle';
+    const locationId = c.action?.locationId ?? c.atNode;
+    return {
+      id: c.id,
+      name: c.name,
+      x: c.position.x,
+      z: c.position.z,
+      facingRadians: c.facing,
+      pose: poseForAction(action, phase),
+      action,
+      phase,
+      activity: c.action ? activityLabel(action, phase, locationId) : 'Idle',
+      needs: c.needs,
+      lastDecision: c.lastDecision,
+    };
+  });
 
   return {
     simMinute: input.clock.simMinute,
@@ -93,6 +98,6 @@ export function toRenderSnapshot(input: Pick<WorldSnapshot, 'clock' | 'toy' | 'c
     calendar,
     timeOfDay: calendar.timeOfDay,
     isDaytime: calendar.isDaytime,
-    citizen,
+    citizens,
   };
 }

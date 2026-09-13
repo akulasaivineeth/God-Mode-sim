@@ -6,6 +6,9 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: [['list'], ['json', { outputFile: 'generated/playwright-report.json' }]],
+  // Asset-backed (GLB/GLTF) first render can take a few seconds to parse on the
+  // main thread; allow generous web-first assertion timeouts.
+  expect: { timeout: 20_000 },
   use: {
     baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',

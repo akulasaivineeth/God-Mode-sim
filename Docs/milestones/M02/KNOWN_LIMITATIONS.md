@@ -29,9 +29,13 @@ issues**. M02 delivers one autonomous citizen — not a society.
 
 ## Known issues / caveats
 
-- **Placeholder character art.** The citizen is an original low-poly primitive
-  figure — readable, not final art. A shared rig / richer animation set comes later
-  (spec §4.1). Core autonomy is intentionally not blocked on art.
+- **Interim CC0 character.** The citizen is a vetted CC0 Kenney GLB with real
+  animation clips (idle/walk/sit/interact), used as an interim shared rig; a
+  bespoke character/rig can come later (spec §4.1). Core autonomy is not blocked
+  on final art.
+- **Buildings are CC0 kit assets.** Home/store/workshop use Kenney GLB kits;
+  background (non-facility) buildings remain lightweight archetype shells trimmed
+  to hold the M2/8GB draw-call budget.
 - **Session-growing event log.** `CITIZEN_DECISION` events accumulate in memory for
   the session; bounded archival/persistence is M12. For multi-day runs this is
   small, but it is not yet capped.

@@ -91,7 +91,8 @@ Open the URL shown in the terminal (usually `http://localhost:5173`).
 You should see:
 
 - A **handcrafted low-poly 3D town** (differentiated houses/store/clinic/school/cafe/workshop/warehouse/farm/community hall, park, square, cemetery, roads with sidewalks, pedestrian paths, trees, a nearby forest on gently rolling hills, and a readable river with banks) under an angled camera
-- One **3D citizen** ("Noah") walking between home, the store, and the workshop, living on their own
+- Asset-backed town (CC0 Kenney/Quaternius): dedicated home/store/workshop buildings, real trees, roads with sidewalks + crossing, a continuous river + bridge, and a town square with a fountain, benches, and lamps
+- One animated **3D citizen** ("Noah") — a CC0 character GLB that walks/sits/works between home, the store, and the workshop, living on their own
 - **Day/night lighting** that follows the clock
 - A **Citizen Inspector** (top-left) with needs bars, the current activity, and the utility-score breakdown behind the last decision
 - A diagnostics panel with the **date, clock, season, day/night, speed**, FPS, **draw calls · triangles** (renderer stats), worker step time, seed, and a state **digest** (fingerprint)

@@ -25,6 +25,7 @@ export function App() {
   const setDigest = useDiagnosticsStore((state) => state.setDigest);
   const setWorkerReady = useDiagnosticsStore((state) => state.setWorkerReady);
   const setSpeedStatus = useDiagnosticsStore((state) => state.setSpeedStatus);
+  const setCitizenSelected = useDiagnosticsStore((state) => state.setCitizenSelected);
 
   const [cameraView, setCameraView] = useState<CameraView>('angled');
   const [cameraNonce, setCameraNonce] = useState(0);
@@ -61,6 +62,10 @@ export function App() {
     setCameraNonce((nonce) => nonce + 1);
   }, []);
 
+  const handleSelectCitizen = useCallback(() => {
+    setCitizenSelected(true);
+  }, [setCitizenSelected]);
+
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#0b0d10' }}>
       <Scene
@@ -68,6 +73,7 @@ export function App() {
         cameraView={cameraView}
         cameraNonce={cameraNonce}
         animationsSuppressed={animationsSuppressed}
+        onSelectCitizen={handleSelectCitizen}
       />
 
       <div

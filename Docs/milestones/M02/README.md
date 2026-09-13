@@ -27,12 +27,19 @@ Nobody drives Noah — they run their own life for days on end. There is still o
 
 ## What you can see when you run M02
 
-- The 3D town from M01, now with a small 3D person walking around it.
+- A stylized miniature town built from vetted CC0 assets: dedicated **cottage
+  (home)**, **General Store** (with awning + sign), and **industrial workshop**,
+  real **trees/bushes/flowers**, roads with **sidewalks, curbs and a zebra
+  crossing**, a continuous **river with banks and a bridge**, and a **town square**
+  with a fountain, benches, lamps, and a park.
+- A real 3D **character** (Kenney CC0 GLB) — Noah — who **walks, sits, and works**
+  using the model's own animation clips as they move between home, the store, and
+  the workshop.
 - A **Citizen Inspector** (top-left) showing needs bars, the current activity
   ("Walking to the Store", "Sleeping", "Working", …), and a table of candidate
   actions with utility scores + the selected action's factor breakdown.
 - Speed controls still work: at 1000× you can watch Noah live several days in
-  seconds; the day/night sky moves with them.
+  seconds; the day/night sky (and night lamps) move with them.
 
 ---
 

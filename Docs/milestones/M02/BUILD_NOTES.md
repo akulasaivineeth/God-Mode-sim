@@ -92,6 +92,52 @@ snapshot PRNG), emitting a `CITIZEN_DECISION` domain event on fresh decisions.
 
 ---
 
+## Revision 7 — asset-backed visual foundation (CHATGPT-DECISION M02-008)
+
+The live renderer was rebuilt from primitive placeholders to a coherent
+stylized miniature town using vetted CC0 assets, while the M02 simulation
+(worker/model) is unchanged and remains the authority. All assets ship in-repo
+under `public/assets/` (no runtime downloads) and are catalogued in
+`Docs/assets/ASSET_REGISTER.md`.
+
+- **Dedicated facility buildings** (`src/rendering/assets/buildings/*` +
+  `BuildingVisualRegistry` + `dedicatedBuildingIds`): `house-1`, `store`, and
+  `workshop` skip the generic shell and render Kenney GLB buildings (cottage,
+  commercial store + awning + `GENERAL STORE` sign, industrial workshop + sign +
+  props). Simulation still references the same authored IDs/coordinates.
+- **Real GLB character with clips** (`src/rendering/assets/CitizenVisual.tsx`):
+  one shared Kenney character GLB (32 embedded clips) driven by an
+  `AnimationMixer` — `walk` while travelling, `sit` for eat/drink/sleep,
+  `interact/pick-up` for work, `idle` otherwise — cross-fading on pose change.
+  Animation snaps/pauses at high speed while the authoritative position keeps
+  updating. The old primitive `Citizen.tsx` was removed (one live character path).
+- **Roads / sidewalks / crossing / entrances** (`environment/CorridorPresentation`):
+  curbs, a zebra crosswalk + Kenney road-crossing at the civic corridor, and
+  entrance aprons/driveways to home/workshop. The authored nav graph is unchanged.
+- **Real vegetation** (`environment/VegetationLayer` + `InstancedVegetation`):
+  Quaternius CommonTree/Pine/bush/fern/flowers/pebbles, grouped per asset and
+  drawn with `InstancedMesh` (no cone trees). ~20+ deterministic placements with
+  a dense north/west periphery frame.
+- **Continuous terrain + river + bridge** (`environment/TownLandscape` +
+  `riverGeometry`): a unified height-tinted terrain mesh and a continuous river
+  ribbon with banks, plus a Kenney bridge — replacing segmented box strips.
+- **Town square + park** (`environment/TownAmenities`): paved plaza, a fountain,
+  instanced benches, lamp posts, a park path ring, and instanced farm rows.
+- **Lighting** (`DayNightLighting` + `environment/PracticalLighting`): warm
+  daytime with material separation; warm entrance/square/park point-lights fade in
+  at night. Time-of-day authority stays in the simulation.
+
+### Render metrics (measured, live HUD via `gl.info.render`)
+
+| View | Draw calls (budget) | Notes |
+|------|---------------------|-------|
+| Overview | **140** (≤140) | benches/graves/vegetation instanced; background shells trimmed to stay in budget |
+| Angled | **134** | |
+| Street | **87** (≤100) | |
+
+Triangles remain well under the 150k budget (low-poly CC0 assets). Instancing
+(vegetation, benches, graves, lamps, crosswalk) keeps repeated geometry cheap.
+
 ## Determinism / M00-M01 regression
 
 The M00 toy sim, PRNG, canonical JSON, digest, and event envelope are unchanged;

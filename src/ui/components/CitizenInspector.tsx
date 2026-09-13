@@ -47,7 +47,7 @@ function NeedBar({ label, value }: { label: string; value: number }) {
 }
 
 export function CitizenInspector() {
-  const citizen = useDiagnosticsStore((s) => s.renderSnapshot?.citizen ?? null);
+  const citizen = useDiagnosticsStore((s) => s.renderSnapshot?.citizens?.[0] ?? null);
   const open = useDiagnosticsStore((s) => s.citizenSelected);
   const setSelected = useDiagnosticsStore((s) => s.setCitizenSelected);
 
