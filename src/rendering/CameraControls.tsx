@@ -12,9 +12,11 @@
 import { useEffect, useMemo } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { Vector3 } from 'three';
+import { PerspectiveCamera, Vector3 } from 'three';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
-import { computePortraitCamera } from './evidencePortrait';
+import { getCitizenBody } from './citizenBoundsRegistry';
+import { registerEvidenceRendererContext } from './evidenceRendererRegistry';
+import { computePortraitCameraFromBounds } from './evidencePortrait';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
 
 interface CameraControlsProps {
@@ -26,7 +28,8 @@ interface CameraControlsProps {
 export function CameraControls({ view, applyNonce }: CameraControlsProps) {
   const cameraOverride = useDiagnosticsStore((state) => state.cameraOverride);
   const cameraOverrideNonce = useDiagnosticsStore((state) => state.cameraOverrideNonce);
-  const camera = useThree((state) => state.camera);
+  const camera = useThree((state) => state.camera as PerspectiveCamera);
+  const scene = useThree((state) => state.scene);
   const domElement = useThree((state) => state.gl.domElement);
 
   const controls = useMemo(() => {
@@ -62,10 +65,24 @@ export function CameraControls({ view, applyNonce }: CameraControlsProps) {
   }, [view, applyNonce, cameraOverride, cameraOverrideNonce, camera, controls]);
 
   useFrame(() => {
+    registerEvidenceRendererContext({
+      camera,
+      scene,
+      width: domElement.clientWidth,
+      height: domElement.clientHeight,
+    });
+
     const state = useDiagnosticsStore.getState();
-    const citizen = state.renderSnapshot?.citizens?.[0];
-    if (state.evidencePortraitMode && state.evidencePortraitOpts && citizen) {
-      const frame = computePortraitCamera(citizen, state.evidencePortraitOpts);
+    const body = getCitizenBody();
+    if (state.evidencePortraitMode && state.evidencePortraitOpts && body) {
+      const frame = computePortraitCameraFromBounds(
+        body,
+        camera,
+        scene,
+        domElement.clientWidth,
+        domElement.clientHeight,
+        state.evidencePortraitOpts,
+      );
       camera.position.set(...frame.position);
       controls.target.set(...frame.target);
       controls.minDistance = 1.2;

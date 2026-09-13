@@ -1,9 +1,11 @@
 /**
- * Camera presets — VIS-002 + R8 evidence framings.
+ * Camera presets — VIS-002 + R8/R12 evidence framings.
  *
  * Plain English: Named framings the player (and capture harness) can jump to.
  * Constants live here so the camera component only exports a component.
  */
+import { computeRiverBridgePreset } from './riverBridgeCamera';
+
 export type CameraView =
   | 'overview'
   | 'angled'
@@ -28,8 +30,8 @@ export const CAMERA_PRESETS: Record<CameraView, CameraPreset> = {
   'home-street': { position: [11, 6, -2], target: [11, 3.5, -10] },
   'store-street': { position: [-11, 5.5, 19], target: [-11, 3.5, 11] },
   'workshop-street': { position: [-15, 6, 34], target: [-11, 3.5, 23] },
-  // Cross-river — southeast elevated toward bridge; restores R8 water readability (R11).
-  river: { position: [48, 42, 42], target: [35, 2, 0] },
+  // Bridge-centric cross-river subject — derived from authored geometry (R12).
+  river: computeRiverBridgePreset(),
   square: { position: [-14, 14, 18], target: [0, 2, 0] },
 };
 

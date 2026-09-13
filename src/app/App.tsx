@@ -1,20 +1,36 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Scene } from '@/rendering/Scene';
 import { CAMERA_PRESETS, cameraViewFromQuery, type CameraView } from '@/rendering/cameraPresets';
-import { computePortraitCamera } from '@/rendering/evidencePortrait';
+import { getCitizenBody } from '@/rendering/citizenBoundsRegistry';
+import {
+  assertCitizenVisibilityContract,
+  computePortraitCameraFromBounds,
+  getCitizenWorldBounds,
+  projectBoundsToScreen,
+  type PortraitOpts,
+  type ScreenProjection,
+} from '@/rendering/evidencePortrait';
+import { getEvidenceRendererContext } from '@/rendering/evidenceRendererRegistry';
+import {
+  assertRiverEvidenceSemantics,
+  computeRiverBridgePreset,
+  riverFrameVectorsAtBridge,
+} from '@/rendering/riverBridgeCamera';
 import { SimulationDriver } from '@/simulation/SimulationDriver';
 import type { SimSpeed } from '@/simulation/core/speed';
+import { CANONICAL_TOWN } from '@/world/townLayout';
 import { CitizenInspector } from '@/ui/components/CitizenInspector';
 import { DiagnosticsHud } from '@/ui/components/DiagnosticsHud';
 import { TimeControls } from '@/ui/components/TimeControls';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 
-export interface EvidencePortraitOptions {
-  distance?: number;
-  sideOffset?: number;
-  eyeHeight?: number;
-  chestHeight?: number;
-  worldFixed?: boolean;
+export type EvidencePortraitOptions = PortraitOpts;
+
+export interface CitizenBoundsSnapshot {
+  min: [number, number, number];
+  max: [number, number, number];
+  center: [number, number, number];
+  radius: number;
 }
 
 /** Read-only evidence harness hooks (presentation only — zero simulation authority). */
@@ -24,7 +40,12 @@ export interface GodModeEvidenceApi {
   clearCameraOverride: () => void;
   setSpeed: (speed: SimSpeed) => void;
   setEvidencePortraitMode: (enabled: boolean) => void;
-  frameCitizenPortrait: (opts?: EvidencePortraitOptions) => void;
+  frameCitizenPortrait: (opts?: EvidencePortraitOptions) => CitizenBoundsSnapshot;
+  getCitizenWorldBounds: () => CitizenBoundsSnapshot | null;
+  getCitizenScreenProjection: () => ScreenProjection | null;
+  assertCitizenVisibility: (minAreaFraction?: number) => ScreenProjection;
+  assertRiverEvidenceSemantics: () => { ok: boolean; reason?: string };
+  getRiverBridgeTarget: () => { x: number; z: number };
   getCameraState: () => {
     position: [number, number, number];
     target: [number, number, number];
@@ -38,6 +59,7 @@ export interface GodModeEvidenceApi {
     animationsSuppressed: boolean;
     citizenPosition: { x: number; z: number; facingRadians: number } | null;
   };
+  getRenderDiagnostics: () => { drawCalls: number; triangles: number };
 }
 
 declare global {
@@ -53,6 +75,26 @@ const CAMERA_VIEWS: { id: CameraView; label: string }[] = [
   { id: 'angled', label: 'Angled' },
   { id: 'street', label: 'Street' },
 ];
+
+import { Sphere, Vector3 } from 'three';
+
+function boundsSnapshot(body: NonNullable<ReturnType<typeof getCitizenBody>>): CitizenBoundsSnapshot {
+  const box = getCitizenWorldBounds(body);
+  const center = new Vector3();
+  const sphere = new Sphere();
+  box.getCenter(center);
+  box.getBoundingSphere(sphere);
+  return {
+    min: [box.min.x, box.min.y, box.min.z],
+    max: [box.max.x, box.max.y, box.max.z],
+    center: [center.x, center.y, center.z],
+    radius: sphere.radius,
+  };
+}
+
+function getEvidenceCamera(): ReturnType<typeof getEvidenceRendererContext> {
+  return getEvidenceRendererContext();
+}
 
 export function App() {
   const driverRef = useRef<SimulationDriver | null>(null);
@@ -103,20 +145,75 @@ export function App() {
       },
       frameCitizenPortrait: (opts = {}) => {
         const state = useDiagnosticsStore.getState();
-        const citizen = state.renderSnapshot?.citizens?.[0];
-        if (!citizen) {
-          throw new Error('No citizen for portrait framing');
+        const body = getCitizenBody();
+        if (!body) {
+          throw new Error('No citizen body mesh for portrait framing');
+        }
+        const ctx = getEvidenceCamera();
+        if (!ctx) {
+          throw new Error('Renderer camera/scene unavailable for portrait framing');
         }
         state.setEvidencePortraitOpts(opts);
-        const frame = computePortraitCamera(citizen, opts);
+        const frame = computePortraitCameraFromBounds(
+          body,
+          ctx.camera,
+          ctx.scene,
+          ctx.width,
+          ctx.height,
+          opts,
+        );
         state.setCameraOverride(frame);
+        const visibility = assertCitizenVisibilityContract(
+          frame.projection,
+          opts.minScreenAreaFraction ?? 0.045,
+        );
+        if (!visibility.ok) {
+          throw new Error(`Portrait visibility contract failed: ${visibility.reason}`);
+        }
+        return boundsSnapshot(body);
+      },
+      getCitizenWorldBounds: () => {
+        const body = getCitizenBody();
+        if (!body) return null;
+        return boundsSnapshot(body);
+      },
+      getCitizenScreenProjection: () => {
+        const body = getCitizenBody();
+        const ctx = getEvidenceCamera();
+        if (!body || !ctx) return null;
+        const bounds = getCitizenWorldBounds(body);
+        ctx.camera.updateMatrixWorld();
+        return projectBoundsToScreen(bounds, ctx.camera, ctx.width, ctx.height);
+      },
+      assertCitizenVisibility: (minAreaFraction = 0.045) => {
+        const projection = window.__GODMODE_EVIDENCE__?.getCitizenScreenProjection();
+        if (!projection) {
+          throw new Error('Citizen screen projection unavailable');
+        }
+        const result = assertCitizenVisibilityContract(projection, minAreaFraction);
+        if (!result.ok) {
+          throw new Error(result.reason);
+        }
+        return projection;
+      },
+      assertRiverEvidenceSemantics: () => {
+        const river = computeRiverBridgePreset();
+        const { bridge } = riverFrameVectorsAtBridge(CANONICAL_TOWN.river.points, 0);
+        const check = assertRiverEvidenceSemantics(
+          river,
+          CAMERA_PRESETS.overview,
+          CAMERA_PRESETS.angled,
+          bridge.x,
+          bridge.z,
+        );
+        return check.ok ? { ok: true } : { ok: false, reason: check.reason };
+      },
+      getRiverBridgeTarget: () => {
+        const { bridge } = riverFrameVectorsAtBridge(CANONICAL_TOWN.river.points, 0);
+        return { x: bridge.x, z: bridge.z };
       },
       getCameraState: () => {
         const state = useDiagnosticsStore.getState();
-        const citizen = state.renderSnapshot?.citizens?.[0];
-        if (state.evidencePortraitOpts && citizen) {
-          return computePortraitCamera(citizen, state.evidencePortraitOpts);
-        }
         if (state.cameraOverride) {
           return state.cameraOverride;
         }
@@ -137,6 +234,10 @@ export function App() {
             ? { x: citizen.x, z: citizen.z, facingRadians: citizen.facingRadians }
             : null,
         };
+      },
+      getRenderDiagnostics: () => {
+        const state = useDiagnosticsStore.getState();
+        return { drawCalls: state.renderCalls, triangles: state.renderTriangles };
       },
     };
     return () => {

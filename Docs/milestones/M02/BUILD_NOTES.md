@@ -207,3 +207,20 @@ Bounded presentation + evidence harness fixes — simulation authority unchanged
 - **Evidence harness** (`scripts/capture-r11-evidence.mjs`): strict pose∧activity∧clip;
   dual-frame WALK/SIT/WORK at 1× with hash-delta check; preset camera-delta verification;
   publishes GitHub release `review-evidence-m02-013-builder-r11`.
+
+## R12 bounds-derived evidence (M02-013 FIX_REQUIRED)
+
+Bounded presentation + evidence harness fixes — simulation authority unchanged:
+
+- **Revert gameplay Alex scale** to accepted `0.02` (R7); remove evidence-only 5× scale
+  mutation of normal gameplay appearance.
+- **Bounds-derived portrait camera:** live `Box3.setFromObject` on animated body after
+  mixer update; FOV + bounding-sphere distance; 4-azimuth occlusion raycast; visibility
+  contract (minimum projected area) fails capture if Alex not in frame.
+- **ROI motion proof:** dual-frame A/B requires pixel delta inside projected citizen ROI
+  (not hash-only); same continuous activity locked for both frames at speed=1.
+- **Bridge-centric river preset:** derived from `bridgePlacementOnRiver` + local
+  tangent/normal; lower oblique altitude; semantic check vs Overview/Angled + minimum
+  water coverage in capture harness.
+- **Evidence harness** (`scripts/capture-r12-evidence.mjs`): full release package with
+  BEFORE/AFTER river panel, ROI validation JSON, asset/network summary.

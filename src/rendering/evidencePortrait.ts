@@ -1,55 +1,275 @@
 /**
- * Evidence portrait camera math — presentation only (M02 R11).
+ * Evidence portrait camera — bounds-derived framing (M02 R12).
  *
- * Computes a close front/3-quarter framing from the live citizen transform so
- * capture harnesses can re-apply every frame while the citizen moves at 1×.
+ * Frames the live animated GLB from its world-space bounding box after the current
+ * pose is applied. Presentation only — never simulation authority (ARCH-002).
  */
+import {
+  Box3,
+  Object3D,
+  PerspectiveCamera,
+  Raycaster,
+  Sphere,
+  Vector3,
+} from 'three';
+
 export interface PortraitOpts {
-  distance?: number;
-  sideOffset?: number;
-  eyeHeight?: number;
-  chestHeight?: number;
-  /**
-   * When true, place the camera on a fixed world south-east arc so building
-   * facing does not push the lens into walls or foliage (R11 evidence).
-   */
-  worldFixed?: boolean;
+  /** Minimum fraction of viewport area occupied by projected citizen bounds. */
+  minScreenAreaFraction?: number;
+  /** Multiplier on bounding-sphere distance for safety margin. */
+  margin?: number;
 }
 
+export interface ScreenProjection {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+  areaFraction: number;
+  /** True when projected bounds are not clipped by viewport edges. */
+  fullyOnScreen: boolean;
+}
+
+export interface PortraitFrame {
+  position: [number, number, number];
+  target: [number, number, number];
+  projection: ScreenProjection;
+}
+
+const BOX_CORNER_OFFSETS: [number, number, number][] = [
+  [0, 0, 0],
+  [1, 0, 0],
+  [0, 1, 0],
+  [1, 1, 0],
+  [0, 0, 1],
+  [1, 0, 1],
+  [0, 1, 1],
+  [1, 1, 1],
+];
+
+export function getCitizenWorldBounds(body: Object3D): Box3 {
+  const box = new Box3();
+  box.setFromObject(body);
+  return box;
+}
+
+export function projectBoundsToScreen(
+  bounds: Box3,
+  camera: PerspectiveCamera,
+  width: number,
+  height: number,
+): ScreenProjection {
+  const min = bounds.min;
+  const max = bounds.max;
+  const corner = new Vector3();
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  for (const [ox, oy, oz] of BOX_CORNER_OFFSETS) {
+    corner.set(
+      ox ? max.x : min.x,
+      oy ? max.y : min.y,
+      oz ? max.z : min.z,
+    );
+    corner.project(camera);
+    const sx = (corner.x * 0.5 + 0.5) * width;
+    const sy = (-corner.y * 0.5 + 0.5) * height;
+    minX = Math.min(minX, sx);
+    maxX = Math.max(maxX, sx);
+    minY = Math.min(minY, sy);
+    maxY = Math.max(maxY, sy);
+  }
+
+  const clampedMinX = Math.max(0, minX);
+  const clampedMaxX = Math.min(width, maxX);
+  const clampedMinY = Math.max(0, minY);
+  const clampedMaxY = Math.min(height, maxY);
+  const visibleW = Math.max(0, clampedMaxX - clampedMinX);
+  const visibleH = Math.max(0, clampedMaxY - clampedMinY);
+  const areaFraction = (visibleW * visibleH) / Math.max(1, width * height);
+  const fullyOnScreen = minX >= 0 && maxX <= width && minY >= 0 && maxY <= height;
+
+  return {
+    minX: clampedMinX,
+    minY: clampedMinY,
+    maxX: clampedMaxX,
+    maxY: clampedMaxY,
+    areaFraction,
+    fullyOnScreen,
+  };
+}
+
+function isCitizenMesh(object: Object3D, citizenBody: Object3D): boolean {
+  let node: Object3D | null = object;
+  while (node) {
+    if (node === citizenBody) return true;
+    node = node.parent;
+  }
+  return false;
+}
+
+function isOccluded(
+  from: Vector3,
+  to: Vector3,
+  scene: Object3D,
+  citizenBody: Object3D,
+): boolean {
+  const dir = to.clone().sub(from);
+  const dist = dir.length();
+  if (dist < 0.01) return false;
+  dir.normalize();
+  const raycaster = new Raycaster(from, dir, 0.05, dist - 0.08);
+  const hits = raycaster.intersectObjects(scene.children, true);
+  return hits.some((hit) => !isCitizenMesh(hit.object, citizenBody));
+}
+
+function scoreCandidate(
+  bounds: Box3,
+  camera: PerspectiveCamera,
+  viewportWidth: number,
+  viewportHeight: number,
+  position: Vector3,
+  target: Vector3,
+  scene: Object3D,
+  citizenBody: Object3D,
+): { score: number; projection: ScreenProjection } | null {
+  if (isOccluded(position, target, scene, citizenBody)) {
+    return null;
+  }
+
+  const savedPos = camera.position.clone();
+  const savedQuat = camera.quaternion.clone();
+  camera.position.copy(position);
+  camera.lookAt(target);
+  camera.updateMatrixWorld();
+
+  const projection = projectBoundsToScreen(bounds, camera, viewportWidth, viewportHeight);
+
+  camera.position.copy(savedPos);
+  camera.quaternion.copy(savedQuat);
+  camera.updateMatrixWorld();
+
+  if (projection.areaFraction <= 0) {
+    return null;
+  }
+
+  const score =
+    projection.areaFraction +
+    (projection.fullyOnScreen ? 0.08 : 0) +
+    Math.min(0.05, projection.maxY / Math.max(1, viewportHeight) * 0.05);
+
+  return { score, projection };
+}
+
+/**
+ * Place the lens from live bounds + FOV, testing several azimuths for occlusion.
+ */
+export function computePortraitCameraFromBounds(
+  body: Object3D,
+  camera: PerspectiveCamera,
+  scene: Object3D,
+  viewportWidth: number,
+  viewportHeight: number,
+  opts: PortraitOpts = {},
+): PortraitFrame {
+  const margin = opts.margin ?? 1.28;
+  const bounds = getCitizenWorldBounds(body);
+  if (bounds.isEmpty()) {
+    throw new Error('Citizen bounds are empty — animated body not ready');
+  }
+
+  const center = bounds.getCenter(new Vector3());
+  const size = bounds.getSize(new Vector3());
+  const sphere = bounds.getBoundingSphere(new Sphere());
+  const radius = Math.max(sphere.radius, 0.35);
+
+  const targetY = center.y + size.y * 0.12;
+  const target = new Vector3(center.x, targetY, center.z);
+
+  const fovRad = (camera.fov * Math.PI) / 180;
+  const distance = (radius / Math.sin(fovRad / 2)) * margin;
+  const elevation = Math.atan2(Math.max(size.y * 0.45, 0.6), distance);
+
+  const azimuths = [Math.PI * 0.25, Math.PI * 0.5, -Math.PI * 0.25, -Math.PI * 0.5];
+  let best: { position: Vector3; projection: ScreenProjection; score: number } | null = null;
+
+  for (const az of azimuths) {
+    const camX = center.x + Math.cos(az) * distance;
+    const camZ = center.z + Math.sin(az) * distance;
+    const camY = targetY + Math.tan(elevation) * distance * 0.35 + size.y * 0.25;
+    const position = new Vector3(camX, camY, camZ);
+
+    const candidate = scoreCandidate(
+      bounds,
+      camera,
+      viewportWidth,
+      viewportHeight,
+      position,
+      target,
+      scene,
+      body,
+    );
+    if (!candidate) continue;
+    if (!best || candidate.score > best.score) {
+      best = { position, projection: candidate.projection, score: candidate.score };
+    }
+  }
+
+  if (!best) {
+    const fallback = new Vector3(center.x + distance, targetY + size.y * 0.55, center.z + distance * 0.35);
+    const candidate = scoreCandidate(
+      bounds,
+      camera,
+      viewportWidth,
+      viewportHeight,
+      fallback,
+      target,
+      scene,
+      body,
+    );
+    if (!candidate) {
+      throw new Error('Unable to find unobstructed portrait camera for citizen bounds');
+    }
+    best = { position: fallback, projection: candidate.projection, score: candidate.score };
+  }
+
+  return {
+    position: [best.position.x, best.position.y, best.position.z],
+    target: [target.x, target.y, target.z],
+    projection: best.projection,
+  };
+}
+
+export function assertCitizenVisibilityContract(
+  projection: ScreenProjection,
+  minAreaFraction = 0.045,
+): { ok: true } | { ok: false; reason: string } {
+  if (projection.areaFraction < minAreaFraction) {
+    return {
+      ok: false,
+      reason: `citizen projected area ${(projection.areaFraction * 100).toFixed(2)}% < ${(minAreaFraction * 100).toFixed(1)}% minimum`,
+    };
+  }
+  if (projection.maxX - projection.minX < 8 || projection.maxY - projection.minY < 8) {
+    return { ok: false, reason: 'citizen projected bounds too small in pixels' };
+  }
+  return { ok: true };
+}
+
+/** @deprecated R11 fixed-offset helper — kept for type compatibility; prefer bounds path. */
 export interface PortraitCitizen {
   x: number;
   z: number;
   facingRadians: number;
 }
 
+/** Legacy stub — R12 always uses bounds-derived framing. */
 export function computePortraitCamera(
-  citizen: PortraitCitizen,
+  _citizen: PortraitCitizen,
   opts: PortraitOpts = {},
 ): { position: [number, number, number]; target: [number, number, number] } {
-  const distance = opts.distance ?? 2.0;
-  const sideOffset = opts.sideOffset ?? 0.45;
-  const eyeHeight = opts.eyeHeight ?? 2.0;
-  const chestHeight = opts.chestHeight ?? 1.45;
-  const { x, z, facingRadians } = citizen;
-
-  if (opts.worldFixed) {
-    // East-side elevated 3/4 view — avoids west-side building walls occluding west-side facilities.
-    const camX = x + distance;
-    const camZ = z + sideOffset;
-    return {
-      position: [camX, eyeHeight, camZ],
-      target: [x, chestHeight, z],
-    };
-  }
-
-  const fwdX = Math.sin(facingRadians);
-  const fwdZ = Math.cos(facingRadians);
-  const rightX = Math.cos(facingRadians);
-  const rightZ = -Math.sin(facingRadians);
-  const camX = x + fwdX * distance + rightX * sideOffset;
-  const camZ = z + fwdZ * distance + rightZ * sideOffset;
-  return {
-    position: [camX, eyeHeight, camZ],
-    target: [x, chestHeight, z],
-  };
+  void opts;
+  throw new Error('computePortraitCamera requires live bounds — use computePortraitCameraFromBounds');
 }
