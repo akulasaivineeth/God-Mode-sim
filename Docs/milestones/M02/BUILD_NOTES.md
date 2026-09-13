@@ -177,3 +177,17 @@ Bounded presentation + evidence harness fixes — simulation authority unchanged
 - **Evidence harness** (`scripts/capture-r9-evidence.mjs`): never navigates after
   acquiring target activity; reframes citizen in-place at 1×; asserts activity,
   pose, clip, and speed at capture time; logs metadata to `capture_metadata.json`.
+
+## R10 proof/readability correction (M02-011 FIX_REQUIRED)
+
+Bounded presentation + evidence harness fixes — simulation authority unchanged:
+
+- **Strict semantic assertions** (`scripts/capture-r10-evidence.mjs`): `assertMeta`
+  requires pose **AND** activity **AND** clip; clip mismatch fails capture (no warn-only).
+- **1× mixer proof:** acquire at accelerated speed, switch to 1× (not 0× freeze),
+  wait ≥450 ms for crossfade settle; WALK/WORK capture two frames ~300 ms apart.
+- **Alex evidence framing:** in-place reframe 3.0–4.0 m from citizen, chest-height
+  target, front/3-quarter — full body readable (~180 px) without occlusion.
+- **Oblique cross-river preset:** `river` camera looks diagonally across the ribbon
+  near the bridge (not tangent-along); modest water/bank vertical separation and
+  stronger water emissive for readability (presentation only).
