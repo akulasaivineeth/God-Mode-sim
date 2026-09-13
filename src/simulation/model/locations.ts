@@ -13,12 +13,17 @@
 import { CANONICAL_TOWN, type Vec2 } from '@/world/townLayout';
 import type { ActionType } from './types';
 
-function buildingPoint(id: string): Vec2 {
+/**
+ * A location's point is placed just OUTSIDE the building (at its doorstep) rather
+ * than at the centre, so the citizen stands on open ground and is visible while
+ * performing actions there (M02 has no interiors yet).
+ */
+function doorstepPoint(id: string, offsetZ: number): Vec2 {
   const b = CANONICAL_TOWN.buildings.find((building) => building.id === id);
   if (!b) {
     throw new Error(`Unknown building for location: ${id}`);
   }
-  return { x: b.position.x, z: b.position.z };
+  return { x: b.position.x, z: b.position.z + offsetZ };
 }
 
 export interface WorldLocation {
@@ -28,9 +33,9 @@ export interface WorldLocation {
   serves: ActionType[];
 }
 
-const HOME_POINT = buildingPoint('house-1');
-const STORE_POINT = buildingPoint('store');
-const WORK_POINT = buildingPoint('workshop');
+const HOME_POINT = doorstepPoint('house-1', 4.5);
+const STORE_POINT = doorstepPoint('store', -6);
+const WORK_POINT = doorstepPoint('workshop', -6);
 
 export const LOCATIONS: Record<WorldLocation['id'], WorldLocation> = {
   home: { id: 'home', label: 'Home', point: HOME_POINT, serves: ['sleep', 'toilet', 'shower', 'drink'] },

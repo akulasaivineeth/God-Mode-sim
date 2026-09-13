@@ -20,10 +20,11 @@ interface CitizenProps {
   onSelect: () => void;
 }
 
-const SKIN = '#d8a07a';
-const SHIRT = '#3f6f8f';
-const PANTS = '#3a3f4a';
+const SKIN = '#e0aa80';
+const SHIRT = '#e2653b';
+const PANTS = '#33506b';
 const HAIR = '#3b2a1d';
+const FIGURE_SCALE = 1.5;
 
 export function Citizen({ citizen, suppressed, selected, onSelect }: CitizenProps) {
   const groupRef = useRef<Group>(null);
@@ -73,10 +74,16 @@ export function Citizen({ citizen, suppressed, selected, onSelect }: CitizenProp
       {/* Selection ring */}
       {selected && (
         <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[0.9, 1.15, 24]} />
+          <ringGeometry args={[1.1, 1.4, 24]} />
           <meshStandardMaterial color="#e8c15a" emissive="#e8c15a" emissiveIntensity={0.5} />
         </mesh>
       )}
+      {/* Floating locator pin so the citizen is findable at any zoom. */}
+      <mesh position={[0, 4.4, 0]} rotation={[Math.PI, 0, 0]}>
+        <coneGeometry args={[0.4, 0.9, 5]} />
+        <meshStandardMaterial color="#e8c15a" emissive="#a07c14" emissiveIntensity={0.6} />
+      </mesh>
+      <group scale={FIGURE_SCALE}>
       {/* Legs */}
       <mesh position={[-0.16, 0.42, 0]} castShadow>
         <boxGeometry args={[0.22, 0.85, 0.26]} />
@@ -109,6 +116,7 @@ export function Citizen({ citizen, suppressed, selected, onSelect }: CitizenProp
         <boxGeometry args={[0.36, 0.12, 0.36]} />
         <meshStandardMaterial color={HAIR} />
       </mesh>
+      </group>
     </group>
   );
 }
