@@ -79,6 +79,10 @@ export class SimulationDriver {
     this.callbacks.onSpeedChange?.(this.status());
   }
 
+  selectCitizen(citizenId: string | null): void {
+    this.client.selectCitizen(citizenId);
+  }
+
   terminate(): void {
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);

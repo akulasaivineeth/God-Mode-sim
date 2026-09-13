@@ -28,7 +28,7 @@ export function DiagnosticsHud() {
       data-testid="diagnostics-hud"
       style={{
         position: 'fixed',
-        top: 12,
+        bottom: 12,
         right: 12,
         width: 288,
         padding: 12,
@@ -41,7 +41,7 @@ export function DiagnosticsHud() {
         zIndex: 10,
       }}
     >
-      <div style={{ fontWeight: 600, marginBottom: 8 }}>GOD MODE — M01 Diagnostics</div>
+      <div style={{ fontWeight: 600, marginBottom: 8 }}>GOD MODE — M02 Diagnostics</div>
 
       <div style={{ fontSize: 15, fontWeight: 700, color: '#e8c15a' }} data-testid="hud-clock">
         {calendar ? calendar.clockLabel : '--:--'}{' '}

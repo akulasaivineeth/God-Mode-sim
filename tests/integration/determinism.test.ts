@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { digestWorldSnapshot } from '@/debug/worldDigest';
 import { buildSaveBundle } from '@/persistence/serialize';
 import { SCHEMA_VERSION } from '@/shared/version';
-import { createWorldSnapshot, runToySteps } from '@/simulation/core/toySim';
+import { createWorldSnapshot, runToySteps, type WorldSnapshot } from '@/simulation/core/toySim';
 
 const CANONICAL_SEED = 'GODMODE_M00_CANONICAL_2026';
 
@@ -13,7 +13,7 @@ describe('M00-GATE determinism', () => {
 
     const partial = runToySteps(createWorldSnapshot(CANONICAL_SEED, SCHEMA_VERSION), 50);
     const restored = runToySteps(
-      buildSaveBundle({ snapshot: partial, exportedAt: '2026-01-01T00:00:00.000Z' }).snapshot,
+      buildSaveBundle({ snapshot: partial, exportedAt: '2026-01-01T00:00:00.000Z' }).snapshot as WorldSnapshot,
       50,
     );
 

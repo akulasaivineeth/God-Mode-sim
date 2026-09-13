@@ -1,13 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Scene } from '@/rendering/Scene';
 import type { CameraView } from '@/rendering/cameraPresets';
 import { SimulationDriver } from '@/simulation/SimulationDriver';
 import type { SimSpeed } from '@/simulation/core/speed';
+import { CitizenInspector } from '@/ui/components/CitizenInspector';
 import { DiagnosticsHud } from '@/ui/components/DiagnosticsHud';
 import { TimeControls } from '@/ui/components/TimeControls';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 
-export const CANONICAL_M01_SEED = 'GODMODE_M01_CANONICAL_2026';
+export const CANONICAL_M02_SEED = 'GODMODE_M02_CANONICAL_2026';
 
 const CAMERA_VIEWS: { id: CameraView; label: string }[] = [
   { id: 'overview', label: 'Overview' },
@@ -27,6 +28,7 @@ export function App() {
 
   const [cameraView, setCameraView] = useState<CameraView>('angled');
   const [cameraNonce, setCameraNonce] = useState(0);
+  const [selectedCitizenId, setSelectedCitizenId] = useState<string | null>('citizen-alex');
 
   useEffect(() => {
     const driver = new SimulationDriver({
@@ -37,13 +39,16 @@ export function App() {
       onStepComplete: (snapshot, stepMs) => {
         recordStep(snapshot, stepMs);
       },
+      onInspectorUpdated: (snapshot) => {
+        recordStep(snapshot, 0);
+      },
       onDigest: (digest) => setDigest(digest),
       onSpeedChange: (status) => setSpeedStatus(status),
       onError: (message) => console.error(message),
     });
 
     driverRef.current = driver;
-    driver.init(CANONICAL_M01_SEED);
+    driver.init(CANONICAL_M02_SEED);
 
     return () => {
       driver.terminate();
@@ -60,6 +65,16 @@ export function App() {
     setCameraNonce((nonce) => nonce + 1);
   }, []);
 
+  const handleSelectCitizen = useCallback((citizenId: string) => {
+    setSelectedCitizenId(citizenId);
+    driverRef.current?.selectCitizen(citizenId);
+  }, []);
+
+  const selectedCitizen = useMemo(
+    () => renderSnapshot?.citizens.find((citizen) => citizen.id === selectedCitizenId) ?? null,
+    [renderSnapshot, selectedCitizenId],
+  );
+
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#0b0d10' }}>
       <Scene
@@ -67,6 +82,7 @@ export function App() {
         cameraView={cameraView}
         cameraNonce={cameraNonce}
         animationsSuppressed={animationsSuppressed}
+        onSelectCitizen={handleSelectCitizen}
       />
 
       <div
@@ -117,18 +133,9 @@ export function App() {
             </button>
           );
         })}
-        <div
-          style={{
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-            fontSize: 10,
-            color: '#6b7480',
-            maxWidth: 120,
-          }}
-        >
-          Drag to rotate · right-drag to pan · scroll to zoom
-        </div>
       </div>
 
+      <CitizenInspector renderSnapshot={renderSnapshot} selectedCitizen={selectedCitizen} />
       <TimeControls onSelectSpeed={handleSelectSpeed} />
       <DiagnosticsHud />
     </div>

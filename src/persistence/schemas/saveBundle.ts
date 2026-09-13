@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { domainEventSchema } from '@/simulation/core/events';
 import { PRNG_ALGORITHM_ID } from '@/simulation/core/prng';
+import { citizenStateSchema } from './citizen';
 import { branchMetadataSchema } from './branch';
 
 const prngStateSchema = z.object({
@@ -27,13 +28,14 @@ export const worldSnapshotSchema = z.object({
   clock: simulationClockSchema,
   prng: prngStateSchema,
   toy: toySimStateSchema,
+  citizens: z.array(citizenStateSchema).optional(),
   events: z.array(domainEventSchema),
 });
 
 export const saveBundleSchema = z.object({
   schemaVersion: z.string(),
   buildVersion: z.string(),
-  milestone: z.enum(['M00', 'M01']),
+  milestone: z.enum(['M00', 'M01', 'M02']),
   worldSeed: z.string(),
   branch: branchMetadataSchema,
   snapshot: worldSnapshotSchema,

@@ -12,6 +12,7 @@ import SimulationWorker from './worker/simulation.worker?worker';
 export interface SimulationClientCallbacks {
   onReady?: (seed: string) => void;
   onStepComplete?: (renderSnapshot: RenderSnapshot, stepMs: number) => void;
+  onInspectorUpdated?: (renderSnapshot: RenderSnapshot) => void;
   onSnapshot?: (snapshot: WorldSnapshot) => void;
   onDigest?: (digest: string) => void;
   onError?: (message: string) => void;
@@ -52,6 +53,10 @@ export class SimulationClient {
     this.post({ type: 'LOAD_SNAPSHOT', snapshot });
   }
 
+  selectCitizen(citizenId: string | null): void {
+    this.post({ type: 'SELECT_CITIZEN', citizenId });
+  }
+
   terminate(): void {
     this.worker.terminate();
   }
@@ -67,6 +72,9 @@ export class SimulationClient {
         break;
       case 'STEP_COMPLETE':
         this.callbacks.onStepComplete?.(response.renderSnapshot, response.stepMs);
+        break;
+      case 'INSPECTOR_UPDATED':
+        this.callbacks.onInspectorUpdated?.(response.renderSnapshot);
         break;
       case 'SNAPSHOT':
         this.callbacks.onSnapshot?.(response.snapshot);

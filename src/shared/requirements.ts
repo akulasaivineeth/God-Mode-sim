@@ -37,4 +37,20 @@ export const M01_REGRESSION_REQUIREMENTS = [
   'M00-GATE',
 ] as const;
 
-export type M01AcceptanceRequirement = (typeof M01_ACCEPTANCE_REQUIREMENTS)[number];
+/** M02 — One autonomous citizen. */
+export const M02_ACCEPTANCE_REQUIREMENTS = [
+  'NPC-NEED-001',
+  'NPC-DEC-001',
+  'VIS-001',
+  'VIS-004',
+  'PATH-001',
+  'M02-GATE',
+] as const;
+
+/** Requirements preserved from M00/M01 that M02 must not regress. */
+export const M02_REGRESSION_REQUIREMENTS = [
+  ...M01_ACCEPTANCE_REQUIREMENTS,
+  ...M01_REGRESSION_REQUIREMENTS,
+] as const;
+
+export type M02AcceptanceRequirement = (typeof M02_ACCEPTANCE_REQUIREMENTS)[number];

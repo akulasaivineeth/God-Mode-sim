@@ -13,5 +13,5 @@ export function parseSaveBundle(json: string): SaveBundle {
 }
 
 export function restoreSnapshotFromBundle(bundle: SaveBundle): WorldSnapshot {
-  return bundle.snapshot;
+  return bundle.snapshot as WorldSnapshot;
 }

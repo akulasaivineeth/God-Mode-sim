@@ -13,6 +13,8 @@ import { createDomainEvent, type DomainEvent } from './events';
 import { Mulberry32Prng, type PrngState } from './prng';
 import type { WorldSeed } from './types';
 
+import type { CitizenState } from './citizens/types';
+
 /** Minimal toy state — proves determinism only, not gameplay. */
 export interface ToySimState {
   tickCount: number;
@@ -29,6 +31,8 @@ export interface WorldSnapshot {
   clock: SimulationClock;
   prng: PrngState;
   toy: ToySimState;
+  /** M02+ authoritative citizen records; omitted in pure M00 snapshots. */
+  citizens?: CitizenState[];
   events: DomainEvent[];
 }
 

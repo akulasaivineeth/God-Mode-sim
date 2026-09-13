@@ -39,10 +39,11 @@ The canonical product specification lives in `Docs/specs/GOD_MODE_Canonical_Buil
 | Status | Milestone | Plain-English summary |
 |--------|-----------|------------------------|
 | **Complete (merged to `main`)** | **M00 — Foundation** | The project runs locally. A hidden **simulation engine** (see Glossary) steps a simple toy world deterministically. The 3D view and diagnostics panel display results but do not own truth. Saves use a versioned format. Tests prove same seed → same outcome. |
-| **Complete (awaiting independent review)** | **M01 — 3D World and Time** | A small **handcrafted 3D town**, a **free camera** (rotate/pan/zoom + presets), a **simulation clock** with a full calendar and **day/night**, and **all speed controls** (Pause, 0.25×, 1×, 5×, 20×, 100×, 1000×). At 1000× animation is skipped but time/state stay exact. |
-| **Not started** | M02+ | Citizens, needs, economy, social systems, God tools, experiments, and all gameplay described in the spec |
+| **Complete (merged to `main`)** | **M01 — 3D World and Time** | A small **handcrafted 3D town**, a **free camera** (rotate/pan/zoom + presets), a **simulation clock** with a full calendar and **day/night**, and **all speed controls** (Pause, 0.25×, 1×, 5×, 20×, 100×, 1000×). At 1000× animation is skipped but time/state stay exact. |
+| **Complete (awaiting independent review)** | **M02 — One Autonomous Citizen** | **Alex**, one stylized 3D citizen with home/store/workplace, five physical needs, waypoint pathing, Layer-1/Layer-2 utility decisions, and a deep inspector with score breakdown. Runs autonomously for multiple simulated days without player commands. |
+| **Not started** | M03+ | Twenty citizens, social perception, economy, God tools, experiments, and all later spec milestones |
 
-**M01 is the world and its clock — still no people.** There are no citizens, shopping, God menu, or timeline branching yet. Those are deliberate limits, not missing bugs.
+**M02 adds one autonomous citizen — not twenty, not economy, not God tools yet.** M01’s empty town now has Alex living a daily loop; broader society systems remain future milestones.
 
 ---
 
@@ -50,17 +51,16 @@ The canonical product specification lives in `Docs/specs/GOD_MODE_Canonical_Buil
 
 Do not expect these in the current build:
 
-- NPCs / citizens (the town is intentionally empty until M02)
-- Hunger, jobs, money, relationships, or conversations
+- Twenty citizens or social perception (M03)
+- Hunger-driven economy, money, inventory, or jobs with wages (M04)
 - God intervention tools
-- Building interiors (exterior shells only in M01)
+- Building interior meshes / roof-fade viewing (VIS-003 deferred)
 - Weather or seasonal effects (the season is shown but has no effects yet)
 - Real save-to-disk gameplay UI (schemas exist; full persistence UI comes later)
 - Timeline branches or experiment comparison
 - Any dependency on ChatGPT, Ollama, or other runtime AI services
 
-Speed controls (Pause, 0.25× … 1000×), the 3D town, the free camera, and
-day/night **are** in this build as of M01.
+Speed controls (Pause, 0.25× … 1000×), the 3D town, the free camera, day/night, **one autonomous citizen (Alex)**, needs, pathing, and the utility inspector **are** in this build as of M02.
 
 ---
 
@@ -71,7 +71,7 @@ You need **Node.js** (version 20 or newer recommended) and **npm** on your Mac.
 ```bash
 git clone https://github.com/akulasaivineeth/God-Mode-sim.git
 cd God-Mode-sim
-git checkout milestone/m01-world-and-time   # current build (M01); M00 is merged to main
+git checkout milestone/m02-one-autonomous-citizen   # current build (M02); M01 merged to main
 npm ci
 ```
 
@@ -89,9 +89,10 @@ Open the URL shown in the terminal (usually `http://localhost:5173`).
 
 You should see:
 
-- A **handcrafted low-poly 3D town** (differentiated houses/store/clinic/school/cafe/workshop/warehouse/farm/community hall, park, square, cemetery, roads with sidewalks, pedestrian paths, trees, a nearby forest on gently rolling hills, and a readable river with banks) under an angled camera
+- A **handcrafted low-poly 3D town** with **Alex**, one stylized citizen (procedural humanoid) near House 1, plus route markers at home, the general store, and the workshop
 - **Day/night lighting** that follows the clock
-- A diagnostics panel with the **date, clock, season, day/night, speed**, FPS, **draw calls · triangles** (renderer stats), worker step time, seed, and a state **digest** (fingerprint)
+- A **citizen inspector** (top-right) with need bars and utility score breakdown when Alex is selected
+- A diagnostics panel (bottom-right) with the **date, clock, season, day/night, speed**, FPS, **draw calls · triangles**, worker step time, seed, and state **digest**
 - **Speed buttons** (bottom) and **camera buttons** (top-left)
 
 Try it: click **1000×** to make the clock race and watch the sun cross the sky;
@@ -145,6 +146,8 @@ More detail: `Docs/architecture/SYSTEM_OVERVIEW.md` and `Docs/architecture/DATA_
 | `Docs/architecture/ARCHITECTURE_DECISIONS.md` | PO + builders | Why key decisions were made (ADRs) |
 | `Docs/milestones/M00/` | PO + reviewers | Everything specific to milestone M00 |
 | `Docs/milestones/M01/` | PO + reviewers | Everything specific to milestone M01 (3D world and time) |
+| `Docs/milestones/M02/` | PO + reviewers | Everything specific to milestone M02 (one autonomous citizen) |
+| `Docs/art-direction/` | PO + builders | Visual north star and asset pipeline guidance |
 | `Docs/specs/GOD_MODE_Canonical_Build_Specification.md` | Builders + reviewers | Full product specification |
 | `Docs/qa/GOD_MODE_Independent_Validation_UAT.md` | Reviewer (Grok) | Validation and UAT procedures |
 | `Docs/agents/` | AI agents | Builder and reviewer operating prompts |
@@ -179,7 +182,7 @@ More detail: `Docs/architecture/SYSTEM_OVERVIEW.md` and `Docs/architecture/DATA_
 
 ## Current branch
 
-Active milestone work: **`milestone/m01-world-and-time`**
+Active milestone work: **`milestone/m02-one-autonomous-citizen`**
 
-M00 has passed independent review and is merged to `main`. Do not merge M01 to
-`main` until independent review marks M01 **PASS**.
+M00 and M01 have passed independent review and are merged to `main`. Do not merge M02 to
+`main` until independent review marks M02 **PASS**.

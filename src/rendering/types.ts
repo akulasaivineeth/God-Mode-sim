@@ -1,41 +1,65 @@
 /**
  * Render snapshot boundary — ADR-003 / ARCH-002.
  *
- * Plain English: The 3D layer may only read these fields. It must never write
- * back into simulation state. visualPhase is 0..1 and drives placeholder motion only.
- *
- * M01 adds a derived, display-only `calendar` plus `timeOfDay`/`isDaytime` so
- * the renderer can draw day/night lighting and the HUD can show the date/clock.
- * These are pure derivations of the authoritative `simMinute` (see calendar.ts);
- * the renderer still cannot influence simulation truth.
+ * M02 adds read-only citizen presentation fields. The renderer still cannot
+ * influence simulation truth.
  */
 import { deriveCalendar, type CalendarView } from '@/simulation/core/calendar';
+import type { ActionKind } from '@/simulation/core/citizens/types';
+import type { UtilityTrace } from '@/simulation/core/citizens/types';
 import type { SimMinute } from '@/simulation/core/types';
+import type { CitizenState } from '@/simulation/core/citizens/types';
+import type { WorldSnapshot } from '@/simulation/core/toySim';
 
-/** Read-only render DTO — no simulation authority. */
+export interface RenderCitizen {
+  id: string;
+  displayName: string;
+  x: number;
+  z: number;
+  y: number;
+  action: ActionKind;
+  targetFacilityId: string | null;
+  currentFacilityId: string | null;
+  appearance: CitizenState['appearance'];
+  needs: CitizenState['needs'];
+  selected: boolean;
+}
+
 export interface RenderSnapshot {
   simMinute: SimMinute;
   visualPhase: number;
   tickCount: number;
   lastChoice: string;
   accumulator: number;
-  /** Derived calendar (display only). */
   calendar: CalendarView;
-  /** Fraction of the current day in [0,1) — drives day/night lighting. */
   timeOfDay: number;
   isDaytime: boolean;
+  citizens: RenderCitizen[];
+  selectedCitizenId: string | null;
+  inspectorTrace: UtilityTrace | null;
 }
 
-export function toRenderSnapshot(input: {
-  clock: { simMinute: SimMinute };
-  toy: {
-    visualPhase: number;
-    tickCount: number;
-    lastChoice: string;
-    accumulator: number;
-  };
-}): RenderSnapshot {
+export function toRenderSnapshot(
+  input: WorldSnapshot,
+  selectedCitizenId: string | null = null,
+): RenderSnapshot {
   const calendar = deriveCalendar(input.clock.simMinute);
+  const citizens = (input.citizens ?? []).map((citizen) => ({
+    id: citizen.id,
+    displayName: citizen.displayName,
+    x: citizen.position.x,
+    z: citizen.position.z,
+    y: 0,
+    action: citizen.activeAction.kind,
+    targetFacilityId: citizen.activeAction.targetFacilityId,
+    currentFacilityId: citizen.currentFacilityId,
+    appearance: citizen.appearance,
+    needs: citizen.needs,
+    selected: citizen.id === selectedCitizenId,
+  }));
+
+  const selected = input.citizens?.find((citizen) => citizen.id === selectedCitizenId) ?? null;
+
   return {
     simMinute: input.clock.simMinute,
     visualPhase: input.toy.visualPhase,
@@ -45,5 +69,8 @@ export function toRenderSnapshot(input: {
     calendar,
     timeOfDay: calendar.timeOfDay,
     isDaytime: calendar.isDaytime,
+    citizens,
+    selectedCitizenId,
+    inspectorTrace: selected?.lastUtilityTrace ?? null,
   };
 }

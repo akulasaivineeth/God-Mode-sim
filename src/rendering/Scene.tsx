@@ -1,10 +1,5 @@
 /**
- * 3D scene composition — VIS / WORLD-001 / SIM-TIME-004 / ARCH-002.
- *
- * Plain English: Assembles the town, day/night lighting, and free camera. It
- * reads a small read-only RenderSnapshot (time of day, visual phase) and never
- * writes back to simulation truth. At high speed, animation smoothing is
- * suppressed while the authoritative time still drives lighting exactly.
+ * 3D scene composition — VIS / WORLD-001 / M02 citizens.
  */
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -12,7 +7,9 @@ import type { Mesh } from 'three';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 import { CameraControls } from './CameraControls';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
+import { CitizenMesh } from './CitizenMesh';
 import { DayNightLighting } from './DayNightLighting';
+import { RouteMarkers } from './RouteMarkers';
 import { Town } from './Town';
 import type { RenderSnapshot } from './types';
 
@@ -21,6 +18,7 @@ interface SceneProps {
   cameraView: CameraView;
   cameraNonce: number;
   animationsSuppressed: boolean;
+  onSelectCitizen: (citizenId: string) => void;
 }
 
 function FpsTracker() {
@@ -43,12 +41,6 @@ function FpsTracker() {
   return null;
 }
 
-/**
- * A small floating marker over the town square that visibly demonstrates the
- * M01 gate: at low speed it eases smoothly; at high speed animation is
- * suppressed and it snaps directly to the authoritative visual phase. Either
- * way it carries no simulation authority.
- */
 function SimBeacon({
   visualPhase,
   suppressed,
@@ -63,7 +55,7 @@ function SimBeacon({
     if (!mesh) return;
     const targetRotation = visualPhase * Math.PI * 2;
     if (suppressed) {
-      mesh.rotation.y = targetRotation; // snap — no interpolation at high speed
+      mesh.rotation.y = targetRotation;
     } else {
       mesh.rotation.y += delta * (0.6 + visualPhase);
     }
@@ -83,9 +75,11 @@ export function Scene({
   cameraView,
   cameraNonce,
   animationsSuppressed,
+  onSelectCitizen,
 }: SceneProps) {
   const timeOfDay = renderSnapshot?.timeOfDay ?? 0.25;
   const visualPhase = renderSnapshot?.visualPhase ?? 0;
+  const citizens = renderSnapshot?.citizens ?? [];
 
   return (
     <Canvas
@@ -98,6 +92,15 @@ export function Scene({
       <CameraControls view={cameraView} applyNonce={cameraNonce} />
       <DayNightLighting timeOfDay={timeOfDay} />
       <Town />
+      <RouteMarkers />
+      {citizens.map((citizen) => (
+        <CitizenMesh
+          key={citizen.id}
+          citizen={citizen}
+          animationsSuppressed={animationsSuppressed}
+          onSelect={onSelectCitizen}
+        />
+      ))}
       <SimBeacon visualPhase={visualPhase} suppressed={animationsSuppressed} />
     </Canvas>
   );
