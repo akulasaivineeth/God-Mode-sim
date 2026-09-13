@@ -3,11 +3,12 @@ import { Scene } from '@/rendering/Scene';
 import type { CameraView } from '@/rendering/cameraPresets';
 import { SimulationDriver } from '@/simulation/SimulationDriver';
 import type { SimSpeed } from '@/simulation/core/speed';
+import { CitizenInspector } from '@/ui/components/CitizenInspector';
 import { DiagnosticsHud } from '@/ui/components/DiagnosticsHud';
 import { TimeControls } from '@/ui/components/TimeControls';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 
-export const CANONICAL_M01_SEED = 'GODMODE_M01_CANONICAL_2026';
+export const CANONICAL_M02_SEED = 'GODMODE_M02_CANONICAL_2026';
 
 const CAMERA_VIEWS: { id: CameraView; label: string }[] = [
   { id: 'overview', label: 'Overview' },
@@ -43,7 +44,7 @@ export function App() {
     });
 
     driverRef.current = driver;
-    driver.init(CANONICAL_M01_SEED);
+    driver.init(CANONICAL_M02_SEED);
 
     return () => {
       driver.terminate();
@@ -129,6 +130,7 @@ export function App() {
         </div>
       </div>
 
+      <CitizenInspector />
       <TimeControls onSelectSpeed={handleSelectSpeed} />
       <DiagnosticsHud />
     </div>

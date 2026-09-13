@@ -18,6 +18,9 @@ interface DiagnosticsState {
   renderCalls: number;
   /** Rendered triangles in the last frame (perf evidence). */
   renderTriangles: number;
+  /** Whether the citizen inspector is open (UX-001). */
+  citizenSelected: boolean;
+  setCitizenSelected: (selected: boolean) => void;
   setSeed: (seed: string) => void;
   setFps: (fps: number) => void;
   setRenderStats: (calls: number, triangles: number) => void;
@@ -44,6 +47,8 @@ export const useDiagnosticsStore = create<DiagnosticsState>((set) => ({
   animationsSuppressed: false,
   renderCalls: 0,
   renderTriangles: 0,
+  citizenSelected: true,
+  setCitizenSelected: (selected) => set({ citizenSelected: selected }),
   setSeed: (seed) => set({ seed }),
   setFps: (fps) => set({ fps }),
   setRenderStats: (calls, triangles) => set({ renderCalls: calls, renderTriangles: triangles }),

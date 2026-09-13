@@ -12,6 +12,7 @@ import type { Mesh } from 'three';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 import { CameraControls } from './CameraControls';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
+import { Citizen } from './Citizen';
 import { DayNightLighting } from './DayNightLighting';
 import { Town } from './Town';
 import type { RenderSnapshot } from './types';
@@ -86,6 +87,9 @@ export function Scene({
 }: SceneProps) {
   const timeOfDay = renderSnapshot?.timeOfDay ?? 0.25;
   const visualPhase = renderSnapshot?.visualPhase ?? 0;
+  const citizen = renderSnapshot?.citizen ?? null;
+  const citizenSelected = useDiagnosticsStore((state) => state.citizenSelected);
+  const setCitizenSelected = useDiagnosticsStore((state) => state.setCitizenSelected);
 
   return (
     <Canvas
@@ -98,6 +102,14 @@ export function Scene({
       <CameraControls view={cameraView} applyNonce={cameraNonce} />
       <DayNightLighting timeOfDay={timeOfDay} />
       <Town />
+      {citizen && (
+        <Citizen
+          citizen={citizen}
+          suppressed={animationsSuppressed}
+          selected={citizenSelected}
+          onSelect={() => setCitizenSelected(true)}
+        />
+      )}
       <SimBeacon visualPhase={visualPhase} suppressed={animationsSuppressed} />
     </Canvas>
   );
