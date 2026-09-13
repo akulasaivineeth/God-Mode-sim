@@ -68,6 +68,8 @@ sequenceDiagram
 
 **M01 update — derived calendar:** `toRenderSnapshot` runs `deriveCalendar(simMinute)` so the snapshot carries the human date/clock/season plus `timeOfDay` (drives day/night lighting) and `isDaytime`. The calendar is derived, never stored, so it cannot drift from the authoritative counter and never enters the save digest. The static town geometry (`src/world/townLayout.ts`) is authored content read directly by the renderer, not streamed per frame (ADR-006).
 
+**M02 update — citizen summary:** the render snapshot also carries a compact read-only `citizen` (position, facing, action + phase, activity label, needs, and the last decision trace). The worker owns the citizen; the renderer draws/interpolates the 3D figure and the inspector reads the decision trace. The citizen is stepped one authoritative sim-minute at a time via the seeded PRNG, so 1× and 1000× match and travel resolves by deterministic duration, not rendered footsteps (ADR-008). See `Docs/milestones/M02/DATA_FLOW.md`.
+
 ---
 
 ## 3. Simulation authority

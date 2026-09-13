@@ -39,10 +39,11 @@ The canonical product specification lives in `Docs/specs/GOD_MODE_Canonical_Buil
 | Status | Milestone | Plain-English summary |
 |--------|-----------|------------------------|
 | **Complete (merged to `main`)** | **M00 — Foundation** | The project runs locally. A hidden **simulation engine** (see Glossary) steps a simple toy world deterministically. The 3D view and diagnostics panel display results but do not own truth. Saves use a versioned format. Tests prove same seed → same outcome. |
-| **Complete (awaiting independent review)** | **M01 — 3D World and Time** | A small **handcrafted 3D town**, a **free camera** (rotate/pan/zoom + presets), a **simulation clock** with a full calendar and **day/night**, and **all speed controls** (Pause, 0.25×, 1×, 5×, 20×, 100×, 1000×). At 1000× animation is skipped but time/state stay exact. |
-| **Not started** | M02+ | Citizens, needs, economy, social systems, God tools, experiments, and all gameplay described in the spec |
+| **Complete (merged to `main`)** | **M01 — 3D World and Time** | A small **handcrafted 3D town**, a **free camera** (rotate/pan/zoom + presets), a **simulation clock** with a full calendar and **day/night**, and **all speed controls** (Pause, 0.25×, 1×, 5×, 20×, 100×, 1000×). At 1000× animation is skipped but time/state stay exact. |
+| **Complete (awaiting independent review)** | **M02 — One Autonomous Citizen** | One stylized **3D citizen** who lives on their own: five **needs** (energy, fullness, hydration, bladder, hygiene), **utility-based decisions** (reflex + routine), deterministic **walking** between home/store/workshop, and a **deep inspector** showing the score breakdown behind each choice. Runs for days with no player input. |
+| **Not started** | M03+ | Twenty citizens, perception, memory, economy, social systems, God tools, experiments, and all gameplay described in the spec |
 
-**M01 is the world and its clock — still no people.** There are no citizens, shopping, God menu, or timeline branching yet. Those are deliberate limits, not missing bugs.
+**M02 adds the first person — still only one.** There is no population, economy, God menu, or timeline branching yet. Those are deliberate limits, not missing bugs.
 
 ---
 
@@ -50,8 +51,8 @@ The canonical product specification lives in `Docs/specs/GOD_MODE_Canonical_Buil
 
 Do not expect these in the current build:
 
-- NPCs / citizens (the town is intentionally empty until M02)
-- Hunger, jobs, money, relationships, or conversations
+- More than one citizen (20-person generation is M03), or relationships, memory, perception, or conversation
+- Jobs that pay, money, shopping inventory, or economy (M04)
 - God intervention tools
 - Building interiors (exterior shells only in M01)
 - Weather or seasonal effects (the season is shown but has no effects yet)
@@ -71,7 +72,7 @@ You need **Node.js** (version 20 or newer recommended) and **npm** on your Mac.
 ```bash
 git clone https://github.com/akulasaivineeth/God-Mode-sim.git
 cd God-Mode-sim
-git checkout milestone/m01-world-and-time   # current build (M01); M00 is merged to main
+git checkout milestone/m02-one-citizen   # current build (M02); M00 and M01 are merged to main
 npm ci
 ```
 
@@ -90,13 +91,15 @@ Open the URL shown in the terminal (usually `http://localhost:5173`).
 You should see:
 
 - A **handcrafted low-poly 3D town** (differentiated houses/store/clinic/school/cafe/workshop/warehouse/farm/community hall, park, square, cemetery, roads with sidewalks, pedestrian paths, trees, a nearby forest on gently rolling hills, and a readable river with banks) under an angled camera
+- One **3D citizen** ("Noah") walking between home, the store, and the workshop, living on their own
 - **Day/night lighting** that follows the clock
+- A **Citizen Inspector** (top-left) with needs bars, the current activity, and the utility-score breakdown behind the last decision
 - A diagnostics panel with the **date, clock, season, day/night, speed**, FPS, **draw calls · triangles** (renderer stats), worker step time, seed, and a state **digest** (fingerprint)
 - **Speed buttons** (bottom) and **camera buttons** (top-left)
 
-Try it: click **1000×** to make the clock race and watch the sun cross the sky;
-click **Pause** to freeze simulated time while the camera still moves; drag to
-rotate, right-drag to pan, and scroll to zoom.
+Try it: click **1000×** to watch Noah live several days in seconds (the sun crosses
+the sky); click **Pause** to freeze simulated time while the camera still moves;
+drag to rotate, right-drag to pan, and scroll to zoom.
 
 Underneath, the M00 toy counter still steps deterministically — that is how the
 engine proves same-seed → same-outcome; it is not gameplay.
@@ -145,6 +148,7 @@ More detail: `Docs/architecture/SYSTEM_OVERVIEW.md` and `Docs/architecture/DATA_
 | `Docs/architecture/ARCHITECTURE_DECISIONS.md` | PO + builders | Why key decisions were made (ADRs) |
 | `Docs/milestones/M00/` | PO + reviewers | Everything specific to milestone M00 |
 | `Docs/milestones/M01/` | PO + reviewers | Everything specific to milestone M01 (3D world and time) |
+| `Docs/milestones/M02/` | PO + reviewers | Everything specific to milestone M02 (one autonomous citizen) |
 | `Docs/specs/GOD_MODE_Canonical_Build_Specification.md` | Builders + reviewers | Full product specification |
 | `Docs/qa/GOD_MODE_Independent_Validation_UAT.md` | Reviewer (Grok) | Validation and UAT procedures |
 | `Docs/agents/` | AI agents | Builder and reviewer operating prompts |
@@ -179,7 +183,7 @@ More detail: `Docs/architecture/SYSTEM_OVERVIEW.md` and `Docs/architecture/DATA_
 
 ## Current branch
 
-Active milestone work: **`milestone/m01-world-and-time`**
+Active milestone work: **`milestone/m02-one-citizen`**
 
-M00 has passed independent review and is merged to `main`. Do not merge M01 to
-`main` until independent review marks M01 **PASS**.
+M00 and M01 have passed independent review and are merged to `main`. Do not merge
+M02 to `main` until independent review marks M02 **PASS**.
