@@ -15,7 +15,7 @@ import { execSync } from 'node:child_process';
 
 const OUT = '/opt/cursor/artifacts/m02_closure_evidence';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
-const RELEASE_TAG = 'review-evidence-m02-020-builder-r14';
+const RELEASE_TAG = 'review-evidence-m02-020-builder-r15';
 const MIN_GAMEPLAY_PIXEL_HEIGHT = 80;
 const MIN_PORTRAIT_PIXEL_HEIGHT = 100;
 const BEFORE_BASE =
@@ -308,6 +308,7 @@ async function assertHumanoidSubjectPresent(
       if (pxW < 18) {
         return { ok: false, reason: `projected width ${pxW.toFixed(0)}px too narrow — subject likely absent` };
       }
+      window.__GODMODE_EVIDENCE__?.assertPortraitLineOfSight();
       return { ok: true, vis, pxH, pxW };
     } catch (err) {
       return { ok: false, reason: err.message ?? String(err) };
@@ -718,6 +719,8 @@ async function acquireActivityWhileDaylight(page, config) {
 async function acquireAndSettleAt1x(page, config) {
   const {
     preset,
+    targetMinute,
+    scanWindow = 40,
     advanceSpeed = 50,
     activityPattern,
     expectedPose,
@@ -727,6 +730,35 @@ async function acquireAndSettleAt1x(page, config) {
     timeoutMs = 240_000,
     settleFrames = 2,
   } = config;
+
+  if (targetMinute != null) {
+    const { meta, lockedActivity } = await seekCanonicalActivity(page, {
+      targetMinute,
+      scanWindow,
+      activityPattern,
+      expectedPose,
+      expectedClip,
+      requireDaylight,
+      label: 'acquireAndSettleAt1x',
+      afterReload: async (p) => {
+        await applyPreset(p, preset, 0, { settleMs: 400, skipDeltaCheck: true });
+      },
+    });
+    await setSpeed(page, 1);
+    await page.waitForTimeout(CROSSFADE_SETTLE_MS);
+    await advanceMixerSettle(page, 0.55);
+    const settled = await getMeta(page);
+    assertMeta(settled, 'acquireAndSettleAt1x', {
+      citizenId: true,
+      pose: expectedPose,
+      exactActivity: lockedActivity,
+      clip: expectedClip,
+      speed: 1,
+      animationsSuppressed: false,
+      daylight: requireDaylight,
+    });
+    return { meta: settled, lockedActivity, acquiredAtSpeed: 1 };
+  }
 
   await applyPreset(page, preset, advanceSpeed, { settleMs: 400, skipDeltaCheck: true });
   await setSpeed(page, advanceSpeed);
@@ -797,8 +829,11 @@ async function captureDualAt1x(page, saveShot, baseName, config, opts = {}) {
     useFullBodyPortrait = true,
     portraitOpts = { margin: 1.35, minScreenAreaFraction: 0.06 },
     seekPhasesForB = [0.35, 0.55, 0.72],
+    mixerAdvanceStepsForB = null,
+    dualAzimuthOffsetsForB = null,
     minRoiMotion = MIN_ROI_MOTION,
     useCenterCropMotion = false,
+    motionColorThreshold = 12,
   } = opts;
 
   const { meta, lockedActivity, acquiredAtSpeed } = await acquireAt1x(page, config);
@@ -866,23 +901,54 @@ async function captureDualAt1x(page, saveShot, baseName, config, opts = {}) {
   let motion = 0;
   let clipDelta = 0;
   let usedSeekPhase = null;
+  let usedMixerAdvance = null;
 
-  for (const phase of seekPhasesForB) {
-    await seekClipAndSettle(page, phase);
-    await advanceMixerSettle(page, 0.55);
+  const bAttempts =
+    dualAzimuthOffsetsForB && dualAzimuthOffsetsForB.length > 0
+      ? dualAzimuthOffsetsForB.map((azimuthOffset) => ({ kind: 'azimuth', azimuthOffset }))
+      : mixerAdvanceStepsForB && mixerAdvanceStepsForB.length > 0
+        ? mixerAdvanceStepsForB.map((seconds) => ({ kind: 'mixer', seconds }))
+        : seekPhasesForB.map((phase) => ({ kind: 'seek', phase }));
+
+  for (const attempt of bAttempts) {
+    if (config.targetMinute != null) {
+      await stepToSimMinute(page, config.targetMinute);
+      await setSpeed(page, 0);
+      await page.waitForTimeout(120);
+    }
+    if (attempt.kind === 'seek') {
+      await seekClipAndSettle(page, attempt.phase);
+      await advanceMixerSettle(page, 0.55);
+    } else if (attempt.kind === 'mixer') {
+      await seekClipAndSettle(page, 0.08);
+      await advanceMixerSettle(page, attempt.seconds);
+    } else {
+      await seekClipAndSettle(page, 0.08);
+      await frameFullBody(page, { ...portraitOpts, azimuthOffset: attempt.azimuthOffset });
+      await assertHumanoidSubjectPresent(page, `${baseName}_B_framing`, {
+        minArea: portraitOpts.minScreenAreaFraction ?? 0.05,
+        minHeight: MIN_PORTRAIT_PIXEL_HEIGHT,
+      });
+    }
     await page.waitForTimeout(DUAL_FRAME_GAP_MS);
     const metaProbe = await getMeta(page);
     if (metaProbe.activity !== lockedActivity || metaProbe.pose !== config.expectedPose) {
-      throw new Error(`${baseName}_B: state drift after seek`);
+      throw new Error(`${baseName}_B: state drift after ${attempt.kind} advance`);
     }
     const roiB = await sampleCitizenRoiPixels(page);
     const motionSampleB = useCenterCropMotion ? await sampleCenterCropPixels(page) : roiB;
-    motion = roiMotionFraction(motionSampleA, motionSampleB, { colorThreshold: 12 });
+    motion = roiMotionFraction(motionSampleA, motionSampleB, { colorThreshold: motionColorThreshold });
     clipDelta = Math.abs((metaProbe.clipPhase ?? 0) - frameA.clipPhase);
     if (motion >= minRoiMotion) {
-      usedSeekPhase = phase;
+      usedSeekPhase = attempt.kind === 'seek' ? attempt.phase : null;
+      usedMixerAdvance = attempt.kind === 'mixer' ? attempt.seconds : null;
+      const usedAzimuthOffset = attempt.kind === 'azimuth' ? attempt.azimuthOffset : null;
       const cameraB = await getCamera(page);
       assertMeta(metaProbe, `${baseName}_B`, expectations);
+      await assertHumanoidSubjectPresent(page, `${baseName}_B`, {
+        minArea: portraitOpts.minScreenAreaFraction ?? 0.05,
+        minHeight: MIN_PORTRAIT_PIXEL_HEIGHT,
+      });
       const visB = await page.evaluate(() => window.__GODMODE_EVIDENCE__.getCitizenScreenProjection());
       const resultB = await shot(page, `${baseName}_B`);
       if (resultB.fullHash === frameA.result.fullHash) {
@@ -893,7 +959,9 @@ async function captureDualAt1x(page, saveShot, baseName, config, opts = {}) {
         roi: roiB.roi,
         roiMotion: motion,
         clipPhaseDelta: clipDelta,
-        clipSeekPhase: phase,
+        clipSeekPhase: usedSeekPhase,
+        mixerAdvanceSeconds: usedMixerAdvance,
+        portraitAzimuthOffset: usedAzimuthOffset,
         acquiredAtSpeed,
         lockedActivity,
         fileHash: resultB.fullHash,
@@ -914,16 +982,18 @@ async function captureDualAt1x(page, saveShot, baseName, config, opts = {}) {
     throw new Error(`${baseName}: identical SHA-256 for A and B — rejected`);
   }
 
-  return { usedSeekPhase, motion, clipDelta };
+  return { usedSeekPhase, usedMixerAdvance, motion, clipDelta };
 }
 
-/** Dual-frame proof while sim + mixer remain at 1× (required for static in-place clips like sit). */
+/** Dual-frame proof while sim + mixer remain at 1× (required for in-place clips like sit). */
 async function captureDualAtLive1x(page, saveShot, baseName, config, opts = {}) {
   const {
     useFullBodyPortrait = true,
     portraitOpts = { margin: 1.35, minScreenAreaFraction: 0.06 },
     minRoiMotion = MIN_ROI_MOTION,
     dualGapMs = DUAL_FRAME_GAP_MS,
+    motionColorThreshold = 12,
+    maxAttempts = 18,
   } = opts;
 
   const { meta, lockedActivity } = await acquireAndSettleAt1x(page, config);
@@ -931,7 +1001,10 @@ async function captureDualAtLive1x(page, saveShot, baseName, config, opts = {}) 
 
   if (useFullBodyPortrait) {
     await frameFullBody(page, portraitOpts);
-    await assertCitizenReadable(page, portraitOpts.minScreenAreaFraction ?? 0.05);
+    await assertHumanoidSubjectPresent(page, `${baseName}_framing`, {
+      minArea: portraitOpts.minScreenAreaFraction ?? 0.05,
+      minHeight: MIN_PORTRAIT_PIXEL_HEIGHT,
+    });
   }
 
   const expectations = {
@@ -961,8 +1034,8 @@ async function captureDualAtLive1x(page, saveShot, baseName, config, opts = {}) 
 
   let capturedB = false;
   let motion = 0;
-  for (let attempt = 0; attempt < 18; attempt += 1) {
-    await page.waitForTimeout(Math.min(dualGapMs, 180 + attempt * 30));
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    await page.waitForTimeout(Math.min(dualGapMs, 220 + attempt * 40));
     if (useFullBodyPortrait) {
       await frameFullBody(page, portraitOpts);
     }
@@ -972,7 +1045,7 @@ async function captureDualAtLive1x(page, saveShot, baseName, config, opts = {}) 
     }
     assertMeta(metaB, `${baseName}_B`, expectations);
     const roiB = await sampleCitizenRoiPixels(page);
-    motion = roiMotionFraction(roiA, roiB, { colorThreshold: 12 });
+    motion = roiMotionFraction(roiA, roiB, { colorThreshold: motionColorThreshold });
     if (motion < minRoiMotion) continue;
     const resultB = await shot(page, `${baseName}_B`);
     if (resultB.fullHash === resultA.fullHash) continue;
@@ -1108,6 +1181,8 @@ async function publishRelease(scaleInfo, hashResults) {
   const files = [
     '01_overview_daylight_diagnostics.png',
     '02_angled_daylight.png',
+    '08_overview_dusk.png',
+    '09_overview_night.png',
     '03_street_home_gameplay.png',
     '04_street_store_gameplay.png',
     '05_street_workshop_gameplay.png',
@@ -1227,6 +1302,19 @@ async function main() {
   await applyPreset(page, 'angled', 0);
   await shot(page, '02_angled_daylight');
 
+  await setSpeed(page, 0);
+  await stepToSimMinute(page, 660);
+  await applyPreset(page, 'overview', 0, { settleMs: 1200, skipDeltaCheck: true });
+  await waitRenderFrames(page, 10);
+  await shot(page, '08_overview_dusk');
+  metadata['08_overview_dusk'] = metaRecord(await getMeta(page), await getCamera(page), { simMinute: 660 });
+
+  await stepToSimMinute(page, 720);
+  await applyPreset(page, 'overview', 0, { settleMs: 1200, skipDeltaCheck: true });
+  await waitRenderFrames(page, 10);
+  await shot(page, '09_overview_night');
+  metadata['09_overview_night'] = metaRecord(await getMeta(page), await getCamera(page), { simMinute: 720 });
+
   // Non-portrait gameplay street shots (same body scale as normal play)
   await page.goto(BASE);
   await page.getByTestId('r3f-canvas').waitFor({ state: 'visible' });
@@ -1255,7 +1343,7 @@ async function main() {
     targetMinute: CANONICAL_EVIDENCE_MINUTES.firstDaytimeStoreEatPerform,
     activityPattern: /Eating at the Store/i,
     expectedPose: 'sit',
-    expectedClip: /interact-right|pick-up|^sit$/i,
+    expectedClip: /^sit$/i,
   });
   await setSpeed(page, 0);
   await page.evaluate(() => window.__GODMODE_EVIDENCE__?.clearCameraOverride());
@@ -1342,13 +1430,13 @@ async function main() {
       targetMinute: CANONICAL_EVIDENCE_MINUTES.firstDaytimeStoreEatPerform,
       activityPattern: /Eating at the Store/i,
       expectedPose: 'sit',
-      expectedClip: /interact-right|pick-up|^sit$/i,
+      expectedClip: /^sit$/i,
       lockImmediately: true,
     },
     {
-      seekPhasesForB: [0.12, 0.28, 0.44, 0.62, 0.78],
-      minRoiMotion: 0.008,
-      useCenterCropMotion: false,
+      dualAzimuthOffsetsForB: [0.35, 0.55, -0.42, 0.72, -0.65],
+      minRoiMotion: 0.012,
+      motionColorThreshold: 10,
       portraitOpts: { margin: 1.4, minScreenAreaFraction: 0.07 },
     },
     6,

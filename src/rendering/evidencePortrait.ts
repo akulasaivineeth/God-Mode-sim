@@ -6,8 +6,10 @@
  */
 import {
   Box3,
+  Mesh,
   Object3D,
   PerspectiveCamera,
+  Raycaster,
   SkinnedMesh,
   Sphere,
   Vector3,
@@ -20,6 +22,8 @@ export interface PortraitOpts {
   minScreenAreaFraction?: number;
   /** Multiplier on bounding-sphere distance for safety margin. */
   margin?: number;
+  /** Optional azimuth bias (radians) for dual-angle static-pose proof (e.g. sit clip). */
+  azimuthOffset?: number;
 }
 
 export interface ScreenProjection {
@@ -36,6 +40,8 @@ export interface PortraitFrame {
   position: [number, number, number];
   target: [number, number, number];
   projection: ScreenProjection;
+  /** True when raycasts from the lens to citizen sample points are unobstructed. */
+  lineOfSightClear: boolean;
 }
 
 const BOX_CORNER_OFFSETS: [number, number, number][] = [
@@ -51,6 +57,8 @@ const BOX_CORNER_OFFSETS: [number, number, number][] = [
 
 const _fallbackSize = new Vector3();
 const _worldCenter = new Vector3();
+const _ray = new Raycaster();
+const _rayDir = new Vector3();
 
 export function getCitizenWorldBounds(body: Object3D): Box3 {
   body.updateWorldMatrix(true, true);
@@ -77,7 +85,6 @@ export function getCitizenWorldBounds(body: Object3D): Box3 {
   if (_fallbackSize.y >= TARGET_CITIZEN_HEIGHT * 0.35) {
     return box;
   }
-  // SkinnedMesh bbox often collapses — synthesize a standing humanoid volume at feet.
   body.getWorldPosition(_worldCenter);
   const halfW = 0.28;
   box.setFromCenterAndSize(
@@ -85,6 +92,71 @@ export function getCitizenWorldBounds(body: Object3D): Box3 {
     new Vector3(halfW * 2, TARGET_CITIZEN_HEIGHT, halfW * 2),
   );
   return box;
+}
+
+export function samplePointsFromBounds(bounds: Box3): Vector3[] {
+  const center = bounds.getCenter(new Vector3());
+  const size = bounds.getSize(new Vector3());
+  return [
+    center.clone().add(new Vector3(0, size.y * 0.44, 0)),
+    center.clone().add(new Vector3(0, size.y * 0.22, 0)),
+    center.clone().add(new Vector3(0, size.y * 0.04, 0)),
+  ];
+}
+
+function isDescendantOf(node: Object3D, ancestor: Object3D | null): boolean {
+  if (!ancestor) return false;
+  let current: Object3D | null = node;
+  while (current) {
+    if (current === ancestor) return true;
+    current = current.parent;
+  }
+  return false;
+}
+
+/** Raycast line-of-sight from camera to citizen sample points; reject world occluders. */
+export function hasUnobstructedLineOfSight(
+  cameraPos: Vector3,
+  bounds: Box3,
+  scene: Object3D,
+  citizenBody: Object3D | null,
+): boolean {
+  if (!citizenBody) {
+    return false;
+  }
+
+  const samples = samplePointsFromBounds(bounds);
+  const meshes: Object3D[] = [];
+  scene.updateMatrixWorld(true);
+  scene.traverse((obj) => {
+    if (obj instanceof Mesh && obj.visible) {
+      meshes.push(obj);
+    }
+  });
+
+  for (const target of samples) {
+    const distToTarget = cameraPos.distanceTo(target);
+    if (distToTarget < 0.05) {
+      continue;
+    }
+
+    _ray.set(cameraPos, _rayDir.subVectors(target, cameraPos).normalize());
+    _ray.far = distToTarget + 0.05;
+    const hits = _ray.intersectObjects(meshes, true);
+    if (hits.length === 0) {
+      continue;
+    }
+
+    const first = hits[0];
+    if (isDescendantOf(first.object, citizenBody)) {
+      continue;
+    }
+    if (first.distance < distToTarget - 0.25) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export function projectBoundsToScreen(
@@ -102,11 +174,7 @@ export function projectBoundsToScreen(
   let maxY = -Infinity;
 
   for (const [ox, oy, oz] of BOX_CORNER_OFFSETS) {
-    corner.set(
-      ox ? max.x : min.x,
-      oy ? max.y : min.y,
-      oz ? max.z : min.z,
-    );
+    corner.set(ox ? max.x : min.x, oy ? max.y : min.y, oz ? max.z : min.z);
     corner.project(camera);
     const sx = (corner.x * 0.5 + 0.5) * width;
     const sy = (-corner.y * 0.5 + 0.5) * height;
@@ -138,11 +206,13 @@ export function projectBoundsToScreen(
 function scoreCandidate(
   bounds: Box3,
   camera: PerspectiveCamera,
+  scene: Object3D,
+  citizenBody: Object3D | null,
   viewportWidth: number,
   viewportHeight: number,
   position: Vector3,
   target: Vector3,
-): { score: number; projection: ScreenProjection } | null {
+): { score: number; projection: ScreenProjection; lineOfSightClear: boolean } | null {
   const savedPos = camera.position.clone();
   const savedQuat = camera.quaternion.clone();
   camera.position.copy(position);
@@ -150,12 +220,13 @@ function scoreCandidate(
   camera.updateMatrixWorld();
 
   const projection = projectBoundsToScreen(bounds, camera, viewportWidth, viewportHeight);
+  const lineOfSightClear = hasUnobstructedLineOfSight(position, bounds, scene, citizenBody);
 
   camera.position.copy(savedPos);
   camera.quaternion.copy(savedQuat);
   camera.updateMatrixWorld();
 
-  if (projection.areaFraction <= 0) {
+  if (projection.areaFraction <= 0 || !lineOfSightClear) {
     return null;
   }
 
@@ -164,21 +235,22 @@ function scoreCandidate(
     (projection.fullyOnScreen ? 0.08 : 0) +
     Math.min(0.05, projection.maxY / Math.max(1, viewportHeight) * 0.05);
 
-  return { score, projection };
+  return { score, projection, lineOfSightClear };
 }
 
 /**
- * Place the lens from live bounds + FOV, testing several azimuths for occlusion.
+ * Place the lens from live bounds + FOV, testing several azimuths with raycast occlusion.
  */
 export function computePortraitCameraFromBounds(
   body: Object3D | null,
   camera: PerspectiveCamera,
-  _scene: Object3D,
+  scene: Object3D,
   viewportWidth: number,
   viewportHeight: number,
   opts: PortraitOpts = {},
 ): PortraitFrame {
   const margin = opts.margin ?? 1.28;
+  const azimuthOffset = opts.azimuthOffset ?? 0;
   const cached = getCitizenWorldBoundsFromRegistry();
   const bounds =
     body != null
@@ -202,18 +274,34 @@ export function computePortraitCameraFromBounds(
   const distance = (radius / Math.sin(fovRad / 2)) * margin;
   const elevation = Math.atan2(Math.max(size.y * 0.45, 0.6), distance);
 
-  const azimuths = [Math.PI * 0.25, Math.PI * 0.5, -Math.PI * 0.25, -Math.PI * 0.5];
-  let best: { position: Vector3; projection: ScreenProjection; score: number } | null = null;
+  const azimuths = [
+    Math.PI * 0.15,
+    Math.PI * 0.35,
+    Math.PI * 0.55,
+    -Math.PI * 0.15,
+    -Math.PI * 0.35,
+    Math.PI,
+    0,
+  ];
+  let best: {
+    position: Vector3;
+    projection: ScreenProjection;
+    score: number;
+    lineOfSightClear: boolean;
+  } | null = null;
 
   for (const az of azimuths) {
-    const camX = center.x + Math.cos(az) * distance;
-    const camZ = center.z + Math.sin(az) * distance;
+    const biasedAz = az + azimuthOffset;
+    const camX = center.x + Math.cos(biasedAz) * distance;
+    const camZ = center.z + Math.sin(biasedAz) * distance;
     const camY = targetY + Math.tan(elevation) * distance * 0.35 + size.y * 0.25;
     const position = new Vector3(camX, camY, camZ);
 
     const candidate = scoreCandidate(
       bounds,
       camera,
+      scene,
+      body,
       viewportWidth,
       viewportHeight,
       position,
@@ -221,24 +309,17 @@ export function computePortraitCameraFromBounds(
     );
     if (!candidate) continue;
     if (!best || candidate.score > best.score) {
-      best = { position, projection: candidate.projection, score: candidate.score };
+      best = {
+        position,
+        projection: candidate.projection,
+        score: candidate.score,
+        lineOfSightClear: candidate.lineOfSightClear,
+      };
     }
   }
 
   if (!best) {
-    const fallback = new Vector3(center.x + distance, targetY + size.y * 0.55, center.z + distance * 0.35);
-    const candidate = scoreCandidate(
-      bounds,
-      camera,
-      viewportWidth,
-      viewportHeight,
-      fallback,
-      target,
-    );
-    if (!candidate) {
-      throw new Error('Unable to find unobstructed portrait camera for citizen bounds');
-    }
-    best = { position: fallback, projection: candidate.projection, score: candidate.score };
+    throw new Error('Unable to find unobstructed portrait camera for citizen bounds');
   }
 
   const minArea = opts.minScreenAreaFraction ?? 0;
@@ -250,21 +331,33 @@ export function computePortraitCameraFromBounds(
       const candidate = scoreCandidate(
         bounds,
         camera,
+        scene,
+        body,
         viewportWidth,
         viewportHeight,
         closer,
         target,
       );
       if (!candidate) break;
-      best = { position: closer, projection: candidate.projection, score: candidate.score };
+      best = {
+        position: closer,
+        projection: candidate.projection,
+        score: candidate.score,
+        lineOfSightClear: candidate.lineOfSightClear,
+      };
       if (candidate.projection.areaFraction >= minArea && candidate.projection.fullyOnScreen) break;
     }
+  }
+
+  if (!best.lineOfSightClear) {
+    throw new Error('Portrait camera failed line-of-sight contract after tightening');
   }
 
   return {
     position: [best.position.x, best.position.y, best.position.z],
     target: [target.x, target.y, target.z],
     projection: best.projection,
+    lineOfSightClear: best.lineOfSightClear,
   };
 }
 

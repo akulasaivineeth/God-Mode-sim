@@ -83,15 +83,15 @@ export function computeFacilityStreetPreset(view: FacilityStreetView): CameraPre
   const targetZ = simPoint?.z ?? point.presentationSpot.z;
   const targetY = terrainHeightAt(targetX, targetZ) + 0.95;
 
-  // West-side facades face the main road — place camera southeast (public side), pulled back
-  // so the full ~1.8 m citizen at the simulation doorstep stays inside the viewport.
-  let camX = targetX + 7.5;
-  let camZ = targetZ - 4.5;
-  let camY = targetY + 3.8;
+  // South-facing facade: lens south-east of the simulation doorstep, looking north-west
+  // at Noah + entrance apron with the sign/awning silhouette behind (M02-020).
+  let camX = targetX + 6.5;
+  let camZ = targetZ - 6.5;
+  let camY = targetY + 4.2;
   if (view === 'workshop-street') {
-    camX = targetX + 8.5;
-    camZ = targetZ - 5.5;
-    camY = targetY + 4.2;
+    camX = targetX + 7;
+    camZ = targetZ - 7;
+    camY = targetY + 4.6;
   }
 
   let guard = 0;

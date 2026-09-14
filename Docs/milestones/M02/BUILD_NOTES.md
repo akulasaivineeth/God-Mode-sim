@@ -271,14 +271,16 @@ In-place history convergence on `milestone/m02-one-citizen` — **no simulation 
 
 Presentation/evidence only — simulation coordinates and worker authority unchanged:
 
-- **Facility street cameras** (`facilityStreetCamera.ts`): STORE/WORKSHOP presets derived from
-  authored entrance + presentation spot with camera outside building volumes; HOME reference
-  preserved.
-- **Fail-closed subject checks:** gameplay street shots reject camera-inside-geometry and require
-  citizen fully on-screen with ≥~80px projected height; animation A/B frames require visible
-  humanoid ROI (not hash-only passes).
-- **IDLE truthfulness:** minute-0 idle capture seeks/converges idle clip before portrait framing.
-- **WORK framing:** acquire on `workshop-street` preset, then bounds-portrait on live Working citizen.
-- **Headless-safe activity seek:** evidence API `stepToSimMinute` + canonical schedule minutes
-  (`canonicalEvidenceSchedule.test.ts`) replace rAF polling for store eat / workshop work.
-- Release: `review-evidence-m02-020-builder-r14` with BEFORE/AFTER compare panels vs M02-020 Grok blockers.
+- **South-facing facades** (`StoreVisual` / `WorkshopVisual`): removed erroneous π rotation so
+  awning/sign/apron face the existing simulation doorsteps at `z = center - 6`.
+- **Facility street cameras** (`facilityStreetCamera.ts`): lens south-east of doorstep,
+  outside building bounds; targets simulation `LOCATIONS` points.
+- **Occlusion-aware portraits** (`evidencePortrait.ts`): raycast line-of-sight to head/chest/pelvis
+  sample points; reject candidates blocked by world geometry.
+- **SIT clip semantics** (`CitizenVisual.tsx`): `eat`/`sit` pose uses embedded `sit` clip, not
+  standing `interact-right`.
+- **Static sit A/B proof** (`evidencePortrait.ts` + harness): Kenney `sit` clip is a zero-duration
+  pose hold; dual-frame proof uses alternate portrait azimuths (parallax ROI delta) while metadata
+  asserts `sit` clip + seated activity at speed 0.
+- **Headless-safe activity seek:** evidence API `stepToSimMinute` + canonical schedule minutes.
+- Release: `review-evidence-m02-020-builder-r15` with BEFORE/AFTER compare panels vs M02-020 Grok blockers.

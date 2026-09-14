@@ -25,7 +25,6 @@ import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.j
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 import { terrainHeightAt } from '@/world/townLayout';
 import { MAT } from '../sharedMaterials';
-import type { ActionType } from '@/simulation/model/types';
 import type { CitizenPose } from '../citizenPresentation';
 import { layoutCitizenModelFromObject } from '../citizenModelScale';
 import { registerPresentationControls } from '../citizenPresentationControl';
@@ -43,7 +42,7 @@ interface CitizenVisualProps {
   onSelect: (citizenId: string) => void;
 }
 
-function pickClip(names: string[], pose: CitizenPose, action: ActionType = 'idle'): string | null {
+function pickClip(names: string[], pose: CitizenPose): string | null {
   const has = (name: string) => (names.includes(name) ? name : null);
   const find = (re: RegExp) => names.find((n) => re.test(n)) ?? null;
 
@@ -51,16 +50,7 @@ function pickClip(names: string[], pose: CitizenPose, action: ActionType = 'idle
     return has('walk') ?? find(/^walk$/i) ?? has('idle') ?? has('static');
   }
   if (pose === 'sit') {
-    // Eating at the store reads clearer as a counter interact than a static sit hold.
-    if (action === 'eat') {
-      return (
-        has('interact-right') ??
-        has('pick-up') ??
-        has('sit') ??
-        find(/^sit$/i) ??
-        has('idle')
-      );
-    }
+    // M02 vertical slice: seated/eating must read as sit, distinct from standing interact/work.
     return has('sit') ?? find(/^sit$/i) ?? has('idle');
   }
   if (pose === 'work') {
@@ -154,8 +144,7 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
     const liveCitizen =
       useDiagnosticsStore.getState().renderSnapshot?.citizens?.[0] ?? citizen;
     const livePose = liveCitizen.pose ?? citizen.pose;
-    const liveAction = liveCitizen.action ?? citizen.action;
-    const clipName = pickClip(clipNames, livePose, liveAction);
+    const clipName = pickClip(clipNames, livePose);
     if (clipName && clipName !== activeClipName.current) {
       activeClipName.current = clipName;
       setCitizenPresentationClip(clipName);

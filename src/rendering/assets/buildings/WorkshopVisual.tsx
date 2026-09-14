@@ -12,8 +12,9 @@ export function WorkshopVisual() {
   const z = 23;
   const y = terrainHeightAt(x, z);
 
+  // Match store: south-facing facade toward simulation work doorstep (z = center - 6).
   return (
-    <group position={[x, y, z]} rotation={[0, Math.PI, 0]}>
+    <group position={[x, y, z]}>
       <ModelAsset url={KENNEY_ASSETS.workshopIndustrial} targetWidth={11.5} />
       <WorldSign
         text="RIVERSIDE WORKSHOP"

@@ -20,6 +20,7 @@ import {
   assertCitizenVisibilityContract,
   computePortraitCameraFromBounds,
   getCitizenWorldBounds,
+  hasUnobstructedLineOfSight,
   projectBoundsToScreen,
   type PortraitOpts,
   type ScreenProjection,
@@ -60,7 +61,8 @@ export interface GodModeEvidenceApi {
   frameCitizenPortrait: (opts?: EvidencePortraitOptions) => CitizenBoundsSnapshot;
   getCitizenWorldBounds: () => CitizenBoundsSnapshot | null;
   getCitizenScreenProjection: () => ScreenProjection | null;
-  assertCitizenVisibility: (minAreaFraction?: number) => ScreenProjection;
+  assertCitizenVisibility: (minAreaFraction?: number, minPixelHeight?: number) => ScreenProjection;
+  assertPortraitLineOfSight: () => { ok: true };
   assertRiverEvidenceSemantics: () => { ok: boolean; reason?: string };
   getRiverBridgeTarget: () => { x: number; z: number };
   getCameraState: () => {
@@ -279,6 +281,19 @@ export function App() {
           throw new Error(result.reason);
         }
         return projection;
+      },
+      assertPortraitLineOfSight: () => {
+        const ctx = getEvidenceCamera();
+        const body = getCitizenBody();
+        if (!ctx || !body) {
+          throw new Error('Portrait line-of-sight check requires live renderer context and citizen body');
+        }
+        const bounds = getCitizenWorldBounds(body);
+        const clear = hasUnobstructedLineOfSight(ctx.camera.position, bounds, ctx.scene, body);
+        if (!clear) {
+          throw new Error('Portrait camera line-of-sight blocked by scene geometry');
+        }
+        return { ok: true as const };
       },
       assertRiverEvidenceSemantics: () => {
         const river = computeRiverBridgePreset();

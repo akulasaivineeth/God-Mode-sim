@@ -11,8 +11,11 @@ export function StoreVisual() {
   const z = 11;
   const y = terrainHeightAt(x, z);
 
+  // Facade/awning/path authored on local -Z so the visible front faces the simulation
+  // doorstep at z = center - 6 (south public side). Do not rotate π — that mirrored
+  // the entrance onto the north/rear edge (M02-020).
   return (
-    <group position={[x, y, z]} rotation={[0, Math.PI, 0]}>
+    <group position={[x, y, z]}>
       <ModelAsset url={KENNEY_ASSETS.storeGeneral} targetWidth={9.5} />
       <ModelAsset url={KENNEY_ASSETS.storeAwning} position={[0, 3.1, -4.2]} scale={2.45} castShadow={false} />
       <WorldSign

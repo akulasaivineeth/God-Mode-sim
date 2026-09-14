@@ -18,7 +18,7 @@ describe('M02-020 facility street cameras', () => {
     expect(store.target[0]).toBeCloseTo(-11, 0);
     expect(store.target[2]).toBeCloseTo(5, 0);
     expect(store.position[2]).toBeLessThan(5);
-    expect(store.position[0]).toBeGreaterThan(-6.5);
+    expect(store.position[0]).toBeGreaterThan(-6);
     const check = assertCameraOutsideFacilityBuilding(store.position, 'store-street');
     expect(check.ok).toBe(true);
     expect(isPointInsideBuildingVolume(store.position[0], store.position[1], store.position[2], 'store')).toBe(
@@ -31,6 +31,7 @@ describe('M02-020 facility street cameras', () => {
     expect(workshop.target[0]).toBeCloseTo(-11, 0);
     expect(workshop.target[2]).toBeCloseTo(17, 0);
     expect(workshop.position[2]).toBeLessThan(17);
+    expect(workshop.position[0]).toBeGreaterThan(-6);
     const check = assertCameraOutsideFacilityBuilding(workshop.position, 'workshop-street');
     expect(check.ok).toBe(true);
   });
