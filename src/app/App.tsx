@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Scene } from '@/rendering/Scene';
 import { CAMERA_PRESETS, cameraViewFromQuery, type CameraView } from '@/rendering/cameraPresets';
+import {
+  assertCameraOutsideFacilityBuilding,
+  computeFacilityStreetPreset,
+  type FacilityStreetView,
+} from '@/rendering/facilityStreetCamera';
 import { getCitizenBody, getCitizenWorldBoundsFromRegistry } from '@/rendering/citizenBoundsRegistry';
 import {
   advanceCitizenMixer,
@@ -48,6 +53,9 @@ export interface GodModeEvidenceApi {
   applyPreset: (view: CameraView) => void;
   clearCameraOverride: () => void;
   setSpeed: (speed: SimSpeed) => void;
+  /** Headless-safe authoritative clock seek (same worker STEP path as gameplay). */
+  stepSimulationMinutes: (count: number) => Promise<void>;
+  stepToSimMinute: (targetMinute: number) => Promise<void>;
   setEvidencePortraitMode: (enabled: boolean) => void;
   frameCitizenPortrait: (opts?: EvidencePortraitOptions) => CitizenBoundsSnapshot;
   getCitizenWorldBounds: () => CitizenBoundsSnapshot | null;
@@ -87,6 +95,11 @@ export interface GodModeEvidenceApi {
     registryHeight: number;
     computedScale: number;
     formula: string;
+  };
+  assertStreetCameraGeometry: (view: FacilityStreetView) => { ok: boolean; reason?: string };
+  getFacilityStreetPreset: (view: FacilityStreetView) => {
+    position: [number, number, number];
+    target: [number, number, number];
   };
 }
 
@@ -168,6 +181,24 @@ export function App() {
       setSpeed: (speed) => {
         driverRef.current?.setSpeed(speed);
       },
+      stepSimulationMinutes: async (count) => {
+        const driver = driverRef.current;
+        if (!driver) {
+          throw new Error('Simulation driver unavailable');
+        }
+        await driver.stepMinutes(count);
+      },
+      stepToSimMinute: async (targetMinute) => {
+        const driver = driverRef.current;
+        if (!driver) {
+          throw new Error('Simulation driver unavailable');
+        }
+        const current = useDiagnosticsStore.getState().renderSnapshot?.simMinute ?? 0;
+        const delta = targetMinute - current;
+        if (delta > 0) {
+          await driver.stepMinutes(delta);
+        }
+      },
       setEvidencePortraitMode: (enabled) => {
         useDiagnosticsStore.getState().setEvidencePortraitMode(enabled);
       },
@@ -238,12 +269,12 @@ export function App() {
         ctx.camera.updateMatrixWorld();
         return projectBoundsToScreen(box, ctx.camera, ctx.width, ctx.height);
       },
-      assertCitizenVisibility: (minAreaFraction = 0.045) => {
+      assertCitizenVisibility: (minAreaFraction = 0.045, minPixelHeight = 72) => {
         const projection = window.__GODMODE_EVIDENCE__?.getCitizenScreenProjection();
         if (!projection) {
           throw new Error('Citizen screen projection unavailable');
         }
-        const result = assertCitizenVisibilityContract(projection, minAreaFraction);
+        const result = assertCitizenVisibilityContract(projection, minAreaFraction, minPixelHeight);
         if (!result.ok) {
           throw new Error(result.reason);
         }
@@ -311,6 +342,16 @@ export function App() {
         computedScale: TARGET_CITIZEN_HEIGHT / KENNEY_ALEX_MODEL_HEIGHT,
         formula: 'TARGET_CITIZEN_HEIGHT / measuredAlexLocalHeight',
       }),
+      assertStreetCameraGeometry: (view: FacilityStreetView) => {
+        const state = useDiagnosticsStore.getState();
+        const preset = state.cameraOverride ?? computeFacilityStreetPreset(view);
+        const check = assertCameraOutsideFacilityBuilding(preset.position, view);
+        return check.ok ? { ok: true } : { ok: false, reason: check.reason };
+      },
+      getFacilityStreetPreset: (view: FacilityStreetView) => {
+        const preset = computeFacilityStreetPreset(view);
+        return { position: [...preset.position], target: [...preset.target] };
+      },
     };
     return () => {
       delete window.__GODMODE_EVIDENCE__;

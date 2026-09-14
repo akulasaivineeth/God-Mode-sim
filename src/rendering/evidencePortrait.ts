@@ -271,6 +271,7 @@ export function computePortraitCameraFromBounds(
 export function assertCitizenVisibilityContract(
   projection: ScreenProjection,
   minAreaFraction = 0.045,
+  minPixelHeight = 72,
 ): { ok: true } | { ok: false; reason: string } {
   if (projection.areaFraction < minAreaFraction) {
     return {
@@ -278,8 +279,19 @@ export function assertCitizenVisibilityContract(
       reason: `citizen projected area ${(projection.areaFraction * 100).toFixed(2)}% < ${(minAreaFraction * 100).toFixed(1)}% minimum`,
     };
   }
-  if (projection.maxX - projection.minX < 8 || projection.maxY - projection.minY < 8) {
+  const pixelHeight = projection.maxY - projection.minY;
+  const pixelWidth = projection.maxX - projection.minX;
+  if (pixelHeight < minPixelHeight) {
+    return {
+      ok: false,
+      reason: `citizen projected height ${pixelHeight.toFixed(0)}px < ${minPixelHeight}px minimum`,
+    };
+  }
+  if (pixelWidth < 8 || pixelHeight < 8) {
     return { ok: false, reason: 'citizen projected bounds too small in pixels' };
+  }
+  if (!projection.fullyOnScreen) {
+    return { ok: false, reason: 'citizen projection clipped by viewport edges' };
   }
   return { ok: true };
 }

@@ -1,5 +1,5 @@
 /**
- * M02 closure evidence (R13 / M02-015) — unified gameplay scale + fail-closed 1× proof.
+ * M02 closure evidence (M02-020) — unified gameplay scale + fail-closed street/anim proof.
  *
  * Single authoritative M02 capture harness. Legacy scripts (capture-r8..r12) are archival only.
  *
@@ -9,13 +9,17 @@
 import { chromium } from '@playwright/test';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 
 const OUT = '/opt/cursor/artifacts/m02_closure_evidence';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
-const RELEASE_TAG = 'review-evidence-m02-015-builder-r13';
+const RELEASE_TAG = 'review-evidence-m02-020-builder-r14';
+const MIN_GAMEPLAY_PIXEL_HEIGHT = 80;
+const MIN_PORTRAIT_PIXEL_HEIGHT = 100;
+const BEFORE_BASE =
+  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-m02-020-grok';
 
 const CROSSFADE_SETTLE_MS = 450;
 const DUAL_FRAME_GAP_MS = 520;
@@ -23,7 +27,14 @@ const MIN_ROI_MOTION = 0.012;
 const MIN_WATER_STRICT_PCT = 0.1;
 const MIN_WATER_LOOSE_PCT = 5.0;
 /** Minimum projected citizen area for non-portrait gameplay street shots (~80px tall). */
-const MIN_STREET_CITIZEN_AREA = 0.0045;
+const MIN_STREET_CITIZEN_AREA = 0.0055;
+
+/** Precomputed from GODMODE_M02_CANONICAL_2026 — see canonicalEvidenceSchedule.test.ts */
+const CANONICAL_EVIDENCE_MINUTES = {
+  firstDaytimeStoreEatPerform: 2048,
+  firstDaytimeWorkPerform: 499,
+  firstDaytimeWalkTravel: 481,
+};
 
 function hashFile(file) {
   return createHash('sha256').update(readFileSync(file)).digest('hex');
@@ -57,7 +68,8 @@ async function waitScene(page) {
       return (
         typeof api?.getCaptureMeta === 'function' &&
         typeof api?.frameCitizenPortrait === 'function' &&
-        typeof api?.seekPresentationClipPhase === 'function'
+        typeof api?.seekPresentationClipPhase === 'function' &&
+        typeof api?.stepToSimMinute === 'function'
       );
     },
     null,
@@ -69,6 +81,68 @@ async function waitScene(page) {
     { timeout: 30_000 },
   );
   await page.waitForTimeout(800);
+}
+
+async function stepToSimMinute(page, targetMinute) {
+  await setSpeed(page, 0);
+  await page.evaluate(async (target) => {
+    await window.__GODMODE_EVIDENCE__.stepToSimMinute(target);
+  }, targetMinute);
+  await waitRenderFrames(page, 14);
+  await page.waitForTimeout(280);
+}
+
+async function reloadEvidenceScene(page) {
+  await page.goto(BASE);
+  await page.getByTestId('r3f-canvas').waitFor({ state: 'visible' });
+  await page.waitForTimeout(1800);
+}
+
+async function seekCanonicalActivity(page, config) {
+  const {
+    targetMinute,
+    scanWindow = 40,
+    activityPattern,
+    expectedPose,
+    expectedClip,
+    requireDaylight = true,
+    label = 'seekCanonicalActivity',
+    afterReload = null,
+  } = config;
+
+  let lastMeta = await getMeta(page);
+  for (let offset = 0; offset < scanWindow; offset += 1) {
+    if (offset > 0) {
+      await reloadEvidenceScene(page);
+      if (afterReload) {
+        await afterReload(page);
+      }
+    }
+    await stepToSimMinute(page, targetMinute + offset);
+    lastMeta = await getMeta(page);
+    const daylightOk = !requireDaylight || lastMeta.isDaylight;
+    if (
+      daylightOk &&
+      activityPattern.test(lastMeta.activity ?? '') &&
+      lastMeta.pose === expectedPose
+    ) {
+      const settled = await waitForClip(page, expectedClip, 1200);
+      assertMeta(settled, label, {
+        citizenId: true,
+        pose: expectedPose,
+        exactActivity: settled.activity,
+        clip: expectedClip,
+        speed: 0,
+        animationsSuppressed: false,
+        daylight: requireDaylight,
+      });
+      return { meta: settled, lockedActivity: settled.activity };
+    }
+  }
+
+  throw new Error(
+    `${label}: no match near minute ${targetMinute} (last activity="${lastMeta.activity}" pose="${lastMeta.pose}" minute=${lastMeta.simMinute})`,
+  );
 }
 
 async function setSpeed(page, speed) {
@@ -209,22 +283,150 @@ async function assertCitizenReadable(page, minArea = 0.05) {
   throw new Error(`Citizen visibility failed after retries (< ${minArea * 100}% area)`);
 }
 
-async function assertGameplayCitizenVisible(page, minArea = MIN_STREET_CITIZEN_AREA) {
-  const projection = await page.evaluate((min) => {
+async function assertStreetCameraGeometry(page, preset) {
+  const check = await page.evaluate((view) => {
+    return window.__GODMODE_EVIDENCE__?.assertStreetCameraGeometry(view);
+  }, preset);
+  if (!check?.ok) {
+    throw new Error(`Street camera geometry failed for ${preset}: ${check?.reason ?? 'unknown'}`);
+  }
+}
+
+async function assertHumanoidSubjectPresent(
+  page,
+  label,
+  { minArea = 0.045, minHeight = MIN_PORTRAIT_PIXEL_HEIGHT } = {},
+) {
+  const result = await page.evaluate(({ minArea, minHeight }) => {
+    try {
+      const vis = window.__GODMODE_EVIDENCE__?.assertCitizenVisibility(minArea, minHeight);
+      const pxH = vis.maxY - vis.minY;
+      const pxW = vis.maxX - vis.minX;
+      if (pxH < minHeight) {
+        return { ok: false, reason: `projected height ${pxH.toFixed(0)}px < ${minHeight}px` };
+      }
+      if (pxW < 18) {
+        return { ok: false, reason: `projected width ${pxW.toFixed(0)}px too narrow — subject likely absent` };
+      }
+      return { ok: true, vis, pxH, pxW };
+    } catch (err) {
+      return { ok: false, reason: err.message ?? String(err) };
+    }
+  }, { minArea, minHeight });
+  if (!result.ok) {
+    throw new Error(`${label}: humanoid subject check failed — ${result.reason}`);
+  }
+  return result;
+}
+
+async function waitForPresentationConvergence(page, config) {
+  const {
+    activityPattern,
+    expectedPose,
+    expectedClip,
+    speed = 1,
+    timeoutMs = 20_000,
+    skipInitialSeek = false,
+  } = config;
+
+  if (!skipInitialSeek) {
+    await seekClipAndSettle(page, 0.08);
+    await advanceMixerSettle(page, 0.55);
+  }
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const meta = await getMeta(page);
+    const activityOk = !activityPattern || activityPattern.test(meta.activity ?? '');
+    const poseOk = meta.pose === expectedPose;
+    const clipOk = expectedClip.test(meta.clip ?? '');
+    const speedOk = meta.speed === speed;
+    if (activityOk && poseOk && clipOk && speedOk && meta.animationsSuppressed === false) {
+      await waitRenderFrames(page, 14);
+      return meta;
+    }
+    await advanceMixerSettle(page, 0.06);
+    await page.waitForTimeout(40);
+  }
+  const last = await getMeta(page);
+  throw new Error(
+    `Presentation convergence timeout: activity="${last.activity}" pose="${last.pose}" clip="${last.clip}" speed=${last.speed}`,
+  );
+}
+
+async function downloadBeforeArtifacts() {
+  const beforeDir = path.join(OUT, 'before_m020');
+  await mkdir(beforeDir, { recursive: true });
+  const files = {
+    store: '04_street_store_gameplay.png',
+    workshop: '05_street_workshop_gameplay.png',
+    idle: '10_idle_1x.png',
+    workA: '13_anim_work_A.png',
+    workB: '13_anim_work_B.png',
+  };
+  for (const [key, name] of Object.entries(files)) {
+    const dest = path.join(beforeDir, name);
+    if (!existsSync(dest)) {
+      execSync(`curl -fsSL "${BEFORE_BASE}/${name}" -o "${dest}"`, { stdio: 'inherit' });
+    }
+  }
+  return beforeDir;
+}
+
+async function stitchBeforeAfter(page, beforePath, afterPath, outName, title) {
+  if (!existsSync(beforePath) || !existsSync(afterPath)) {
+    console.warn('Skipping compare panel — missing', beforePath, afterPath);
+    return null;
+  }
+  const beforeB64 = readFileSync(beforePath).toString('base64');
+  const afterB64 = readFileSync(afterPath).toString('base64');
+  await page.evaluate(
+    async ({ beforeB64, afterB64, title }) => {
+      const load = (b64) =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = `data:image/png;base64,${b64}`;
+        });
+      const before = await load(beforeB64);
+      const after = await load(afterB64);
+      const pad = 16;
+      const labelH = 36;
+      const w = before.width + after.width + pad * 3;
+      const h = Math.max(before.height, after.height) + labelH + pad * 2;
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#0b0d10';
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#d8dee9';
+      ctx.font = '16px ui-monospace, monospace';
+      ctx.fillText(title, pad, 24);
+      ctx.drawImage(before, pad, labelH + pad);
+      ctx.fillText('BEFORE (M02-020)', pad, labelH + pad - 6);
+      ctx.drawImage(after, before.width + pad * 2, labelH + pad);
+      ctx.fillText('AFTER', before.width + pad * 2, labelH + pad - 6);
+      (window.__compareDataUrl = canvas.toDataURL('image/png'));
+    },
+    { beforeB64, afterB64, title },
+  );
+  const dataUrl = await page.evaluate(() => window.__compareDataUrl);
+  const b64 = dataUrl.split(',')[1];
+  const outPath = path.join(OUT, outName);
+  writeFileSync(outPath, Buffer.from(b64, 'base64'));
+  console.log('saved compare', outPath);
+  return outPath;
+}
+
+async function assertGameplayCitizenVisible(page, preset, minArea = MIN_STREET_CITIZEN_AREA) {
+  await assertStreetCameraGeometry(page, preset);
+  const projection = await page.evaluate(({ minArea, minHeight }) => {
     const vis = window.__GODMODE_EVIDENCE__?.getCitizenScreenProjection();
     if (!vis) throw new Error('No citizen screen projection');
-    if (vis.areaFraction < min) {
-      throw new Error(
-        `Gameplay citizen area ${(vis.areaFraction * 100).toFixed(3)}% < ${(min * 100).toFixed(2)}% minimum`,
-      );
-    }
-    const pxH = vis.maxY - vis.minY;
-    const pxW = vis.maxX - vis.minX;
-    if (pxH < 28 || pxW < 12) {
-      throw new Error(`Gameplay citizen ROI too small (${pxW.toFixed(0)}×${pxH.toFixed(0)} px)`);
-    }
+    window.__GODMODE_EVIDENCE__?.assertCitizenVisibility(minArea, minHeight);
     return vis;
-  }, minArea);
+  }, { minArea, minHeight: MIN_GAMEPLAY_PIXEL_HEIGHT });
   return projection;
 }
 
@@ -387,9 +589,29 @@ async function acquireAt1x(page, config) {
     requirePoseBeforeSwitch = true,
     lockImmediately = false,
     timeoutMs = 240_000,
+    targetMinute = null,
+    scanWindow = 40,
   } = config;
 
-  await applyPreset(page, preset, advanceSpeed, { settleMs: 400, skipDeltaCheck: true });
+  await applyPreset(page, preset, 0, { settleMs: 400, skipDeltaCheck: true });
+  await setSpeed(page, 0);
+
+  if (targetMinute != null) {
+    const { meta, lockedActivity } = await seekCanonicalActivity(page, {
+      targetMinute,
+      scanWindow,
+      activityPattern,
+      expectedPose,
+      expectedClip,
+      requireDaylight,
+      label: 'acquireAt1x',
+      afterReload: async (p) => {
+        await applyPreset(p, preset, 0, { settleMs: 400, skipDeltaCheck: true });
+      },
+    });
+    return { meta, lockedActivity, acquiredAtSpeed: 0 };
+  }
+
   await setSpeed(page, advanceSpeed);
 
   const start = Date.now();
@@ -447,6 +669,50 @@ async function acquireAt1x(page, config) {
   throw new Error(
     `Timed out at 1× pose=${expectedPose}: activity="${last.activity}" pose="${last.pose}" clip="${last.clip}"`,
   );
+}
+
+async function acquireActivityWhileDaylightWithRetry(page, config, maxAttempts = 6) {
+  let lastErr;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await acquireActivityWhileDaylight(page, config);
+    } catch (err) {
+      lastErr = err;
+      console.warn(`Activity acquire attempt ${attempt}/${maxAttempts} failed:`, err.message);
+      await page.goto(BASE);
+      await page.getByTestId('r3f-canvas').waitFor({ state: 'visible' });
+      await page.waitForTimeout(2000);
+      await waitForDaylight(page);
+      await setPortraitMode(page, false);
+      await setUiChrome(page, { inspector: false, diagnostics: false });
+    }
+  }
+  throw lastErr;
+}
+
+async function acquireActivityWhileDaylight(page, config) {
+  const {
+    targetMinute,
+    scanWindow = 40,
+    activityPattern,
+    expectedPose,
+    expectedClip,
+    label = 'acquireActivityWhileDaylight',
+  } = config;
+
+  if (targetMinute == null) {
+    throw new Error(`${label}: targetMinute required for headless-safe canonical seek`);
+  }
+
+  return seekCanonicalActivity(page, {
+    targetMinute,
+    scanWindow,
+    activityPattern,
+    expectedPose,
+    expectedClip,
+    requireDaylight: true,
+    label,
+  });
 }
 
 async function acquireAndSettleAt1x(page, config) {
@@ -544,8 +810,12 @@ async function captureDualAt1x(page, saveShot, baseName, config, opts = {}) {
   }
 
   if (useFullBodyPortrait) {
+    await page.evaluate(() => window.__GODMODE_EVIDENCE__?.clearCameraOverride());
     await frameFullBody(page, portraitOpts);
-    await assertCitizenReadable(page, portraitOpts.minScreenAreaFraction ?? 0.05);
+    await assertHumanoidSubjectPresent(page, `${baseName}_framing`, {
+      minArea: portraitOpts.minScreenAreaFraction ?? 0.05,
+      minHeight: MIN_PORTRAIT_PIXEL_HEIGHT,
+    });
   } else {
     await waitRenderFrames(page, 8);
   }
@@ -565,6 +835,10 @@ async function captureDualAt1x(page, saveShot, baseName, config, opts = {}) {
     const camera = await getCamera(page);
     const frameMeta = await getMeta(page);
     assertMeta(frameMeta, shotName, expectations);
+    await assertHumanoidSubjectPresent(page, shotName, {
+      minArea: portraitOpts.minScreenAreaFraction ?? 0.05,
+      minHeight: MIN_PORTRAIT_PIXEL_HEIGHT,
+    });
     const roiSample = await sampleCitizenRoiPixels(page);
     const vis = await page.evaluate(() => window.__GODMODE_EVIDENCE__.getCitizenScreenProjection());
     if (!vis?.fullyOnScreen && useFullBodyPortrait) {
@@ -727,43 +1001,57 @@ async function captureDualAtLive1x(page, saveShot, baseName, config, opts = {}) 
 }
 
 async function captureIdleAt1x(page, saveShot) {
+  await reloadEvidenceScene(page);
+  await setPortraitMode(page, true);
+  await setUiChrome(page, { inspector: false, diagnostics: false });
+
   const minute0 = await getMeta(page);
   if (minute0.simMinute !== 0) {
     throw new Error(`Idle proof requires minute-0 spawn, got minute=${minute0.simMinute}`);
   }
 
-  const { meta, lockedActivity } = await acquireAndSettleAt1x(page, {
-    preset: 'home-street',
-    advanceSpeed: 0,
-    activityPattern: /^(Idle|Relaxing)$/i,
-    expectedPose: 'idle',
-    expectedClip: /^idle$/i,
-    requireDaylight: false,
-    requirePoseBeforeSwitch: false,
-    timeoutMs: 45_000,
-    settleFrames: 1,
+  await setSpeed(page, 0);
+  await seekClipAndSettle(page, 0);
+  await advanceMixerSettle(page, 0.9);
+  await waitRenderFrames(page, 24);
+
+  const meta = await getMeta(page);
+  assertMeta(meta, '10_idle_1x', {
+    citizenId: true,
+    pose: 'idle',
+    activity: /^(Idle|Relaxing)$/i,
+    clip: /^idle$/i,
+    speed: 0,
+    animationsSuppressed: false,
   });
 
-  await frameFullBody(page, { margin: 1.4, minScreenAreaFraction: 0.07 });
-  await assertCitizenReadable(page, 0.06);
+  await page.evaluate(() => window.__GODMODE_EVIDENCE__?.clearCameraOverride());
+  await frameFullBody(page, { margin: 1.45, minScreenAreaFraction: 0.08 });
+  await assertHumanoidSubjectPresent(page, '10_idle_1x', {
+    minArea: 0.06,
+    minHeight: MIN_PORTRAIT_PIXEL_HEIGHT,
+  });
+
   const camera = await getCamera(page);
   const vis = await page.evaluate(() => window.__GODMODE_EVIDENCE__.getCitizenScreenProjection());
   const result = await shot(page, '10_idle_1x');
   await saveShot('10_idle_1x', metaRecord(meta, camera, {
     visibility: vis,
-    acquiredAtSpeed: 1,
-    lockedActivity,
+    acquiredAtSpeed: 0,
+    lockedActivity: meta.activity,
     fileHash: result.fullHash,
     animationsSuppressed: false,
-    liveMixerAt1x: true,
+    liveMixerAt1x: false,
+    presentationConverged: true,
   }));
   await setSpeed(page, 0);
 }
 
 async function captureGameplayStreet(page, saveShot, name, preset, expectations = {}) {
   await setPortraitMode(page, false);
+  await assertStreetCameraGeometry(page, preset);
   const meta = await getMeta(page);
-  const visibility = await assertGameplayCitizenVisible(page);
+  const visibility = await assertGameplayCitizenVisible(page, preset);
   const diag = await page.evaluate(() => window.__GODMODE_EVIDENCE__.getRenderDiagnostics());
   const camera = await getCamera(page);
   const result = await shot(page, name);
@@ -834,6 +1122,10 @@ async function publishRelease(scaleInfo, hashResults) {
     '13_anim_work_B.png',
     '14_inspector.png',
     '15_canonical_north_star.png',
+    'compare_04_store_street.png',
+    'compare_05_workshop_street.png',
+    'compare_10_idle_1x.png',
+    'compare_13_work_A.png',
     'J_review_clip.webm',
     'capture_metadata.json',
     'diagnostics_summary.json',
@@ -868,7 +1160,7 @@ async function publishRelease(scaleInfo, hashResults) {
   }
 
   const notes = [
-    'M02 R13 / M02-015 — unified ~1.8 m gameplay scale + fail-closed 1× closure proof',
+    'M02-020 — facility street cameras + fail-closed humanoid subject proof',
     '',
     `Scale: ${scaleInfo.formula} = ${scaleInfo.targetHeight} / ${scaleInfo.registryHeight} → ${scaleInfo.computedScale.toFixed(6)}`,
     '',
@@ -886,7 +1178,13 @@ async function publishRelease(scaleInfo, hashResults) {
 
 async function main() {
   await mkdir(OUT, { recursive: true });
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({
+    args: [
+      '--disable-background-timer-throttling',
+      '--disable-backgrounding-occluded-windows',
+      '--disable-renderer-backgrounding',
+    ],
+  });
   const context = await browser.newContext({
     viewport: { width: 1440, height: 900 },
     recordVideo: { dir: OUT, size: { width: 1440, height: 900 } },
@@ -953,15 +1251,11 @@ async function main() {
   await waitForDaylight(page);
   await setUiChrome(page, { inspector: false, diagnostics: false });
   await setPortraitMode(page, false);
-  await acquireAt1x(page, {
-    preset: 'store-street',
-    advanceSpeed: 10,
+  await acquireActivityWhileDaylightWithRetry(page, {
+    targetMinute: CANONICAL_EVIDENCE_MINUTES.firstDaytimeStoreEatPerform,
     activityPattern: /Eating at the Store/i,
     expectedPose: 'sit',
     expectedClip: /interact-right|pick-up|^sit$/i,
-    requirePoseBeforeSwitch: false,
-    lockImmediately: true,
-    timeoutMs: 360_000,
   });
   await setSpeed(page, 0);
   await page.evaluate(() => window.__GODMODE_EVIDENCE__?.clearCameraOverride());
@@ -978,14 +1272,11 @@ async function main() {
   await page.waitForTimeout(2500);
   await waitForDaylight(page);
   await setPortraitMode(page, false);
-  await acquireAt1x(page, {
-    preset: 'workshop-street',
-    advanceSpeed: 20,
+  await acquireActivityWhileDaylightWithRetry(page, {
+    targetMinute: CANONICAL_EVIDENCE_MINUTES.firstDaytimeWorkPerform,
     activityPattern: /^Working$/i,
     expectedPose: 'work',
     expectedClip: /interact-right|pick-up/i,
-    lockImmediately: true,
-    timeoutMs: 360_000,
   });
   await setSpeed(page, 0);
   await page.evaluate(() => window.__GODMODE_EVIDENCE__?.clearCameraOverride());
@@ -1019,9 +1310,7 @@ async function main() {
   await copyFile(northStarSrc, path.join(OUT, '15_canonical_north_star.png'));
 
   // Animation proof segment — idle at minute-0, then daylight-gated walk / sit / work
-  await page.goto(BASE);
-  await page.getByTestId('r3f-canvas').waitFor({ state: 'visible' });
-  await page.waitForTimeout(2500);
+  await reloadEvidenceScene(page);
   await setPortraitMode(page, true);
   await setUiChrome(page, { inspector: false, diagnostics: false });
 
@@ -1031,7 +1320,7 @@ async function main() {
 
   hashValidation.walk = await captureWithRetry(page, saveShot, '11_anim_walk', {
     preset: 'street',
-    advanceSpeed: 25,
+    targetMinute: CANONICAL_EVIDENCE_MINUTES.firstDaytimeWalkTravel,
     activityPattern: /Walking/i,
     expectedPose: 'walk',
     expectedClip: /^walk$/i,
@@ -1050,18 +1339,17 @@ async function main() {
     '12_anim_sit_eat',
     {
       preset: 'store-street',
-      advanceSpeed: 10,
+      targetMinute: CANONICAL_EVIDENCE_MINUTES.firstDaytimeStoreEatPerform,
       activityPattern: /Eating at the Store/i,
       expectedPose: 'sit',
       expectedClip: /interact-right|pick-up|^sit$/i,
-      requirePoseBeforeSwitch: false,
       lockImmediately: true,
-      timeoutMs: 360_000,
     },
     {
       seekPhasesForB: [0.12, 0.28, 0.44, 0.62, 0.78],
       minRoiMotion: 0.008,
-      useCenterCropMotion: true,
+      useCenterCropMotion: false,
+      portraitOpts: { margin: 1.4, minScreenAreaFraction: 0.07 },
     },
     6,
   );
@@ -1072,19 +1360,18 @@ async function main() {
     '13_anim_work',
     {
       preset: 'workshop-street',
-      advanceSpeed: 20,
+      targetMinute: CANONICAL_EVIDENCE_MINUTES.firstDaytimeWorkPerform,
       activityPattern: /^Working$/i,
       expectedPose: 'work',
       expectedClip: /interact-right|pick-up/i,
       lockImmediately: true,
-      timeoutMs: 360_000,
     },
     {
       useFullBodyPortrait: true,
-      portraitOpts: { margin: 1.5, minScreenAreaFraction: 0.07 },
-      seekPhasesForB: [0.2, 0.4, 0.6, 0.85],
-      minRoiMotion: 0.006,
-      useCenterCropMotion: true,
+      portraitOpts: { margin: 1.55, minScreenAreaFraction: 0.08 },
+      seekPhasesForB: [0.18, 0.36, 0.54, 0.72, 0.88],
+      minRoiMotion: 0.01,
+      useCenterCropMotion: false,
     },
   );
 
@@ -1117,6 +1404,25 @@ async function main() {
 
   await context.close();
   await browser.close();
+
+  const beforeDir = await downloadBeforeArtifacts();
+  const comparePage = await chromium.launch().then((b) => b.newPage());
+  const compares = [
+    ['04_street_store_gameplay.png', 'compare_04_store_street.png', 'STORE street'],
+    ['05_street_workshop_gameplay.png', 'compare_05_workshop_street.png', 'WORKSHOP street'],
+    ['10_idle_1x.png', 'compare_10_idle_1x.png', 'IDLE 1×'],
+    ['13_anim_work_A.png', 'compare_13_work_A.png', 'WORK A 1×'],
+  ];
+  for (const [name, out, title] of compares) {
+    await stitchBeforeAfter(
+      comparePage,
+      path.join(beforeDir, name),
+      path.join(OUT, name),
+      out,
+      title,
+    );
+  }
+  await comparePage.close();
 
   // Validate animation A/B hashes from files
   for (const pair of ['11_anim_walk', '12_anim_sit_eat', '13_anim_work']) {

@@ -265,4 +265,20 @@ In-place history convergence on `milestone/m02-one-citizen` — **no simulation 
 - **R14 proof closure:** live 1× mixer (`animationsSuppressed: false`); minute-0 IDLE before
   daylight advance; dual-frame WALK/SIT-EAT/WORK with ROI motion + distinct SHA-256 (no
   `allowDuplicateHash`, no idle-contrast sit fallback); gameplay-scale street shots; full
-  regression + river semantics. Release: `review-evidence-m02-014-builder-r14`.
+  regression + river semantics. Release: `review-evidence-m02-015-builder-r13`.
+
+## M02-020 street camera + subject proof (FIX_REQUIRED)
+
+Presentation/evidence only — simulation coordinates and worker authority unchanged:
+
+- **Facility street cameras** (`facilityStreetCamera.ts`): STORE/WORKSHOP presets derived from
+  authored entrance + presentation spot with camera outside building volumes; HOME reference
+  preserved.
+- **Fail-closed subject checks:** gameplay street shots reject camera-inside-geometry and require
+  citizen fully on-screen with ≥~80px projected height; animation A/B frames require visible
+  humanoid ROI (not hash-only passes).
+- **IDLE truthfulness:** minute-0 idle capture seeks/converges idle clip before portrait framing.
+- **WORK framing:** acquire on `workshop-street` preset, then bounds-portrait on live Working citizen.
+- **Headless-safe activity seek:** evidence API `stepToSimMinute` + canonical schedule minutes
+  (`canonicalEvidenceSchedule.test.ts`) replace rAF polling for store eat / workshop work.
+- Release: `review-evidence-m02-020-builder-r14` with BEFORE/AFTER compare panels vs M02-020 Grok blockers.
