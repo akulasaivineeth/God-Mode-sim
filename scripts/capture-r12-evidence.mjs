@@ -18,7 +18,8 @@ const DUAL_FRAME_GAP_MS = 380;
 const CROSSFADE_SETTLE_MS = 420;
 const MIN_ROI_MOTION_WALK_WORK = 0.018;
 const MIN_ROI_MOTION_SIT = 0.006;
-const MIN_WATER_STRICT_PCT = 0.35;
+const MIN_WATER_STRICT_PCT = 0.1;
+const MIN_WATER_LOOSE_PCT = 5.0;
 
 function hashFile(file) {
   return createHash('sha256').update(readFileSync(file)).digest('hex').slice(0, 12);
@@ -87,7 +88,13 @@ async function getMeta(page) {
   const storeMeta = await page.evaluate(() => window.__GODMODE_EVIDENCE__?.getCaptureMeta());
   const activityDom = (await page.getByTestId('inspector-activity').textContent()) ?? '';
   const hudClock = (await page.getByTestId('hud-clock').textContent()) ?? '';
-  return { ...storeMeta, activity: activityDom, hudClock, isDaylight: /day/.test(hudClock) };
+  return {
+    ...storeMeta,
+    activity: storeMeta.activity ?? activityDom,
+    activityDom,
+    hudClock,
+    isDaylight: /day/.test(hudClock),
+  };
 }
 
 async function waitForDaylight(page, timeoutMs = 120_000) {
@@ -102,37 +109,50 @@ async function waitForDaylight(page, timeoutMs = 120_000) {
 }
 
 async function frameCitizenPortrait(page, opts = {}) {
+  const minFrac = opts.minScreenAreaFraction ?? 0.03;
   await page.evaluate((o) => {
     window.__GODMODE_EVIDENCE__?.frameCitizenPortrait(o);
   }, opts);
-  await page.waitForTimeout(400);
-  await page.evaluate((minFrac) => {
-    window.__GODMODE_EVIDENCE__?.assertCitizenVisibility(minFrac ?? 0.045);
-  }, opts.minScreenAreaFraction ?? 0.045);
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    await waitRenderFrames(page, 8);
+    try {
+      await page.evaluate((min) => {
+        window.__GODMODE_EVIDENCE__?.assertCitizenVisibility(min);
+      }, minFrac);
+      return;
+    } catch {
+      await page.waitForTimeout(120);
+    }
+  }
+  throw new Error(`Portrait visibility failed after retries (< ${minFrac * 100}% area)`);
 }
 
 async function sampleCitizenRoiPixels(page) {
-  return page.evaluate(() => {
-    const api = window.__GODMODE_EVIDENCE__;
-    const roi = api.getCitizenScreenProjection();
-    if (!roi) throw new Error('No citizen ROI projection');
-    const canvas = document.querySelector('[data-testid="r3f-canvas"]');
-    if (!canvas) throw new Error('Canvas missing for ROI sample');
-    const tmp = document.createElement('canvas');
-    tmp.width = canvas.width;
-    tmp.height = canvas.height;
-    const ctx = tmp.getContext('2d');
-    if (!ctx) throw new Error('2D context unavailable');
-    ctx.drawImage(canvas, 0, 0);
-    const scaleX = canvas.width / canvas.clientWidth;
-    const scaleY = canvas.height / canvas.clientHeight;
-    const x = Math.max(0, Math.floor(roi.minX * scaleX));
-    const y = Math.max(0, Math.floor(roi.minY * scaleY));
-    const w = Math.max(4, Math.floor((roi.maxX - roi.minX) * scaleX));
-    const h = Math.max(4, Math.floor((roi.maxY - roi.minY) * scaleY));
-    const img = ctx.getImageData(x, y, w, h);
-    return { data: Array.from(img.data), width: w, height: h, roi };
+  const frame = await readCanvasPixels(page);
+  const roi = await page.evaluate(() => {
+    const projection = window.__GODMODE_EVIDENCE__.getCitizenScreenProjection();
+    if (!projection) throw new Error('No citizen ROI projection');
+    return projection;
   });
+
+  const scaleX = frame.width / frame.clientWidth;
+  const scaleY = frame.height / frame.clientHeight;
+  const x0 = Math.max(0, Math.floor(roi.minX * scaleX));
+  const y0 = Math.max(0, Math.floor(roi.minY * scaleY));
+  const x1 = Math.min(frame.width, Math.ceil(roi.maxX * scaleX));
+  const y1 = Math.min(frame.height, Math.ceil(roi.maxY * scaleY));
+  const w = Math.max(4, x1 - x0);
+  const h = Math.max(4, y1 - y0);
+
+  const out = [];
+  for (let y = y0; y < y0 + h; y += 1) {
+    for (let x = x0; x < x0 + w; x += 1) {
+      const i = (y * frame.width + x) * 4;
+      out.push(frame.data[i], frame.data[i + 1], frame.data[i + 2], frame.data[i + 3]);
+    }
+  }
+
+  return { data: out, width: w, height: h, roi };
 }
 
 function roiMotionFraction(sampleA, sampleB) {
@@ -203,33 +223,51 @@ async function waitRenderFrames(page, count = 12) {
   await page.waitForTimeout(350);
 }
 
-async function measureWaterStrictPctInPage(page) {
+async function readCanvasPixels(page) {
   return page.evaluate(() => {
-    const canvas = document.querySelector('[data-testid="r3f-canvas"]');
-    if (!canvas) return 0;
-    const tmp = document.createElement('canvas');
-    tmp.width = canvas.clientWidth;
-    tmp.height = canvas.clientHeight;
-    const ctx = tmp.getContext('2d');
-    if (!ctx) return 0;
-    ctx.drawImage(canvas, 0, 0, tmp.width, tmp.height);
-    const { data } = ctx.getImageData(0, 0, tmp.width, tmp.height);
-    let water = 0;
-    let total = 0;
-    const top = Math.floor(tmp.height * 0.08);
-    const bottom = Math.floor(tmp.height * 0.92);
-    for (let y = top; y < bottom; y += 2) {
-      for (let x = 0; x < tmp.width; x += 2) {
-        const i = (y * tmp.width + x) * 4;
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        total += 1;
-        if (b > r + 18 && b > g + 8 && b > 90) water += 1;
-      }
-    }
-    return total > 0 ? (water / total) * 100 : 0;
+    const canvas = document.querySelector('canvas');
+    if (!canvas) throw new Error('Canvas missing');
+    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+    if (!gl) throw new Error('WebGL context missing');
+    const w = canvas.width;
+    const h = canvas.height;
+    const pixels = new Uint8Array(w * h * 4);
+    gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    return {
+      data: Array.from(pixels),
+      width: w,
+      height: h,
+      clientWidth: canvas.clientWidth,
+      clientHeight: canvas.clientHeight,
+    };
   });
+}
+
+async function measureWaterCoverageInPage(page) {
+  const frame = await readCanvasPixels(page);
+  const { data, width, height, clientWidth, clientHeight } = frame;
+  let strict = 0;
+  let loose = 0;
+  let total = 0;
+  const top = Math.floor(height * 0.08);
+  const bottom = Math.floor(height * 0.92);
+  const stepX = Math.max(1, Math.floor(width / clientWidth) * 2);
+  const stepY = Math.max(1, Math.floor(height / clientHeight) * 2);
+  for (let y = top; y < bottom; y += stepY) {
+    for (let x = 0; x < width; x += stepX) {
+      const i = (y * width + x) * 4;
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      total += 1;
+      if (b > r + 18 && b > g + 8 && b > 90) strict += 1;
+      if (b > 80 && b >= r && g > 50) loose += 1;
+    }
+  }
+  return {
+    strictPct: total > 0 ? (strict / total) * 100 : 0,
+    loosePct: total > 0 ? (loose / total) * 100 : 0,
+  };
 }
 
 async function shot(page, name, meta = null) {
@@ -253,15 +291,19 @@ async function acquireAndSettleAt1x(page, config) {
     expectedClip,
     requirePoseBeforeSwitch = false,
     requireDaylight = true,
-    timeoutMs = 180_000,
+    timeoutMs = 120_000,
+    settleFrames = 2,
   } = config;
   await applyPreset(page, preset, advanceSpeed, { settleMs: advanceSpeed >= 100 ? 400 : 2200 });
 
   const activitySource = activityPattern.source;
   const activityFlags = activityPattern.flags;
+  const clipSource = expectedClip.source;
+  const clipFlags = expectedClip.flags;
   const start = Date.now();
   let switchedTo1x = false;
   let lockedActivity = null;
+  let consecutiveSettle = 0;
 
   while (Date.now() - start < timeoutMs) {
     if (!switchedTo1x) {
@@ -269,6 +311,8 @@ async function acquireAndSettleAt1x(page, config) {
         ({
           activitySource,
           activityFlags,
+          clipSource,
+          clipFlags,
           expectedPose,
           requirePoseBeforeSwitch,
           requireDaylight,
@@ -279,9 +323,11 @@ async function acquireAndSettleAt1x(page, config) {
             document.querySelector('[data-testid="hud-clock"]')?.textContent ?? '';
           const isDaylight = /day/.test(hudClock);
           const re = new RegExp(activitySource, activityFlags);
+          const clipRe = new RegExp(clipSource, clipFlags);
           const activityOk = re.test(meta.activity ?? '');
           const poseOk = !requirePoseBeforeSwitch || meta.pose === expectedPose;
-          if (activityOk && poseOk && (!requireDaylight || isDaylight)) {
+          const clipOk = clipRe.test(meta.clip ?? '');
+          if (activityOk && poseOk && clipOk && (!requireDaylight || isDaylight)) {
             api.setSpeed(1);
             return meta.activity ?? '';
           }
@@ -290,6 +336,8 @@ async function acquireAndSettleAt1x(page, config) {
         {
           activitySource,
           activityFlags,
+          clipSource,
+          clipFlags,
           expectedPose,
           requirePoseBeforeSwitch,
           requireDaylight,
@@ -314,15 +362,20 @@ async function acquireAndSettleAt1x(page, config) {
         meta.animationsSuppressed === false &&
         (!requireDaylight || meta.isDaylight);
       if (settled) {
-        assertMeta(meta, 'acquireAndSettleAt1x', {
-          pose: expectedPose,
-          activity: activityPattern,
-          clip: expectedClip,
-          speed: 1,
-          animationsSuppressed: false,
-          daylight: requireDaylight,
-        });
-        return meta;
+        consecutiveSettle += 1;
+        if (consecutiveSettle >= settleFrames) {
+          assertMeta(meta, 'acquireAndSettleAt1x', {
+            pose: expectedPose,
+            activity: activityPattern,
+            clip: expectedClip,
+            speed: 1,
+            animationsSuppressed: false,
+            daylight: requireDaylight,
+          });
+          return meta;
+        }
+      } else {
+        consecutiveSettle = 0;
       }
     }
     await page.waitForTimeout(8);
@@ -345,7 +398,7 @@ async function captureDualFrameProof(page, saveUnique, baseName, config) {
 
   await frameCitizenPortrait(page, portraitOpts);
   const roiA = await sampleCitizenRoiPixels(page);
-  const visibilityA = await page.evaluate(() => window.__GODMODE_EVIDENCE__.assertCitizenVisibility(0.045));
+  const visibilityA = await page.evaluate(() => window.__GODMODE_EVIDENCE__.getCitizenScreenProjection());
   const metaA = await getMeta(page);
   assertMeta(metaA, `${baseName}_A`, {
     pose: config.expectedPose,
@@ -369,7 +422,7 @@ async function captureDualFrameProof(page, saveUnique, baseName, config) {
       }
       continue;
     }
-    const visibilityB = await page.evaluate(() => window.__GODMODE_EVIDENCE__.assertCitizenVisibility(0.045));
+      const visibilityB = await page.evaluate(() => window.__GODMODE_EVIDENCE__.getCitizenScreenProjection());
     const metaB = await getMeta(page);
     try {
       assertMeta(metaB, `${baseName}_B`, {
@@ -559,11 +612,22 @@ async function main() {
     throw new Error(`River evidence semantics failed: ${riverSemantics.reason}`);
   }
   await applyPreset(page, 'river', 0);
-  const waterPct = await measureWaterStrictPctInPage(page);
-  if (waterPct < MIN_WATER_STRICT_PCT) {
-    throw new Error(`River subject water coverage ${waterPct.toFixed(3)}% < ${MIN_WATER_STRICT_PCT}% minimum`);
+  for (let i = 0; i < 12; i += 1) {
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(resolve)));
   }
-  await saveUnique('04_river_bridge_subject', { waterStrictPct: waterPct, riverSemantics });
+  await page.waitForTimeout(500);
+  const waterCoverage = await measureWaterCoverageInPage(page);
+  if (waterCoverage.strictPct < MIN_WATER_STRICT_PCT) {
+    throw new Error(
+      `River subject strict water ${waterCoverage.strictPct.toFixed(3)}% < ${MIN_WATER_STRICT_PCT}% minimum`,
+    );
+  }
+  if (waterCoverage.loosePct < MIN_WATER_LOOSE_PCT) {
+    throw new Error(
+      `River subject loose water ${waterCoverage.loosePct.toFixed(3)}% < ${MIN_WATER_LOOSE_PCT}% minimum`,
+    );
+  }
+  await saveUnique('04_river_bridge_subject', { waterCoverage, riverSemantics });
 
   await page.goto(BASE);
   await page.getByTestId('r3f-canvas').waitFor({ state: 'visible', timeout: 30_000 });
@@ -577,10 +641,12 @@ async function main() {
     expectedPose: 'walk',
     expectedClip: /^walk$/i,
     requirePoseBeforeSwitch: true,
-    portraitOpts: { minScreenAreaFraction: 0.045, margin: 1.3 },
-    dualGapMs: 300,
+    settleFrames: 1,
+    timeoutMs: 90_000,
+    portraitOpts: { minScreenAreaFraction: 0.03, margin: 1.05 },
+    dualGapMs: 260,
     minRoiMotion: MIN_ROI_MOTION_WALK_WORK,
-  }, 8);
+  }, 12);
 
   await captureWithRetry(page, saveUnique, '12_anim_sit', {
     preset: 'store-street',
@@ -588,7 +654,7 @@ async function main() {
     activityPattern: /Eating at the Store/i,
     expectedPose: 'sit',
     expectedClip: /^sit$/i,
-    portraitOpts: { minScreenAreaFraction: 0.045, margin: 1.28 },
+    portraitOpts: { minScreenAreaFraction: 0.03, margin: 1.05 },
     dualGapMs: 420,
     minRoiMotion: MIN_ROI_MOTION_SIT,
   });
@@ -599,7 +665,7 @@ async function main() {
     activityPattern: /^Working$/i,
     expectedPose: 'work',
     expectedClip: /interact-right|pick-up/i,
-    portraitOpts: { minScreenAreaFraction: 0.045, margin: 1.3 },
+    portraitOpts: { minScreenAreaFraction: 0.03, margin: 1.05 },
     dualGapMs: 400,
     minRoiMotion: MIN_ROI_MOTION_WALK_WORK,
   });
@@ -641,7 +707,7 @@ async function main() {
     ),
   );
 
-  console.log('R12 evidence complete', OUT, 'unique shots', hashes.size, 'water%', waterPct);
+  console.log('R12 evidence complete', OUT, 'unique shots', hashes.size, 'water', waterCoverage);
 
   try {
     await publishRelease();

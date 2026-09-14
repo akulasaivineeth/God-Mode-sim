@@ -10,7 +10,15 @@
  */
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { AnimationMixer, type AnimationAction, type Group, LoopRepeat, Mesh } from 'three';
+import {
+  AnimationMixer,
+  Box3,
+  Vector3,
+  type AnimationAction,
+  type Group,
+  LoopRepeat,
+  Mesh,
+} from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
@@ -18,12 +26,30 @@ import { terrainHeightAt } from '@/world/townLayout';
 import { MAT } from '../sharedMaterials';
 import type { CitizenPose } from '../citizenPresentation';
 import type { RenderCitizen } from '../types';
-import { registerCitizenBody } from '../citizenBoundsRegistry';
+import { registerCitizenBody, setCitizenWorldBounds } from '../citizenBoundsRegistry';
 import { KENNEY_ASSETS } from './EnvironmentAssetRegistry';
 
 const ALEX_GLB = KENNEY_ASSETS.alexCharacter;
 /** Base Kenney Alex scale — accepted gameplay framing since R7. */
 const MODEL_SCALE = 0.02;
+/** Kenney Alex authorship height in model-local units (presentation constant). */
+const ALEX_LOCAL_HEIGHT = 90;
+const ALEX_LOCAL_RADIUS = 22;
+const boundsBox = new Box3();
+const boundsScratch = new Box3();
+const boundsCenter = new Vector3();
+const boundsSize = new Vector3();
+
+function updateCitizenBounds(root: Group): Box3 {
+  root.updateWorldMatrix(true, true);
+  // SkinnedMesh rest-pose bbox collapses — derive readable bounds from live root transform.
+  boundsCenter.set(0, ALEX_LOCAL_HEIGHT * 0.5, 0);
+  boundsSize.set(ALEX_LOCAL_RADIUS * 2, ALEX_LOCAL_HEIGHT, ALEX_LOCAL_RADIUS * 2);
+  boundsScratch.setFromCenterAndSize(boundsCenter, boundsSize);
+  boundsScratch.applyMatrix4(root.matrixWorld);
+  boundsBox.copy(boundsScratch);
+  return boundsBox;
+}
 
 interface CitizenVisualProps {
   citizen: RenderCitizen;
@@ -87,9 +113,8 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
   }, [gltf]);
 
   useEffect(() => {
-    registerCitizenBody(bodyRef.current);
     return () => registerCitizenBody(null);
-  }, [scene]);
+  }, []);
 
   useEffect(() => {
     setCitizenPresentationPose(citizen.pose);
@@ -114,10 +139,18 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
       }
     }
 
+    if (!animationsSuppressed) {
+      mixer.update(delta);
+    }
+
+    if (bodyRef.current) {
+      registerCitizenBody(bodyRef.current);
+      setCitizenWorldBounds(updateCitizenBounds(bodyRef.current));
+    }
+
     if (animationsSuppressed) {
       return;
     }
-    mixer.update(delta);
 
     // Procedural fallback bob only if the model shipped without clips.
     if (clipNames.length === 0 && bodyRef.current) {
@@ -151,7 +184,13 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
           </mesh>
         </>
       )}
-      <group ref={bodyRef} scale={MODEL_SCALE}>
+      <group
+        ref={(node) => {
+          bodyRef.current = node;
+          registerCitizenBody(node);
+        }}
+        scale={MODEL_SCALE}
+      >
         <primitive object={scene} />
       </group>
     </group>

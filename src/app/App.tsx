@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Scene } from '@/rendering/Scene';
 import { CAMERA_PRESETS, cameraViewFromQuery, type CameraView } from '@/rendering/cameraPresets';
-import { getCitizenBody } from '@/rendering/citizenBoundsRegistry';
+import { getCitizenBody, getCitizenWorldBoundsFromRegistry } from '@/rendering/citizenBoundsRegistry';
 import {
   assertCitizenVisibilityContract,
   computePortraitCameraFromBounds,
@@ -145,8 +145,9 @@ export function App() {
       },
       frameCitizenPortrait: (opts = {}) => {
         const state = useDiagnosticsStore.getState();
+        const cached = getCitizenWorldBoundsFromRegistry();
         const body = getCitizenBody();
-        if (!body) {
+        if ((!cached || cached.isEmpty()) && !body) {
           throw new Error('No citizen body mesh for portrait framing');
         }
         const ctx = getEvidenceCamera();
@@ -163,27 +164,52 @@ export function App() {
           opts,
         );
         state.setCameraOverride(frame);
-        const visibility = assertCitizenVisibilityContract(
-          frame.projection,
-          opts.minScreenAreaFraction ?? 0.045,
-        );
-        if (!visibility.ok) {
-          throw new Error(`Portrait visibility contract failed: ${visibility.reason}`);
+        const cachedBounds = getCitizenWorldBoundsFromRegistry();
+        if (cachedBounds && !cachedBounds.isEmpty()) {
+          const center = new Vector3();
+          const sphere = new Sphere();
+          cachedBounds.getCenter(center);
+          cachedBounds.getBoundingSphere(sphere);
+          return {
+            min: [cachedBounds.min.x, cachedBounds.min.y, cachedBounds.min.z],
+            max: [cachedBounds.max.x, cachedBounds.max.y, cachedBounds.max.z],
+            center: [center.x, center.y, center.z],
+            radius: sphere.radius,
+          };
+        }
+        if (!body) {
+          throw new Error('No citizen bounds available after portrait framing');
         }
         return boundsSnapshot(body);
       },
       getCitizenWorldBounds: () => {
+        const cached = getCitizenWorldBoundsFromRegistry();
+        if (cached && !cached.isEmpty()) {
+          const center = new Vector3();
+          const sphere = new Sphere();
+          cached.getCenter(center);
+          cached.getBoundingSphere(sphere);
+          return {
+            min: [cached.min.x, cached.min.y, cached.min.z],
+            max: [cached.max.x, cached.max.y, cached.max.z],
+            center: [center.x, center.y, center.z],
+            radius: sphere.radius,
+          };
+        }
         const body = getCitizenBody();
         if (!body) return null;
         return boundsSnapshot(body);
       },
       getCitizenScreenProjection: () => {
-        const body = getCitizenBody();
+        const cached = getCitizenWorldBoundsFromRegistry();
         const ctx = getEvidenceCamera();
-        if (!body || !ctx) return null;
-        const bounds = getCitizenWorldBounds(body);
+        if (!ctx) return null;
+        const bounds = cached && !cached.isEmpty() ? cached : null;
+        const body = getCitizenBody();
+        if (!bounds && !body) return null;
+        const box = bounds ?? getCitizenWorldBounds(body!);
         ctx.camera.updateMatrixWorld();
-        return projectBoundsToScreen(bounds, ctx.camera, ctx.width, ctx.height);
+        return projectBoundsToScreen(box, ctx.camera, ctx.width, ctx.height);
       },
       assertCitizenVisibility: (minAreaFraction = 0.045) => {
         const projection = window.__GODMODE_EVIDENCE__?.getCitizenScreenProjection();

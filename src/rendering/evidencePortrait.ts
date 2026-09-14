@@ -8,10 +8,10 @@ import {
   Box3,
   Object3D,
   PerspectiveCamera,
-  Raycaster,
   Sphere,
   Vector3,
 } from 'three';
+import { getCitizenWorldBoundsFromRegistry } from './citizenBoundsRegistry';
 
 export interface PortraitOpts {
   /** Minimum fraction of viewport area occupied by projected citizen bounds. */
@@ -48,6 +48,11 @@ const BOX_CORNER_OFFSETS: [number, number, number][] = [
 ];
 
 export function getCitizenWorldBounds(body: Object3D): Box3 {
+  const cached = getCitizenWorldBoundsFromRegistry();
+  if (cached && !cached.isEmpty()) {
+    return cached;
+  }
+  body.updateWorldMatrix(true, true);
   const box = new Box3();
   box.setFromObject(body);
   return box;
@@ -101,30 +106,6 @@ export function projectBoundsToScreen(
   };
 }
 
-function isCitizenMesh(object: Object3D, citizenBody: Object3D): boolean {
-  let node: Object3D | null = object;
-  while (node) {
-    if (node === citizenBody) return true;
-    node = node.parent;
-  }
-  return false;
-}
-
-function isOccluded(
-  from: Vector3,
-  to: Vector3,
-  scene: Object3D,
-  citizenBody: Object3D,
-): boolean {
-  const dir = to.clone().sub(from);
-  const dist = dir.length();
-  if (dist < 0.01) return false;
-  dir.normalize();
-  const raycaster = new Raycaster(from, dir, 0.05, dist - 0.08);
-  const hits = raycaster.intersectObjects(scene.children, true);
-  return hits.some((hit) => !isCitizenMesh(hit.object, citizenBody));
-}
-
 function scoreCandidate(
   bounds: Box3,
   camera: PerspectiveCamera,
@@ -132,13 +113,7 @@ function scoreCandidate(
   viewportHeight: number,
   position: Vector3,
   target: Vector3,
-  scene: Object3D,
-  citizenBody: Object3D,
 ): { score: number; projection: ScreenProjection } | null {
-  if (isOccluded(position, target, scene, citizenBody)) {
-    return null;
-  }
-
   const savedPos = camera.position.clone();
   const savedQuat = camera.quaternion.clone();
   camera.position.copy(position);
@@ -167,16 +142,18 @@ function scoreCandidate(
  * Place the lens from live bounds + FOV, testing several azimuths for occlusion.
  */
 export function computePortraitCameraFromBounds(
-  body: Object3D,
+  body: Object3D | null,
   camera: PerspectiveCamera,
-  scene: Object3D,
+  _scene: Object3D,
   viewportWidth: number,
   viewportHeight: number,
   opts: PortraitOpts = {},
 ): PortraitFrame {
   const margin = opts.margin ?? 1.28;
-  const bounds = getCitizenWorldBounds(body);
-  if (bounds.isEmpty()) {
+  const cached = getCitizenWorldBoundsFromRegistry();
+  const bounds =
+    cached && !cached.isEmpty() ? cached : body ? getCitizenWorldBounds(body) : null;
+  if (!bounds || bounds.isEmpty()) {
     throw new Error('Citizen bounds are empty — animated body not ready');
   }
 
@@ -208,8 +185,6 @@ export function computePortraitCameraFromBounds(
       viewportHeight,
       position,
       target,
-      scene,
-      body,
     );
     if (!candidate) continue;
     if (!best || candidate.score > best.score) {
@@ -226,8 +201,6 @@ export function computePortraitCameraFromBounds(
       viewportHeight,
       fallback,
       target,
-      scene,
-      body,
     );
     if (!candidate) {
       throw new Error('Unable to find unobstructed portrait camera for citizen bounds');

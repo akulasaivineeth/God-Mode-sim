@@ -100,6 +100,7 @@ export function Scene({
     <Canvas
       data-testid="r3f-canvas"
       style={{ width: '100%', height: '100%' }}
+      gl={{ preserveDrawingBuffer: true }}
       camera={{ position: CAMERA_PRESETS.angled.position, fov: 45, near: 0.1, far: 500 }}
       shadows
     >

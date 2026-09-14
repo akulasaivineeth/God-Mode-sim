@@ -14,7 +14,7 @@ import { useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { PerspectiveCamera, Vector3 } from 'three';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
-import { getCitizenBody } from './citizenBoundsRegistry';
+import { getCitizenBody, getCitizenWorldBoundsFromRegistry } from './citizenBoundsRegistry';
 import { registerEvidenceRendererContext } from './evidenceRendererRegistry';
 import { computePortraitCameraFromBounds } from './evidencePortrait';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
@@ -74,7 +74,8 @@ export function CameraControls({ view, applyNonce }: CameraControlsProps) {
 
     const state = useDiagnosticsStore.getState();
     const body = getCitizenBody();
-    if (state.evidencePortraitMode && state.evidencePortraitOpts && body) {
+    const cachedBounds = getCitizenWorldBoundsFromRegistry();
+    if (state.evidencePortraitMode && state.evidencePortraitOpts && (body || cachedBounds)) {
       const frame = computePortraitCameraFromBounds(
         body,
         camera,

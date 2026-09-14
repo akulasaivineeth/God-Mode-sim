@@ -52,18 +52,18 @@ export function computeRiverBridgePreset(
   const { bridge, tangent, normal } = riverFrameVectorsAtBridge(points, 0);
   const bridgeY = terrainHeightAt(bridge.x, bridge.z);
 
-  // East-bank oblique: camera on river normal, looking back across the ribbon + bridge deck.
-  const lateral = 26;
-  const tangentBias = 14;
-  const height = 17;
+  // East-bank oblique derived from bridge frame — calibrated for readable water ribbon.
+  const height = 22;
+  const lateral = 9.5;
+  const tangentOffset = 32;
 
-  const camX = bridge.x + normal.x * lateral + tangent.x * tangentBias;
-  const camZ = bridge.z + normal.z * lateral + tangent.z * tangentBias;
+  const camX = bridge.x + normal.x * lateral + tangent.x * tangentOffset;
+  const camZ = bridge.z + normal.z * lateral + tangent.z * tangentOffset;
   const camY = bridgeY + height;
 
-  const targetX = bridge.x - normal.x * 4 + tangent.x * 5;
-  const targetZ = bridge.z - normal.z * 4 + tangent.z * 5;
-  const targetY = bridgeY + 1.2;
+  const targetX = bridge.x - normal.x * 0.5;
+  const targetZ = bridge.z;
+  const targetY = bridgeY + 1.0;
 
   return {
     position: [camX, camY, camZ],
