@@ -1,6 +1,15 @@
 import { create } from 'zustand';
+import type { CameraView } from '@/rendering/cameraPresets';
+import type { CitizenPose } from '@/rendering/citizenPresentation';
+import type { PortraitOpts } from '@/rendering/evidencePortrait';
 import type { RenderSnapshot } from '@/rendering/types';
 import { DEFAULT_SPEED, type SimSpeed } from '@/simulation/core/speed';
+
+/** Presentation-only camera override (evidence harness / in-place reframing). */
+export interface CameraOverride {
+  position: [number, number, number];
+  target: [number, number, number];
+}
 
 interface DiagnosticsState {
   seed: string;
@@ -18,6 +27,31 @@ interface DiagnosticsState {
   renderCalls: number;
   /** Rendered triangles in the last frame (perf evidence). */
   renderTriangles: number;
+  /** Whether the citizen inspector is open (UX-001). */
+  citizenSelected: boolean;
+  /** Active Kenney clip name on the live citizen (presentation only, not sim authority). */
+  citizenPresentationClip: string | null;
+  /** Local mixer time for the active clip — dual-frame motion proof (presentation only). */
+  citizenPresentationClipTime: number;
+  /** Presentation pose mirrored from render snapshot for evidence harness. */
+  citizenPresentationPose: CitizenPose | null;
+  /** In-place camera override — bypasses named preset without reload. */
+  cameraOverride: CameraOverride | null;
+  cameraOverrideNonce: number;
+  /** Hides selection chrome so evidence portraits foreground the humanoid (presentation only). */
+  evidencePortraitMode: boolean;
+  /** Live portrait framing opts — camera re-applies every frame while citizen moves. */
+  evidencePortraitOpts: PortraitOpts | null;
+  /** Last named camera preset (for evidence harness preset-delta checks). */
+  activeCameraView: CameraView;
+  setCitizenSelected: (selected: boolean) => void;
+  setCitizenPresentationClip: (clip: string | null) => void;
+  setCitizenPresentationClipTime: (time: number) => void;
+  setCitizenPresentationPose: (pose: CitizenPose | null) => void;
+  setCameraOverride: (override: CameraOverride | null) => void;
+  setEvidencePortraitMode: (enabled: boolean) => void;
+  setEvidencePortraitOpts: (opts: PortraitOpts | null) => void;
+  setActiveCameraView: (view: CameraView) => void;
   setSeed: (seed: string) => void;
   setFps: (fps: number) => void;
   setRenderStats: (calls: number, triangles: number) => void;
@@ -44,6 +78,32 @@ export const useDiagnosticsStore = create<DiagnosticsState>((set) => ({
   animationsSuppressed: false,
   renderCalls: 0,
   renderTriangles: 0,
+  citizenSelected: true,
+  citizenPresentationClip: null,
+  citizenPresentationClipTime: 0,
+  citizenPresentationPose: null,
+  cameraOverride: null,
+  cameraOverrideNonce: 0,
+  evidencePortraitMode: false,
+  evidencePortraitOpts: null,
+  activeCameraView: 'angled',
+  setCitizenSelected: (selected) => set({ citizenSelected: selected }),
+  setCitizenPresentationClip: (clip) => set({ citizenPresentationClip: clip }),
+  setCitizenPresentationClipTime: (time) => set({ citizenPresentationClipTime: time }),
+  setCitizenPresentationPose: (pose) => set({ citizenPresentationPose: pose }),
+  setCameraOverride: (override) =>
+    set((state) => ({
+      cameraOverride: override,
+      cameraOverrideNonce: state.cameraOverrideNonce + 1,
+    })),
+  setEvidencePortraitMode: (enabled) =>
+    set((state) => ({
+      evidencePortraitMode: enabled,
+      evidencePortraitOpts: enabled ? state.evidencePortraitOpts : null,
+    })),
+  setEvidencePortraitOpts: (opts) =>
+    set({ evidencePortraitOpts: opts, evidencePortraitMode: opts != null }),
+  setActiveCameraView: (view) => set({ activeCameraView: view }),
   setSeed: (seed) => set({ seed }),
   setFps: (fps) => set({ fps }),
   setRenderStats: (calls, triangles) => set({ renderCalls: calls, renderTriangles: triangles }),

@@ -40,11 +40,30 @@ export class SimulationDriver {
   private ready = false;
   private rafId: number | null = null;
   private lastFrameAt = 0;
+  private pendingStepResolve: (() => void) | null = null;
+  private pendingStepReject: ((error: Error) => void) | null = null;
+  private pendingStepTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(callbacks: SimulationDriverCallbacks = {}) {
     this.callbacks = callbacks;
     this.client = new SimulationClient({
       ...callbacks,
+      onStepComplete: (snapshot, stepMs) => {
+        callbacks.onStepComplete?.(snapshot, stepMs);
+        if (this.pendingStepResolve) {
+          const resolve = this.pendingStepResolve;
+          this.clearPendingStep();
+          resolve();
+        }
+      },
+      onError: (message) => {
+        if (this.pendingStepReject) {
+          const reject = this.pendingStepReject;
+          this.clearPendingStep();
+          reject(new Error(message));
+        }
+        callbacks.onError?.(message);
+      },
       onReady: (seed) => {
         this.ready = true;
         this.pacing = createPacingState();
@@ -79,7 +98,45 @@ export class SimulationDriver {
     this.callbacks.onSpeedChange?.(this.status());
   }
 
+  /**
+   * Evidence / test helper — advance the authoritative clock by exactly `count`
+   * simulated minutes without relying on rAF pacing (headless-safe).
+   */
+  stepMinutes(count: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!this.ready) {
+        reject(new Error('Simulation driver not ready'));
+        return;
+      }
+      if (count <= 0) {
+        resolve();
+        return;
+      }
+      if (this.pendingStepResolve) {
+        reject(new Error('Concurrent stepMinutes call'));
+        return;
+      }
+      this.pendingStepResolve = resolve;
+      this.pendingStepReject = reject;
+      this.pendingStepTimer = setTimeout(() => {
+        this.clearPendingStep();
+        reject(new Error(`stepMinutes(${count}) timed out`));
+      }, 120_000);
+      this.client.step(count);
+    });
+  }
+
+  private clearPendingStep(): void {
+    if (this.pendingStepTimer) {
+      clearTimeout(this.pendingStepTimer);
+      this.pendingStepTimer = null;
+    }
+    this.pendingStepResolve = null;
+    this.pendingStepReject = null;
+  }
+
   terminate(): void {
+    this.clearPendingStep();
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;

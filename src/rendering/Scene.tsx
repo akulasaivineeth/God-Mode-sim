@@ -1,19 +1,27 @@
 /**
- * 3D scene composition — VIS / WORLD-001 / SIM-TIME-004 / ARCH-002.
+ * 3D scene composition — VIS / WORLD-001 / M02 (asset-backed presentation).
  *
- * Plain English: Assembles the town, day/night lighting, and free camera. It
- * reads a small read-only RenderSnapshot (time of day, visual phase) and never
- * writes back to simulation truth. At high speed, animation smoothing is
- * suppressed while the authoritative time still drives lighting exactly.
+ * Plain English: Assembles the town from real CC0 assets (dedicated facility
+ * buildings, instanced vegetation, roads/curbs/crossings, continuous terrain +
+ * river, town square + park), day/night + practical lighting, the free camera,
+ * and the shared GLB citizen. It reads a read-only RenderSnapshot and never
+ * writes simulation state (ARCH-002). Asset loaders are wrapped in <Suspense>.
  */
-import { useRef } from 'react';
+import { Suspense, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import type { Mesh } from 'three';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 import { CameraControls } from './CameraControls';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
 import { DayNightLighting } from './DayNightLighting';
+import { FacilityInteractionSpots } from './FacilityInteractionSpots';
 import { Town } from './Town';
+import { DedicatedBuildings } from './assets/BuildingVisualRegistry';
+import { CitizenVisual } from './assets/CitizenVisual';
+import { CorridorPresentation } from './environment/CorridorPresentation';
+import { PracticalLighting } from './environment/PracticalLighting';
+import { TownAmenities } from './environment/TownAmenities';
+import { TownLandscape } from './environment/TownLandscape';
+import { VegetationLayer } from './environment/VegetationLayer';
 import type { RenderSnapshot } from './types';
 
 interface SceneProps {
@@ -21,6 +29,7 @@ interface SceneProps {
   cameraView: CameraView;
   cameraNonce: number;
   animationsSuppressed: boolean;
+  onSelectCitizen: (citizenId: string) => void;
 }
 
 function FpsTracker() {
@@ -43,38 +52,40 @@ function FpsTracker() {
   return null;
 }
 
-/**
- * A small floating marker over the town square that visibly demonstrates the
- * M01 gate: at low speed it eases smoothly; at high speed animation is
- * suppressed and it snaps directly to the authoritative visual phase. Either
- * way it carries no simulation authority.
- */
-function SimBeacon({
-  visualPhase,
-  suppressed,
-}: {
-  visualPhase: number;
-  suppressed: boolean;
-}) {
-  const meshRef = useRef<Mesh>(null);
-
-  useFrame((_, delta) => {
-    const mesh = meshRef.current;
-    if (!mesh) return;
-    const targetRotation = visualPhase * Math.PI * 2;
-    if (suppressed) {
-      mesh.rotation.y = targetRotation; // snap — no interpolation at high speed
-    } else {
-      mesh.rotation.y += delta * (0.6 + visualPhase);
-    }
-    mesh.position.y = 16 + Math.sin(visualPhase * Math.PI * 2) * 0.4;
-  });
+function SceneContent({
+  renderSnapshot,
+  cameraView,
+  cameraNonce,
+  animationsSuppressed,
+  onSelectCitizen,
+}: SceneProps) {
+  const timeOfDay = renderSnapshot?.timeOfDay ?? 0.25;
+  const citizens = renderSnapshot?.citizens ?? [];
+  const citizenSelected = useDiagnosticsStore((state) => state.citizenSelected);
 
   return (
-    <mesh ref={meshRef} position={[0, 16, 0]} castShadow>
-      <octahedronGeometry args={[1.1, 0]} />
-      <meshStandardMaterial color="#e8c15a" emissive="#7a5f10" emissiveIntensity={0.4} />
-    </mesh>
+    <>
+      <FpsTracker />
+      <CameraControls view={cameraView} applyNonce={cameraNonce} />
+      <DayNightLighting timeOfDay={timeOfDay} />
+      <PracticalLighting timeOfDay={timeOfDay} />
+      <TownLandscape />
+      <Town />
+      <CorridorPresentation />
+      <TownAmenities />
+      <DedicatedBuildings />
+      <VegetationLayer />
+      <FacilityInteractionSpots />
+      {citizens.map((citizen) => (
+        <CitizenVisual
+          key={citizen.id}
+          citizen={citizen}
+          selected={citizenSelected}
+          animationsSuppressed={animationsSuppressed}
+          onSelect={onSelectCitizen}
+        />
+      ))}
+    </>
   );
 }
 
@@ -83,22 +94,25 @@ export function Scene({
   cameraView,
   cameraNonce,
   animationsSuppressed,
+  onSelectCitizen,
 }: SceneProps) {
-  const timeOfDay = renderSnapshot?.timeOfDay ?? 0.25;
-  const visualPhase = renderSnapshot?.visualPhase ?? 0;
-
   return (
     <Canvas
       data-testid="r3f-canvas"
       style={{ width: '100%', height: '100%' }}
+      gl={{ preserveDrawingBuffer: true }}
       camera={{ position: CAMERA_PRESETS.angled.position, fov: 45, near: 0.1, far: 500 }}
       shadows
     >
-      <FpsTracker />
-      <CameraControls view={cameraView} applyNonce={cameraNonce} />
-      <DayNightLighting timeOfDay={timeOfDay} />
-      <Town />
-      <SimBeacon visualPhase={visualPhase} suppressed={animationsSuppressed} />
+      <Suspense fallback={null}>
+        <SceneContent
+          renderSnapshot={renderSnapshot}
+          cameraView={cameraView}
+          cameraNonce={cameraNonce}
+          animationsSuppressed={animationsSuppressed}
+          onSelectCitizen={onSelectCitizen}
+        />
+      </Suspense>
     </Canvas>
   );
 }

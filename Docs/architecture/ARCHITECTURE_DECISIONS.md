@@ -294,6 +294,54 @@ issues `STEP { count }`. The human calendar is a **pure derivation** of
 
 ---
 
+## ADR-008 — Citizen model: worker-authoritative, minute-stepped, utility decisions
+
+**Status:** Accepted (M02)
+
+### Decision
+
+The first autonomous citizen lives entirely in the simulation worker
+(`src/simulation/model/`). State advances in whole **sim-minute** steps. Behaviour
+comes from a **three-layer utility decision**: Layer-1 reflex for critical needs,
+Layer-2 scored routine choice otherwise, using seeded noise. The renderer receives
+only a compact read-only `RenderSnapshot.citizen` and interpolates.
+
+### Reason
+
+- Keeps ARCH-002 (worker authority) and ARCH-005 (state = f(total minutes), so 1×
+  and 1000× match) by construction; travel resolves by deterministic duration, not
+  rendered footsteps (spec §5.2, §30.8).
+- Utility scoring with a stored factor breakdown makes every decision explainable
+  (NPC-DEC-001) and avoids scripted outcomes.
+- A separate `digestCitizenWorld` proves citizen determinism without touching the
+  M00 golden digest (`digestWorldSnapshot` is unchanged).
+
+### Alternatives considered
+
+| Alternative | Summary |
+|-------------|---------|
+| Behaviour tree / FSM only | Simple but hard to explain/score and less emergent |
+| Real-time continuous stepping | Couples outcomes to frame timing; breaks ARCH-005 |
+| Full navmesh/physics pathing | Overkill for one citizen at V1 scale |
+| Storing the derived calendar / heavy per-frame citizen data | Bloats snapshot; risks drift |
+
+### Why alternatives were rejected
+
+- Pure FSMs make the inspector/causal-trace weaker and bias toward scripted paths.
+- Frame-timed stepping would violate high-speed equivalence.
+- A navmesh is unnecessary; an authored waypoint graph satisfies §30.8 for V1.
+
+### Consequences
+
+- `WorldSnapshot` gains an optional `citizens` array (backward compatible; schema
+  bumped to `m02.0`; M00 digest payload unchanged).
+- Adding needs/actions means extending `needs.ts`/`decision.ts` (+ the save schema).
+- The event log grows per decision within a session (bounded archival is M12).
+
+**Requirement:** NPC-ID-001, NPC-NEED-001, NPC-DEC-001, NPC-DEC-010, NPC-MOVE-001 (preserves ARCH-002/003/005)
+
+---
+
 ## ADR template (for future entries)
 
 ```markdown

@@ -6,7 +6,7 @@ Status: canonical visual reference addendum for environment-facing milestones.
 
 The Product Owner's current primary visual target is:
 
-`Docs/art-direction/references/god-mode-town-north-star.jpg`
+`Docs/art-direction/references/god-mode-town-north-star.png`
 
 **Cursor, Grok, and ChatGPT must use this image as the primary visual benchmark for environment-facing work.** It is not a pixel-perfect implementation contract; it defines the target design language, composition quality, amenity readability, landscaping quality, and overall emotional impression of the live town.
 
@@ -18,7 +18,7 @@ When a static concept-art detail would conflict with simulation architecture, pe
 
 See `Docs/art-direction/references/town-visual-reference-board.webp`.
 
-The board contains the six original user-supplied reference images combined into one temporary internal reference sheet. It is **secondary** to the approved north-star JPG above and exists to explain the visual lineage.
+The board contains the six original user-supplied reference images combined into one temporary internal reference sheet. It is **secondary** to the approved north-star PNG above and exists to explain the visual lineage.
 
 **Important:** Several source images on the secondary board contain Getty/Shutterstock watermarks. They are reference-only, not game assets. Do not copy logos/watermarks or reproduce an image exactly. Extract the design language. Remove that temporary board before any public release or asset-distribution step unless licensed replacements are obtained.
 
@@ -83,4 +83,4 @@ The M2 / 8 GB target remains binding. Prefer shared materials, instancing, reusa
 
 ## Review standard
 
-A milestone is not visually complete merely because required objects exist. For production-facing environment work, reviewers should compare the actual running build to `god-mode-town-north-star.jpg` and ask: **Does this feel like the same family of beautiful, intentional, expandable miniature town while remaining a real-time systemic simulation?**
+A milestone is not visually complete merely because required objects exist. For production-facing environment work, reviewers should compare the actual running build to `god-mode-town-north-star.png` and ask: **Does this feel like the same family of beautiful, intentional, expandable miniature town while remaining a real-time systemic simulation?**

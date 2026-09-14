@@ -12,6 +12,7 @@ import { advanceClock, type SimulationClock } from './clock';
 import { createDomainEvent, type DomainEvent } from './events';
 import { Mulberry32Prng, type PrngState } from './prng';
 import type { WorldSeed } from './types';
+import type { CitizenState } from '../model/types';
 
 /** Minimal toy state — proves determinism only, not gameplay. */
 export interface ToySimState {
@@ -30,6 +31,11 @@ export interface WorldSnapshot {
   prng: PrngState;
   toy: ToySimState;
   events: DomainEvent[];
+  /**
+   * M02+ citizens. Optional so M00/M01 toy snapshots remain valid and the M00
+   * determinism digest (which does not hash citizens) stays locked.
+   */
+  citizens?: CitizenState[];
 }
 
 export const DEFAULT_BRANCH_ID = 'main';
