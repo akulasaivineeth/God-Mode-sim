@@ -15,12 +15,12 @@ import { execSync } from 'node:child_process';
 
 const OUT = '/opt/cursor/artifacts/m02_closure_evidence';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
-const RELEASE_TAG = 'review-evidence-m02-020-builder-r16';
+const RELEASE_TAG = 'review-evidence-m02-020-builder-r17';
 const PLAYER_BASE = 'http://127.0.0.1:4173/';
 const MIN_GAMEPLAY_PIXEL_HEIGHT = 80;
 const MIN_PORTRAIT_PIXEL_HEIGHT = 100;
 const BEFORE_BASE =
-  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-m02-020-grok';
+  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-m02-021-grok';
 
 const CROSSFADE_SETTLE_MS = 450;
 const DUAL_FRAME_GAP_MS = 520;
@@ -533,6 +533,66 @@ function roiMotionFraction(sampleA, sampleB, { colorThreshold = 14 } = {}) {
   return changed / Math.max(1, pixels);
 }
 
+function roiColorSpread(sample) {
+  let sum = 0;
+  const pixels = sample.data.length / 4;
+  for (let i = 0; i < sample.data.length; i += 4) {
+    const r = sample.data[i];
+    const g = sample.data[i + 1];
+    const b = sample.data[i + 2];
+    sum += Math.max(r, g, b) - Math.min(r, g, b);
+  }
+  return sum / Math.max(1, pixels);
+}
+
+async function waitForLiveCitizenReadable(page, minHeight = MIN_PORTRAIT_PIXEL_HEIGHT) {
+  for (let attempt = 0; attempt < 32; attempt += 1) {
+    await waitRenderFrames(page, 4);
+    const ready = await page.evaluate(({ minH }) => {
+      const bounds = window.__GODMODE_EVIDENCE__?.getCitizenWorldBounds?.();
+      if (!bounds) return false;
+      try {
+        const vis = window.__GODMODE_EVIDENCE__.getCitizenScreenProjection();
+        return vis != null && vis.maxY - vis.minY >= minH * 0.35;
+      } catch {
+        return true;
+      }
+    }, { minH: minHeight });
+    if (ready) return;
+    await page.waitForTimeout(100);
+  }
+  throw new Error('Live citizen body/bounds not readable for portrait framing');
+}
+
+async function settleLiveSubjectForPortrait(page) {
+  await seekClipAndSettle(page, 0.08);
+  await advanceMixerSettle(page, 0.75);
+  await waitForLiveCitizenReadable(page);
+}
+
+async function assertSubjectRoiNotGray(page, label, minSpread = 18) {
+  const roi = await sampleCitizenRoiPixels(page);
+  const spread = roiColorSpread(roi);
+  if (spread < minSpread) {
+    throw new Error(
+      `${label}: fail-closed — subject ROI color spread ${spread.toFixed(1)} < ${minSpread} (gray/empty)`,
+    );
+  }
+  return spread;
+}
+
+async function frameLiveSubjectPortrait(page, label, portraitOpts) {
+  await page.evaluate(() => window.__GODMODE_EVIDENCE__?.clearCameraOverride());
+  await waitRenderFrames(page, 18);
+  await waitForLiveCitizenReadable(page);
+  await frameFullBody(page, portraitOpts);
+  await assertHumanoidSubjectPresent(page, label, {
+    minArea: portraitOpts.minScreenAreaFraction ?? 0.06,
+    minHeight: MIN_PORTRAIT_PIXEL_HEIGHT,
+  });
+  await assertSubjectRoiNotGray(page, label);
+}
+
 async function advanceMixerSettle(page, seconds = 0.45) {
   await page.evaluate((s) => {
     window.__GODMODE_EVIDENCE__.advancePresentationMixer(s);
@@ -582,7 +642,7 @@ async function waitForClip(page, expectedClip, timeoutMs = 800) {
 
 async function acquireAt1x(page, config) {
   const {
-    preset,
+    preset = null,
     advanceSpeed = 50,
     activityPattern,
     expectedPose,
@@ -595,7 +655,9 @@ async function acquireAt1x(page, config) {
     scanWindow = 40,
   } = config;
 
-  await applyPreset(page, preset, 0, { settleMs: 400, skipDeltaCheck: true });
+  if (preset) {
+    await applyPreset(page, preset, 0, { settleMs: 400, skipDeltaCheck: true });
+  }
   await setSpeed(page, 0);
 
   if (targetMinute != null) {
@@ -608,12 +670,19 @@ async function acquireAt1x(page, config) {
       requireDaylight,
       label: 'acquireAt1x',
       afterReload: async (p) => {
-        await applyPreset(p, preset, 0, { settleMs: 400, skipDeltaCheck: true });
+        if (preset) {
+          await applyPreset(p, preset, 0, { settleMs: 400, skipDeltaCheck: true });
+        }
       },
     });
-    return { meta, lockedActivity, acquiredAtSpeed: 0 };
+    await settleLiveSubjectForPortrait(page);
+    const settled = await getMeta(page);
+    return { meta: settled, lockedActivity, acquiredAtSpeed: 0 };
   }
 
+  if (preset) {
+    await applyPreset(page, preset, advanceSpeed, { settleMs: 400, skipDeltaCheck: true });
+  }
   await setSpeed(page, advanceSpeed);
 
   const start = Date.now();
@@ -846,12 +915,7 @@ async function captureDualAt1x(page, saveShot, baseName, config, opts = {}) {
   }
 
   if (useFullBodyPortrait) {
-    await page.evaluate(() => window.__GODMODE_EVIDENCE__?.clearCameraOverride());
-    await frameFullBody(page, portraitOpts);
-    await assertHumanoidSubjectPresent(page, `${baseName}_framing`, {
-      minArea: portraitOpts.minScreenAreaFraction ?? 0.05,
-      minHeight: MIN_PORTRAIT_PIXEL_HEIGHT,
-    });
+    await frameLiveSubjectPortrait(page, `${baseName}_framing`, portraitOpts);
   } else {
     await waitRenderFrames(page, 8);
   }
@@ -876,6 +940,7 @@ async function captureDualAt1x(page, saveShot, baseName, config, opts = {}) {
       minHeight: MIN_PORTRAIT_PIXEL_HEIGHT,
     });
     const roiSample = await sampleCitizenRoiPixels(page);
+    const colorSpread = await assertSubjectRoiNotGray(page, shotName);
     const vis = await page.evaluate(() => window.__GODMODE_EVIDENCE__.getCitizenScreenProjection());
     if (!vis?.fullyOnScreen && useFullBodyPortrait) {
       throw new Error(`${shotName}: citizen ROI not fully on screen`);
@@ -884,6 +949,7 @@ async function captureDualAt1x(page, saveShot, baseName, config, opts = {}) {
     await saveShot(shotName, metaRecord(frameMeta, camera, {
       visibility: vis,
       roi: roiSample.roi,
+      roiColorSpread: colorSpread,
       acquiredAtSpeed,
       lockedActivity,
       fileHash: result.fullHash,
@@ -1089,6 +1155,8 @@ async function captureIdleAt1x(page, saveShot) {
   await advanceMixerSettle(page, 0.9);
   await waitRenderFrames(page, 24);
 
+  await settleLiveSubjectForPortrait(page);
+
   const meta = await getMeta(page);
   assertMeta(meta, '10_idle_1x', {
     citizenId: true,
@@ -1099,11 +1167,9 @@ async function captureIdleAt1x(page, saveShot) {
     animationsSuppressed: false,
   });
 
-  await page.evaluate(() => window.__GODMODE_EVIDENCE__?.clearCameraOverride());
-  await frameFullBody(page, { margin: 1.45, minScreenAreaFraction: 0.08 });
-  await assertHumanoidSubjectPresent(page, '10_idle_1x', {
-    minArea: 0.06,
-    minHeight: MIN_PORTRAIT_PIXEL_HEIGHT,
+  await frameLiveSubjectPortrait(page, '10_idle_1x', {
+    margin: 1.42,
+    minScreenAreaFraction: 0.08,
   });
 
   const camera = await getCamera(page);
@@ -1133,6 +1199,9 @@ async function captureCameraUxWalkthrough(page, saveShot) {
     { timeout: 20_000 },
   );
   await setUiChrome(page, { inspector: false, diagnostics: true });
+  await page.waitForSelector('[data-testid="camera-controls"]', { timeout: 15_000 });
+  await page.waitForTimeout(400);
+  await shot(page, '22_camera_controls_ui');
 
   await page.getByTestId('camera-angled').click();
   await page.waitForTimeout(500);
@@ -1181,9 +1250,18 @@ async function captureCameraUxWalkthrough(page, saveShot) {
   await page.getByTestId('camera-reset').click();
   await page.waitForTimeout(550);
   const resetCam = await page.evaluate(() => globalThis.__GODMODE_PLAYER_CAMERA__?.getState());
-  await saveShot('21_camera_reset', { camera: resetCam, step: 'reset' });
+  const overviewPreset = { position: [8, 80, 58], target: [26, 1, 0] };
+  const resetMatchesOverview =
+    resetCam != null &&
+    resetCam.position.every((v, i) => Math.abs(v - overviewPreset.position[i]) < 2.5) &&
+    resetCam.target.every((v, i) => Math.abs(v - overviewPreset.target[i]) < 1.5);
+  if (!resetMatchesOverview) {
+    throw new Error('VIS-002 reset did not return to canonical Overview framing');
+  }
+  await saveShot('21_camera_reset', { camera: resetCam, step: 'reset', overviewPreset: true });
 
   for (const name of [
+    '22_camera_controls_ui',
     '16_camera_angled_preset',
     '17_camera_zoomed_in',
     '18_camera_rotated',
@@ -1194,7 +1272,7 @@ async function captureCameraUxWalkthrough(page, saveShot) {
     await shot(page, name);
   }
 
-  return { presetDistance: presetCam?.distance, resetDistance: resetCam?.distance };
+  return { presetDistance: presetCam?.distance, resetDistance: resetCam?.distance, resetMatchesOverview };
 }
 
 async function captureGameplayStreet(page, saveShot, name, preset, expectations = {}) {
@@ -1279,6 +1357,7 @@ async function publishRelease(scaleInfo, hashResults) {
     '19_camera_panned.png',
     '20_camera_zoomed_out.png',
     '21_camera_reset.png',
+    '22_camera_controls_ui.png',
     '15_canonical_north_star.png',
     'compare_04_store_street.png',
     'compare_05_workshop_street.png',
@@ -1328,7 +1407,7 @@ async function publishRelease(scaleInfo, hashResults) {
 
   const fileArgs = files.map((f) => `${path.join(OUT, f)}#${f}`).join(' ');
   execSync(
-    `gh release create ${RELEASE_TAG} --repo ${repo} --title "M02 R13 / M02-015 closure evidence" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
+    `gh release create ${RELEASE_TAG} --repo ${repo} --title "M02 R17 / M02-021 FIX_REQUIRED evidence" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
     { stdio: 'inherit' },
   );
   console.log(`Published https://github.com/${repo}/releases/tag/${RELEASE_TAG}`);
@@ -1353,7 +1432,59 @@ async function runCameraUxOnly() {
   console.log('Camera UX evidence saved', OUT);
 }
 
+async function runWorkshopOnly() {
+  await mkdir(OUT, { recursive: true });
+  const metadata = existsSync(path.join(OUT, 'capture_metadata.json'))
+    ? JSON.parse(readFileSync(path.join(OUT, 'capture_metadata.json'), 'utf8'))
+    : {};
+  const browser = await chromium.launch();
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const saveShot = async (name, meta = null) => {
+    if (meta) metadata[name] = meta;
+  };
+
+  await page.goto(BASE);
+  await page.getByTestId('r3f-canvas').waitFor({ state: 'visible' });
+  await page.waitForTimeout(2500);
+  await waitForDaylight(page);
+  await setPortraitMode(page, false);
+  await setUiChrome(page, { inspector: false, diagnostics: false });
+  await acquireActivityWhileDaylightWithRetry(page, {
+    targetMinute: CANONICAL_EVIDENCE_MINUTES.firstDaytimeWorkPerform,
+    activityPattern: /^Working$/i,
+    expectedPose: 'work',
+    expectedClip: /interact-right|pick-up/i,
+  });
+  await setSpeed(page, 0);
+  await page.evaluate(() => window.__GODMODE_EVIDENCE__?.clearCameraOverride());
+  await applyPreset(page, 'workshop-street', 0, { settleMs: 1200, skipDeltaCheck: true });
+  await waitRenderFrames(page, 12);
+  await captureGameplayStreet(page, saveShot, '05_street_workshop_gameplay', 'workshop-street', {
+    activity: 'Working',
+    pose: 'work',
+  });
+
+  const beforeDir = await downloadBeforeArtifacts();
+  const comparePage = await browser.newPage();
+  await stitchBeforeAfter(
+    comparePage,
+    path.join(beforeDir, '05_street_workshop_gameplay.png'),
+    path.join(OUT, '05_street_workshop_gameplay.png'),
+    'compare_05_workshop_street.png',
+    'WORKSHOP street',
+  );
+  await comparePage.close();
+  writeFileSync(path.join(OUT, 'capture_metadata.json'), JSON.stringify(metadata, null, 2));
+  await browser.close();
+  console.log('Workshop street recaptured', OUT);
+}
+
 async function main() {
+  if (process.argv.includes('--workshop-only')) {
+    await runWorkshopOnly();
+    return;
+  }
+
   if (process.argv.includes('--camera-ux-only')) {
     await runCameraUxOnly();
     return;
@@ -1554,7 +1685,7 @@ async function main() {
     saveShot,
     '13_anim_work',
     {
-      preset: 'workshop-street',
+      preset: null,
       targetMinute: CANONICAL_EVIDENCE_MINUTES.firstDaytimeWorkPerform,
       activityPattern: /^Working$/i,
       expectedPose: 'work',
@@ -1563,11 +1694,12 @@ async function main() {
     },
     {
       useFullBodyPortrait: true,
-      portraitOpts: { margin: 1.55, minScreenAreaFraction: 0.08 },
+      portraitOpts: { margin: 1.32, minScreenAreaFraction: 0.09 },
       seekPhasesForB: [0.18, 0.36, 0.54, 0.72, 0.88],
-      minRoiMotion: 0.01,
+      minRoiMotion: 0.012,
       useCenterCropMotion: false,
     },
+    6,
   );
 
   // Inspector

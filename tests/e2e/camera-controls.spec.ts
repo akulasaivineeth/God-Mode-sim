@@ -61,15 +61,15 @@ test('VIS-002 — zoom buttons and wheel change distance within bounds', async (
   expect(maxed!.distance).toBeLessThanOrEqual(maxed!.maxDistance + 0.5);
 });
 
-test('VIS-002 — drag rotates and reset returns to preset framing', async ({ page }) => {
+test('VIS-002 — drag rotates and reset returns to Overview framing', async ({ page }) => {
   test.setTimeout(60_000);
   await page.goto('/');
   await expect(page.getByTestId('r3f-canvas')).toBeVisible();
   await waitForPlayerCamera(page);
   await page.getByTestId('camera-angled').click();
   await page.waitForTimeout(400);
-  const preset = await readCamera(page);
-  expect(preset).not.toBeNull();
+  const angled = await readCamera(page);
+  expect(angled).not.toBeNull();
 
   const canvas = page.getByTestId('r3f-canvas');
   const box = await canvas.boundingBox();
@@ -84,14 +84,21 @@ test('VIS-002 — drag rotates and reset returns to preset framing', async ({ pa
   const rotated = await readCamera(page);
   expect(
     rotated!.position.some(
-      (v: number, i: number) => Math.abs(v - preset!.position[i]) > 0.05,
+      (v: number, i: number) => Math.abs(v - angled!.position[i]) > 0.05,
     ),
   ).toBe(true);
 
   await page.getByTestId('camera-reset').click();
   await page.waitForTimeout(500);
   const reset = await readCamera(page);
-  expect(Math.abs(reset!.distance - preset!.distance)).toBeLessThan(2.5);
+  const overviewPosition: [number, number, number] = [8, 80, 58];
+  const overviewTarget: [number, number, number] = [26, 1, 0];
+  expect(
+    reset!.position.every((v, i) => Math.abs(v - overviewPosition[i]) < 2.5),
+  ).toBe(true);
+  expect(
+    reset!.target.every((v, i) => Math.abs(v - overviewTarget[i]) < 1.5),
+  ).toBe(true);
 });
 
 test('VIS-002 — manual camera works while simulation is paused', async ({ page }) => {

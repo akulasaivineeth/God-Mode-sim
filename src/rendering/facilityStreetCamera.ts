@@ -89,9 +89,11 @@ export function computeFacilityStreetPreset(view: FacilityStreetView): CameraPre
   let camZ = targetZ - 6.5;
   let camY = targetY + 4.2;
   if (view === 'workshop-street') {
-    camX = targetX + 7;
-    camZ = targetZ - 7;
-    camY = targetY + 4.6;
+    // Elevated east-side oblique — clears south-yard foreground props without drifting
+    // south toward the General Store apron (M02-021).
+    camX = targetX + 13;
+    camZ = targetZ - 1.5;
+    camY = targetY + 7.2;
   }
 
   let guard = 0;

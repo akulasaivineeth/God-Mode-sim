@@ -30,8 +30,10 @@ describe('M02-020 facility street cameras', () => {
     const workshop = computeFacilityStreetPreset('workshop-street');
     expect(workshop.target[0]).toBeCloseTo(-11, 0);
     expect(workshop.target[2]).toBeCloseTo(17, 0);
-    expect(workshop.position[2]).toBeLessThan(17);
-    expect(workshop.position[0]).toBeGreaterThan(-6);
+    // M02-021 — elevated east-side oblique clears yard props without framing the store
+    expect(workshop.position[0]).toBeCloseTo(2, 0);
+    expect(workshop.position[2]).toBeCloseTo(15.5, 0);
+    expect(workshop.position[1]).toBeGreaterThan(6);
     const check = assertCameraOutsideFacilityBuilding(workshop.position, 'workshop-street');
     expect(check.ok).toBe(true);
   });

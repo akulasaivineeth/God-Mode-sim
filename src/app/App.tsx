@@ -444,9 +444,10 @@ export function App() {
     const store = useDiagnosticsStore.getState();
     store.setCameraOverride(null);
     store.setEvidencePortraitOpts(null);
-    store.setActiveCameraView(cameraView);
+    store.setActiveCameraView('overview');
+    setCameraView('overview');
     setCameraNonce((nonce) => nonce + 1);
-  }, [cameraView]);
+  }, []);
 
   const handleSelectCitizen = useCallback(() => {
     setCitizenSelected(true);

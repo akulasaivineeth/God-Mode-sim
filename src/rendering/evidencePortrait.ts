@@ -278,8 +278,10 @@ export function computePortraitCameraFromBounds(
     Math.PI * 0.15,
     Math.PI * 0.35,
     Math.PI * 0.55,
+    Math.PI * 0.72,
     -Math.PI * 0.15,
     -Math.PI * 0.35,
+    -Math.PI * 0.55,
     Math.PI,
     0,
   ];

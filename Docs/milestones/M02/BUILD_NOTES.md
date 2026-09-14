@@ -297,3 +297,18 @@ Presentation-only orbit controls for normal play — simulation authority unchan
 - **Player API** (`window.__GODMODE_PLAYER_CAMERA__`): read distance/state, zoom, recenter-on-citizen hook.
 - **Tests**: `cameraPlayerControl.test.ts` + `tests/e2e/camera-controls.spec.ts` (wheel, drag, reset, paused sim).
 - **Evidence**: sequential camera UX walkthrough `16_camera_*` … `21_camera_reset` in builder release r16.
+
+## M02-021 FIX_REQUIRED (R17)
+
+Presentation/evidence + VIS-002 completion — simulation authority unchanged:
+
+- **Structural subject acquisition** (`capture-m02-closure-evidence.mjs`): acquire live citizen
+  first via canonical minute seek; `settleLiveSubjectForPortrait` + `frameLiveSubjectPortrait`;
+  fail-closed gray ROI (`roiColorSpread`); WORK uses subject-first framing (`preset: null`).
+- **Workshop street camera** (`facilityStreetCamera.ts`): elevated east-side oblique
+  (`camX = targetX + 13`, `camZ = targetZ - 1.5`, `camY + 7.2`) clears south-yard props
+  without drifting toward the General Store apron.
+- **VIS-002 Reset → Overview** (`App.tsx`): Reset returns canonical gameplay Overview preset,
+  not the previously selected preset.
+- **Evidence**: `22_camera_controls_ui.png` showing +/−/Reset; BEFORE/AFTER vs M02-021 Grok;
+  release `review-evidence-m02-020-builder-r17`.
