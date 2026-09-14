@@ -51,15 +51,23 @@ export interface GodModeEvidenceApi {
     target: [number, number, number];
   } | null;
   getCaptureMeta: () => {
+    citizenId: string;
     activity: string;
     pose: string | null;
     clip: string | null;
+    clipPhase: number;
     simMinute: number;
     speed: number;
     animationsSuppressed: boolean;
+    isDaylight: boolean;
     citizenPosition: { x: number; z: number; facingRadians: number } | null;
   };
   getRenderDiagnostics: () => { drawCalls: number; triangles: number };
+  /** Bounds-derived full-body portrait from live rendered citizen (presentation only). */
+  frameCitizenSimPortrait: (opts?: {
+    margin?: number;
+    minScreenAreaFraction?: number;
+  }) => void;
 }
 
 declare global {
@@ -201,13 +209,12 @@ export function App() {
         return boundsSnapshot(body);
       },
       getCitizenScreenProjection: () => {
+        const body = getCitizenBody();
         const cached = getCitizenWorldBoundsFromRegistry();
         const ctx = getEvidenceCamera();
         if (!ctx) return null;
-        const bounds = cached && !cached.isEmpty() ? cached : null;
-        const body = getCitizenBody();
-        if (!bounds && !body) return null;
-        const box = bounds ?? getCitizenWorldBounds(body!);
+        const box = body ? getCitizenWorldBounds(body) : cached && !cached.isEmpty() ? cached : null;
+        if (!box) return null;
         ctx.camera.updateMatrixWorld();
         return projectBoundsToScreen(box, ctx.camera, ctx.width, ctx.height);
       },
@@ -249,13 +256,17 @@ export function App() {
       getCaptureMeta: () => {
         const state = useDiagnosticsStore.getState();
         const citizen = state.renderSnapshot?.citizens?.[0] ?? null;
+        const calendar = state.renderSnapshot?.calendar;
         return {
+          citizenId: citizen?.id ?? '',
           activity: citizen?.activity ?? '',
           pose: citizen?.pose ?? state.citizenPresentationPose,
           clip: state.citizenPresentationClip,
+          clipPhase: state.citizenPresentationClipTime,
           simMinute: state.renderSnapshot?.simMinute ?? 0,
           speed: driverRef.current?.getSpeed() ?? state.speed,
           animationsSuppressed: state.animationsSuppressed,
+          isDaylight: calendar?.isDaytime ?? true,
           citizenPosition: citizen
             ? { x: citizen.x, z: citizen.z, facingRadians: citizen.facingRadians }
             : null,
@@ -265,6 +276,12 @@ export function App() {
         const state = useDiagnosticsStore.getState();
         return { drawCalls: state.renderCalls, triangles: state.renderTriangles };
       },
+      frameCitizenSimPortrait: (opts = {}) => {
+        window.__GODMODE_EVIDENCE__?.frameCitizenPortrait({
+          margin: opts.margin ?? 1.35,
+          minScreenAreaFraction: opts.minScreenAreaFraction ?? 0.06,
+        });
+      },
     };
     return () => {
       delete window.__GODMODE_EVIDENCE__;
@@ -272,10 +289,15 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    const evidenceCaptureMode = new URLSearchParams(window.location.search).get('evidence') === '1';
     const driver = new SimulationDriver({
       onReady: (seed) => {
         setSeed(seed);
         setWorkerReady(true);
+        // Freeze sim at minute 0 before the capture harness attaches (presentation only).
+        if (evidenceCaptureMode) {
+          driver.setSpeed(0);
+        }
       },
       onStepComplete: (snapshot, stepMs) => {
         recordStep(snapshot, stepMs);

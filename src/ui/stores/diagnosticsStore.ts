@@ -31,6 +31,8 @@ interface DiagnosticsState {
   citizenSelected: boolean;
   /** Active Kenney clip name on the live citizen (presentation only, not sim authority). */
   citizenPresentationClip: string | null;
+  /** Local mixer time for the active clip — dual-frame motion proof (presentation only). */
+  citizenPresentationClipTime: number;
   /** Presentation pose mirrored from render snapshot for evidence harness. */
   citizenPresentationPose: CitizenPose | null;
   /** In-place camera override — bypasses named preset without reload. */
@@ -44,6 +46,7 @@ interface DiagnosticsState {
   activeCameraView: CameraView;
   setCitizenSelected: (selected: boolean) => void;
   setCitizenPresentationClip: (clip: string | null) => void;
+  setCitizenPresentationClipTime: (time: number) => void;
   setCitizenPresentationPose: (pose: CitizenPose | null) => void;
   setCameraOverride: (override: CameraOverride | null) => void;
   setEvidencePortraitMode: (enabled: boolean) => void;
@@ -77,6 +80,7 @@ export const useDiagnosticsStore = create<DiagnosticsState>((set) => ({
   renderTriangles: 0,
   citizenSelected: true,
   citizenPresentationClip: null,
+  citizenPresentationClipTime: 0,
   citizenPresentationPose: null,
   cameraOverride: null,
   cameraOverrideNonce: 0,
@@ -85,6 +89,7 @@ export const useDiagnosticsStore = create<DiagnosticsState>((set) => ({
   activeCameraView: 'angled',
   setCitizenSelected: (selected) => set({ citizenSelected: selected }),
   setCitizenPresentationClip: (clip) => set({ citizenPresentationClip: clip }),
+  setCitizenPresentationClipTime: (time) => set({ citizenPresentationClipTime: time }),
   setCitizenPresentationPose: (pose) => set({ citizenPresentationPose: pose }),
   setCameraOverride: (override) =>
     set((state) => ({
