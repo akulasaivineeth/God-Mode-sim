@@ -12,6 +12,7 @@ import {
   Vector3,
 } from 'three';
 import { getCitizenWorldBoundsFromRegistry } from './citizenBoundsRegistry';
+import { TARGET_CITIZEN_HEIGHT } from './citizenModelScale';
 
 export interface PortraitOpts {
   /** Minimum fraction of viewport area occupied by projected citizen bounds. */
@@ -47,6 +48,9 @@ const BOX_CORNER_OFFSETS: [number, number, number][] = [
   [1, 1, 1],
 ];
 
+const _fallbackSize = new Vector3();
+const _worldCenter = new Vector3();
+
 export function getCitizenWorldBounds(body: Object3D): Box3 {
   const cached = getCitizenWorldBoundsFromRegistry();
   if (cached && !cached.isEmpty()) {
@@ -55,6 +59,17 @@ export function getCitizenWorldBounds(body: Object3D): Box3 {
   body.updateWorldMatrix(true, true);
   const box = new Box3();
   box.setFromObject(body);
+  box.getSize(_fallbackSize);
+  if (_fallbackSize.y >= TARGET_CITIZEN_HEIGHT * 0.35) {
+    return box;
+  }
+  // SkinnedMesh bbox often collapses — synthesize a standing humanoid volume at feet.
+  body.getWorldPosition(_worldCenter);
+  const halfW = 0.28;
+  box.setFromCenterAndSize(
+    _worldCenter.clone().add(new Vector3(0, TARGET_CITIZEN_HEIGHT * 0.5, 0)),
+    new Vector3(halfW * 2, TARGET_CITIZEN_HEIGHT, halfW * 2),
+  );
   return box;
 }
 

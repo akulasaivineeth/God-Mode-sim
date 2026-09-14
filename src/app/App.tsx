@@ -51,15 +51,23 @@ export interface GodModeEvidenceApi {
     target: [number, number, number];
   } | null;
   getCaptureMeta: () => {
+    citizenId: string;
     activity: string;
     pose: string | null;
     clip: string | null;
     simMinute: number;
     speed: number;
     animationsSuppressed: boolean;
+    isDaylight: boolean;
     citizenPosition: { x: number; z: number; facingRadians: number } | null;
   };
   getRenderDiagnostics: () => { drawCalls: number; triangles: number };
+  /** World-fixed 3/4 portrait from authoritative sim position (presentation only). */
+  frameCitizenSimPortrait: (opts?: {
+    distance?: number;
+    cameraY?: number;
+    targetY?: number;
+  }) => void;
 }
 
 declare global {
@@ -249,13 +257,16 @@ export function App() {
       getCaptureMeta: () => {
         const state = useDiagnosticsStore.getState();
         const citizen = state.renderSnapshot?.citizens?.[0] ?? null;
+        const calendar = state.renderSnapshot?.calendar;
         return {
+          citizenId: citizen?.id ?? '',
           activity: citizen?.activity ?? '',
           pose: citizen?.pose ?? state.citizenPresentationPose,
           clip: state.citizenPresentationClip,
           simMinute: state.renderSnapshot?.simMinute ?? 0,
           speed: driverRef.current?.getSpeed() ?? state.speed,
           animationsSuppressed: state.animationsSuppressed,
+          isDaylight: calendar?.isDaytime ?? true,
           citizenPosition: citizen
             ? { x: citizen.x, z: citizen.z, facingRadians: citizen.facingRadians }
             : null,
@@ -264,6 +275,23 @@ export function App() {
       getRenderDiagnostics: () => {
         const state = useDiagnosticsStore.getState();
         return { drawCalls: state.renderCalls, triangles: state.renderTriangles };
+      },
+      frameCitizenSimPortrait: (opts = {}) => {
+        const state = useDiagnosticsStore.getState();
+        const citizen = state.renderSnapshot?.citizens?.[0];
+        if (!citizen) throw new Error('No citizen in render snapshot for sim portrait');
+        state.setEvidencePortraitMode(false);
+        state.setEvidencePortraitOpts(null);
+        const distance = opts.distance ?? 3.4;
+        const cameraY = opts.cameraY ?? 1.55;
+        const targetY = opts.targetY ?? 1.05;
+        // East-side 3/4 view — readable humanoid silhouette independent of travel facing.
+        const camX = citizen.x + distance * 0.82;
+        const camZ = citizen.z + distance * 0.38;
+        state.setCameraOverride({
+          position: [camX, cameraY, camZ],
+          target: [citizen.x, targetY, citizen.z],
+        });
       },
     };
     return () => {
