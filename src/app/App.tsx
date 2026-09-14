@@ -2,6 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Scene } from '@/rendering/Scene';
 import { CAMERA_PRESETS, cameraViewFromQuery, type CameraView } from '@/rendering/cameraPresets';
 import {
+  dollyPlayerCamera,
+  getPlayerCameraState,
+  recenterOrbitOnPoint,
+} from '@/rendering/cameraPlayerControl';
+import { terrainHeightAt } from '@/world/townLayout';
+import {
   assertCameraOutsideFacilityBuilding,
   computeFacilityStreetPreset,
   type FacilityStreetView,
@@ -35,6 +41,7 @@ import { SimulationDriver } from '@/simulation/SimulationDriver';
 import type { SimSpeed } from '@/simulation/core/speed';
 import { CANONICAL_TOWN } from '@/world/townLayout';
 import { CitizenInspector } from '@/ui/components/CitizenInspector';
+import { CameraControlStrip } from '@/ui/components/CameraControlStrip';
 import { DiagnosticsHud } from '@/ui/components/DiagnosticsHud';
 import { TimeControls } from '@/ui/components/TimeControls';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
@@ -105,19 +112,21 @@ export interface GodModeEvidenceApi {
   };
 }
 
+export interface GodModePlayerCameraApi {
+  getState: () => ReturnType<typeof getPlayerCameraState>;
+  zoomIn: () => boolean;
+  zoomOut: () => boolean;
+  recenterOnCitizen: () => boolean;
+}
+
 declare global {
   interface Window {
     __GODMODE_EVIDENCE__?: GodModeEvidenceApi;
+    __GODMODE_PLAYER_CAMERA__?: GodModePlayerCameraApi;
   }
 }
 
 export const CANONICAL_M02_SEED = 'GODMODE_M02_CANONICAL_2026';
-
-const CAMERA_VIEWS: { id: CameraView; label: string }[] = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'angled', label: 'Angled' },
-  { id: 'street', label: 'Street' },
-];
 
 import { Sphere, Vector3 } from 'three';
 
@@ -161,6 +170,23 @@ export function App() {
       setCameraView(fromQuery);
       setCameraNonce((n) => n + 1);
     }
+  }, []);
+
+  useEffect(() => {
+    window.__GODMODE_PLAYER_CAMERA__ = {
+      getState: () => getPlayerCameraState(),
+      zoomIn: () => dollyPlayerCamera(0.82),
+      zoomOut: () => dollyPlayerCamera(1.22),
+      recenterOnCitizen: () => {
+        const citizen = useDiagnosticsStore.getState().renderSnapshot?.citizens?.[0];
+        if (!citizen) return false;
+        const y = terrainHeightAt(citizen.x, citizen.z) + 0.95;
+        return recenterOrbitOnPoint(citizen.x, y, citizen.z, true);
+      },
+    };
+    return () => {
+      delete window.__GODMODE_PLAYER_CAMERA__;
+    };
   }, []);
 
   useEffect(() => {
@@ -406,9 +432,21 @@ export function App() {
   }, []);
 
   const handleSelectView = useCallback((view: CameraView) => {
+    const store = useDiagnosticsStore.getState();
+    store.setCameraOverride(null);
+    store.setEvidencePortraitOpts(null);
+    store.setActiveCameraView(view);
     setCameraView(view);
     setCameraNonce((nonce) => nonce + 1);
   }, []);
+
+  const handleResetCamera = useCallback(() => {
+    const store = useDiagnosticsStore.getState();
+    store.setCameraOverride(null);
+    store.setEvidencePortraitOpts(null);
+    store.setActiveCameraView(cameraView);
+    setCameraNonce((nonce) => nonce + 1);
+  }, [cameraView]);
 
   const handleSelectCitizen = useCallback(() => {
     setCitizenSelected(true);
@@ -424,65 +462,11 @@ export function App() {
         onSelectCitizen={handleSelectCitizen}
       />
 
-      <div
-        data-testid="camera-controls"
-        style={{
-          position: 'fixed',
-          top: 12,
-          left: 12,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 6,
-          padding: 8,
-          background: 'rgba(12, 14, 18, 0.88)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 8,
-          zIndex: 10,
-        }}
-      >
-        <div
-          style={{
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-            fontSize: 11,
-            color: '#9aa3ab',
-          }}
-        >
-          Camera
-        </div>
-        {CAMERA_VIEWS.map((view) => {
-          const active = view.id === cameraView;
-          return (
-            <button
-              key={view.id}
-              data-testid={`camera-${view.id}`}
-              onClick={() => handleSelectView(view.id)}
-              style={{
-                padding: '5px 10px',
-                cursor: 'pointer',
-                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-                fontSize: 12,
-                color: active ? '#0b0d10' : '#d8dee9',
-                background: active ? '#8fb6e0' : 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                borderRadius: 6,
-                fontWeight: active ? 700 : 500,
-              }}
-            >
-              {view.label}
-            </button>
-          );
-        })}
-        <div
-          style={{
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-            fontSize: 10,
-            color: '#6b7480',
-            maxWidth: 120,
-          }}
-        >
-          Drag to rotate · right-drag to pan · scroll to zoom
-        </div>
-      </div>
+      <CameraControlStrip
+        activeView={cameraView}
+        onSelectView={handleSelectView}
+        onReset={handleResetCamera}
+      />
 
       <CitizenInspector />
       <TimeControls onSelectSpeed={handleSelectSpeed} />

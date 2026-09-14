@@ -284,3 +284,16 @@ Presentation/evidence only — simulation coordinates and worker authority uncha
   asserts `sit` clip + seated activity at speed 0.
 - **Headless-safe activity seek:** evidence API `stepToSimMinute` + canonical schedule minutes.
 - Release: `review-evidence-m02-020-builder-r15` with BEFORE/AFTER compare panels vs M02-020 Grok blockers.
+
+## VIS-002 player camera UX (Product-owner addendum, M02-020)
+
+Presentation-only orbit controls for normal play — simulation authority unchanged:
+
+- **`cameraPlayerControl.ts`**: town-scale distance clamp (6–102 m vs legacy 180), target bounds,
+  damping, cursor-centered zoom, explicit mouse/touch mappings (LMB orbit, RMB/MMB pan, pinch zoom).
+- **`CameraControls.tsx`**: evidence portrait re-pin isolated to `evidencePortraitMode`; player
+  `cameraOverride` applies once on nonce (never every frame after manual interaction).
+- **`CameraControlStrip.tsx`**: on-screen `+` / `−` zoom and **Reset** alongside Overview/Angled/Street.
+- **Player API** (`window.__GODMODE_PLAYER_CAMERA__`): read distance/state, zoom, recenter-on-citizen hook.
+- **Tests**: `cameraPlayerControl.test.ts` + `tests/e2e/camera-controls.spec.ts` (wheel, drag, reset, paused sim).
+- **Evidence**: sequential camera UX walkthrough `16_camera_*` … `21_camera_reset` in builder release r16.

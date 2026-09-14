@@ -1,20 +1,22 @@
 /**
  * Free camera — VIS-002.
  *
- * Plain English: Lets the player rotate, pan, and zoom the camera freely, plus
- * jump to preset framings (overview / angled / street). Camera movement is pure
- * presentation — it never affects simulation state (spec §4.2, ARCH-002), so it
- * keeps working even while the simulation is paused (UAT-TIME-001).
- *
- * Uses Three.js' built-in OrbitControls (shipped with the `three` package) to
- * avoid adding a dependency.
+ * Orbit / pan / zoom for normal play plus preset jumps. Presentation only — never
+ * affects simulation (ARCH-002). Evidence portrait mode is isolated: it may re-pin
+ * the lens every frame; player mode never does after the user takes control.
  */
 import { useEffect, useMemo } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { PerspectiveCamera, Vector3 } from 'three';
+import { MOUSE, PerspectiveCamera, TOUCH } from 'three';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 import { getCitizenBody, getCitizenWorldBoundsFromRegistry } from './citizenBoundsRegistry';
+import {
+  applyPlayerCameraLimits,
+  clampOrbitTarget,
+  configureOrbitControls,
+  registerPlayerCameraControls,
+} from './cameraPlayerControl';
 import { registerEvidenceRendererContext } from './evidenceRendererRegistry';
 import { computePortraitCameraFromBounds } from './evidencePortrait';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
@@ -26,7 +28,6 @@ interface CameraControlsProps {
 }
 
 export function CameraControls({ view, applyNonce }: CameraControlsProps) {
-  const cameraOverride = useDiagnosticsStore((state) => state.cameraOverride);
   const cameraOverrideNonce = useDiagnosticsStore((state) => state.cameraOverrideNonce);
   const camera = useThree((state) => state.camera as PerspectiveCamera);
   const scene = useThree((state) => state.scene);
@@ -34,35 +35,40 @@ export function CameraControls({ view, applyNonce }: CameraControlsProps) {
 
   const controls = useMemo(() => {
     const orbit = new OrbitControls(camera, domElement);
-    orbit.enableDamping = true;
-    orbit.dampingFactor = 0.08;
-    orbit.minDistance = 6;
-    orbit.maxDistance = 180;
-    // Keep the camera above ground for readable framing.
-    orbit.maxPolarAngle = Math.PI * 0.49;
-    orbit.panSpeed = 0.8;
+    configureOrbitControls(orbit);
+    orbit.mouseButtons = {
+      LEFT: MOUSE.ROTATE,
+      MIDDLE: MOUSE.PAN,
+      RIGHT: MOUSE.PAN,
+    };
+    orbit.touches = {
+      ONE: TOUCH.ROTATE,
+      TWO: TOUCH.DOLLY_PAN,
+    };
     return orbit;
   }, [camera, domElement]);
 
   useEffect(() => {
+    registerPlayerCameraControls(controls);
     return () => {
+      registerPlayerCameraControls(null);
       controls.dispose();
     };
   }, [controls]);
 
   useEffect(() => {
     const state = useDiagnosticsStore.getState();
-    if (state.evidencePortraitMode && state.evidencePortraitOpts) {
-      controls.minDistance = 1.2;
+    if (state.evidencePortraitMode) {
       return;
     }
-    const preset = cameraOverride ?? CAMERA_PRESETS[view];
-    // Evidence portrait framing needs <6 m; default OrbitControls minDistance would clamp it back out.
-    controls.minDistance = cameraOverride ? 1.2 : 6;
+
+    const preset = state.cameraOverride ?? CAMERA_PRESETS[view];
+    applyPlayerCameraLimits(controls, Boolean(state.cameraOverride));
     camera.position.set(...preset.position);
-    controls.target.copy(new Vector3(...preset.target));
+    controls.target.set(...preset.target);
+    clampOrbitTarget(controls.target);
     controls.update();
-  }, [view, applyNonce, cameraOverride, cameraOverrideNonce, camera, controls]);
+  }, [view, applyNonce, cameraOverrideNonce, camera, controls]);
 
   useFrame(() => {
     registerEvidenceRendererContext({
@@ -75,6 +81,7 @@ export function CameraControls({ view, applyNonce }: CameraControlsProps) {
     const state = useDiagnosticsStore.getState();
     const body = getCitizenBody();
     const cachedBounds = getCitizenWorldBoundsFromRegistry();
+
     if (state.evidencePortraitMode && state.evidencePortraitOpts && (body || cachedBounds)) {
       const frame = computePortraitCameraFromBounds(
         body,
@@ -86,17 +93,13 @@ export function CameraControls({ view, applyNonce }: CameraControlsProps) {
       );
       camera.position.set(...frame.position);
       controls.target.set(...frame.target);
-      controls.minDistance = 1.2;
+      applyPlayerCameraLimits(controls, true);
       controls.update();
       return;
     }
-    // Re-apply every frame so Playwright portrait framing wins before screenshot capture.
-    if (cameraOverride) {
-      camera.position.set(...cameraOverride.position);
-      controls.target.set(...cameraOverride.target);
-      controls.update();
-      return;
-    }
+
+    applyPlayerCameraLimits(controls, false);
+    clampOrbitTarget(controls.target);
     controls.update();
   });
 

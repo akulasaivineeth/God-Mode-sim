@@ -15,7 +15,8 @@ import { execSync } from 'node:child_process';
 
 const OUT = '/opt/cursor/artifacts/m02_closure_evidence';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
-const RELEASE_TAG = 'review-evidence-m02-020-builder-r15';
+const RELEASE_TAG = 'review-evidence-m02-020-builder-r16';
+const PLAYER_BASE = 'http://127.0.0.1:4173/';
 const MIN_GAMEPLAY_PIXEL_HEIGHT = 80;
 const MIN_PORTRAIT_PIXEL_HEIGHT = 100;
 const BEFORE_BASE =
@@ -1120,6 +1121,82 @@ async function captureIdleAt1x(page, saveShot) {
   await setSpeed(page, 0);
 }
 
+async function captureCameraUxWalkthrough(page, saveShot) {
+  await page.goto(PLAYER_BASE);
+  await page.getByTestId('r3f-canvas').waitFor({ state: 'visible', timeout: 30_000 });
+  await page.waitForFunction(
+    () => {
+      const state = globalThis.__GODMODE_PLAYER_CAMERA__?.getState?.();
+      return state != null && state.distance > 0;
+    },
+    null,
+    { timeout: 20_000 },
+  );
+  await setUiChrome(page, { inspector: false, diagnostics: true });
+
+  await page.getByTestId('camera-angled').click();
+  await page.waitForTimeout(500);
+  const presetCam = await page.evaluate(() => globalThis.__GODMODE_PLAYER_CAMERA__?.getState());
+  await saveShot('16_camera_angled_preset', { camera: presetCam, step: 'angled_preset' });
+
+  await page.getByTestId('camera-zoom-in').click();
+  await page.waitForTimeout(450);
+  await saveShot('17_camera_zoomed_in', {
+    camera: await page.evaluate(() => globalThis.__GODMODE_PLAYER_CAMERA__?.getState()),
+    step: 'zoom_in',
+  });
+
+  const canvas = page.getByTestId('r3f-canvas');
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error('Canvas bounding box unavailable for camera UX capture');
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+  await page.mouse.move(cx, cy);
+  await page.mouse.down({ button: 'left' });
+  await page.mouse.move(cx + 120, cy + 45, { steps: 10 });
+  await page.mouse.up({ button: 'left' });
+  await page.waitForTimeout(700);
+  await saveShot('18_camera_rotated', {
+    camera: await page.evaluate(() => globalThis.__GODMODE_PLAYER_CAMERA__?.getState()),
+    step: 'rotate',
+  });
+
+  await page.mouse.move(cx, cy);
+  await page.mouse.down({ button: 'right' });
+  await page.mouse.move(cx - 90, cy + 35, { steps: 10 });
+  await page.mouse.up({ button: 'right' });
+  await page.waitForTimeout(700);
+  await saveShot('19_camera_panned', {
+    camera: await page.evaluate(() => globalThis.__GODMODE_PLAYER_CAMERA__?.getState()),
+    step: 'pan',
+  });
+
+  await page.getByTestId('camera-zoom-out').click();
+  await page.waitForTimeout(450);
+  await saveShot('20_camera_zoomed_out', {
+    camera: await page.evaluate(() => globalThis.__GODMODE_PLAYER_CAMERA__?.getState()),
+    step: 'zoom_out',
+  });
+
+  await page.getByTestId('camera-reset').click();
+  await page.waitForTimeout(550);
+  const resetCam = await page.evaluate(() => globalThis.__GODMODE_PLAYER_CAMERA__?.getState());
+  await saveShot('21_camera_reset', { camera: resetCam, step: 'reset' });
+
+  for (const name of [
+    '16_camera_angled_preset',
+    '17_camera_zoomed_in',
+    '18_camera_rotated',
+    '19_camera_panned',
+    '20_camera_zoomed_out',
+    '21_camera_reset',
+  ]) {
+    await shot(page, name);
+  }
+
+  return { presetDistance: presetCam?.distance, resetDistance: resetCam?.distance };
+}
+
 async function captureGameplayStreet(page, saveShot, name, preset, expectations = {}) {
   await setPortraitMode(page, false);
   await assertStreetCameraGeometry(page, preset);
@@ -1196,6 +1273,12 @@ async function publishRelease(scaleInfo, hashResults) {
     '13_anim_work_A.png',
     '13_anim_work_B.png',
     '14_inspector.png',
+    '16_camera_angled_preset.png',
+    '17_camera_zoomed_in.png',
+    '18_camera_rotated.png',
+    '19_camera_panned.png',
+    '20_camera_zoomed_out.png',
+    '21_camera_reset.png',
     '15_canonical_north_star.png',
     'compare_04_store_street.png',
     'compare_05_workshop_street.png',
@@ -1251,7 +1334,31 @@ async function publishRelease(scaleInfo, hashResults) {
   console.log(`Published https://github.com/${repo}/releases/tag/${RELEASE_TAG}`);
 }
 
+async function runCameraUxOnly() {
+  await mkdir(OUT, { recursive: true });
+  const metaPath = path.join(OUT, 'capture_metadata.json');
+  let metadata = {};
+  if (existsSync(metaPath)) {
+    metadata = JSON.parse(readFileSync(metaPath, 'utf8'));
+  }
+  const browser = await chromium.launch();
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const saveShot = async (name, meta = null) => {
+    if (meta) metadata[name] = meta;
+  };
+  const ux = await captureCameraUxWalkthrough(page, saveShot);
+  metadata.camera_ux_walkthrough = ux;
+  writeFileSync(metaPath, JSON.stringify(metadata, null, 2));
+  await browser.close();
+  console.log('Camera UX evidence saved', OUT);
+}
+
 async function main() {
+  if (process.argv.includes('--camera-ux-only')) {
+    await runCameraUxOnly();
+    return;
+  }
+
   await mkdir(OUT, { recursive: true });
   const browser = await chromium.launch({
     args: [
@@ -1464,6 +1571,8 @@ async function main() {
   );
 
   // Inspector
+  await captureCameraUxWalkthrough(page, saveShot);
+
   await setUiChrome(page, { inspector: true, diagnostics: true });
   await setPortraitMode(page, false);
   await applyPreset(page, 'store-street', 0);
