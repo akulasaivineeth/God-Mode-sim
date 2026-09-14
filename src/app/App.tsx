@@ -3,6 +3,15 @@ import { Scene } from '@/rendering/Scene';
 import { CAMERA_PRESETS, cameraViewFromQuery, type CameraView } from '@/rendering/cameraPresets';
 import { getCitizenBody, getCitizenWorldBoundsFromRegistry } from '@/rendering/citizenBoundsRegistry';
 import {
+  advanceCitizenMixer,
+  getCitizenClipDuration,
+  seekCitizenClipPhase,
+} from '@/rendering/citizenPresentationControl';
+import {
+  KENNEY_ALEX_MODEL_HEIGHT,
+  TARGET_CITIZEN_HEIGHT,
+} from '@/rendering/citizenModelScale';
+import {
   assertCitizenVisibilityContract,
   computePortraitCameraFromBounds,
   getCitizenWorldBounds,
@@ -68,6 +77,17 @@ export interface GodModeEvidenceApi {
     margin?: number;
     minScreenAreaFraction?: number;
   }) => void;
+  /** Seek active clip to normalized phase while sim is paused (presentation only). */
+  seekPresentationClipPhase: (phase: number) => number;
+  /** Advance presentation mixer by seconds at speed 0 (dual-frame proof). */
+  advancePresentationMixer: (deltaSeconds: number) => void;
+  getPresentationClipDuration: () => number;
+  getCitizenModelScaleInfo: () => {
+    targetHeight: number;
+    registryHeight: number;
+    computedScale: number;
+    formula: string;
+  };
 }
 
 declare global {
@@ -282,6 +302,15 @@ export function App() {
           minScreenAreaFraction: opts.minScreenAreaFraction ?? 0.06,
         });
       },
+      seekPresentationClipPhase: (phase) => seekCitizenClipPhase(phase),
+      advancePresentationMixer: (deltaSeconds) => advanceCitizenMixer(deltaSeconds),
+      getPresentationClipDuration: () => getCitizenClipDuration(),
+      getCitizenModelScaleInfo: () => ({
+        targetHeight: TARGET_CITIZEN_HEIGHT,
+        registryHeight: KENNEY_ALEX_MODEL_HEIGHT,
+        computedScale: TARGET_CITIZEN_HEIGHT / KENNEY_ALEX_MODEL_HEIGHT,
+        formula: 'TARGET_CITIZEN_HEIGHT / measuredAlexLocalHeight',
+      }),
     };
     return () => {
       delete window.__GODMODE_EVIDENCE__;

@@ -27,6 +27,7 @@ import { terrainHeightAt } from '@/world/townLayout';
 import { MAT } from '../sharedMaterials';
 import type { CitizenPose } from '../citizenPresentation';
 import { layoutCitizenModelFromObject } from '../citizenModelScale';
+import { registerPresentationControls } from '../citizenPresentationControl';
 import type { RenderCitizen } from '../types';
 import { registerCitizenBody, setCitizenWorldBounds } from '../citizenBoundsRegistry';
 import { getCitizenWorldBounds } from '../evidencePortrait';
@@ -103,8 +104,29 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
   }, [gltf]);
 
   useEffect(() => {
-    return () => registerCitizenBody(null);
-  }, []);
+    registerPresentationControls({
+      seekClipPhase: (phase) => {
+        const action = currentAction.current;
+        if (!action) return 0;
+        const duration = action.getClip().duration || 1;
+        const normalized = ((phase % 1) + 1) % 1;
+        action.time = normalized * duration;
+        action.paused = false;
+        mixer.update(0);
+        setCitizenPresentationClipTime(action.time);
+        return action.time;
+      },
+      getActiveClipDuration: () => currentAction.current?.getClip().duration ?? 0,
+      advanceMixer: (deltaSeconds) => {
+        mixer.update(deltaSeconds);
+        setCitizenPresentationClipTime(currentAction.current?.time ?? 0);
+      },
+    });
+    return () => {
+      registerPresentationControls(null);
+      registerCitizenBody(null);
+    };
+  }, [mixer, setCitizenPresentationClipTime]);
 
   useEffect(() => {
     setCitizenPresentationPose(citizen.pose);

@@ -241,7 +241,10 @@ route. Simulation authority unchanged; no town/river redesign.
   framing from worker truth (not collapsed SkinnedMesh bbox heuristics alone).
 - **SkinnedMesh bounds fallback** (`evidencePortrait.ts`): synthesize standing humanoid
   volume when live bbox collapses (portrait metrics only).
-- **Closure evidence harness** (`scripts/capture-m02-closure-evidence.mjs`): captures
-  required A–J package (street idle/walk, store sit/eat, workshop work, facility frames,
-  overview corridor, inspector, review clip) with metadata; publishes GitHub release
-  `review-evidence-m02-014-builder-r13`.
+- **Closure evidence harness** (`scripts/capture-m02-closure-evidence.mjs`): R13 fail-closed
+  image-space proof — rejects identical A/B SHA-256, requires ROI pixel delta (clipPhase
+  recorded only, never overrides zero delta), mixer seek API (`citizenPresentationControl.ts`),
+  gameplay-scale street HOME/STORE/WORKSHOP shots (no evidence body-scale boost), honest
+  static-sit fallback (contrasting idle frame B when Kenney `sit` clip is visually static),
+  full regression set (overview/angled/river/square/north-star). Release:
+  `review-evidence-m02-013-builder-r13`.

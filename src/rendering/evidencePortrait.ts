@@ -8,6 +8,7 @@ import {
   Box3,
   Object3D,
   PerspectiveCamera,
+  SkinnedMesh,
   Sphere,
   Vector3,
 } from 'three';
@@ -54,6 +55,23 @@ const _worldCenter = new Vector3();
 export function getCitizenWorldBounds(body: Object3D): Box3 {
   body.updateWorldMatrix(true, true);
   const box = new Box3();
+  let hasSkinned = false;
+  body.traverse((child) => {
+    if (child instanceof SkinnedMesh) {
+      child.computeBoundingBox();
+      if (child.boundingBox) {
+        const skinned = child.boundingBox.clone().applyMatrix4(child.matrixWorld);
+        box.union(skinned);
+        hasSkinned = true;
+      }
+    }
+  });
+  if (hasSkinned) {
+    box.getSize(_fallbackSize);
+    if (_fallbackSize.y >= TARGET_CITIZEN_HEIGHT * 0.25) {
+      return box;
+    }
+  }
   box.setFromObject(body);
   box.getSize(_fallbackSize);
   if (_fallbackSize.y >= TARGET_CITIZEN_HEIGHT * 0.35) {
