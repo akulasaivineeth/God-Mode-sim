@@ -30,6 +30,12 @@ function ensureSnapshot(): WorldSnapshot {
 function handleInit(seed: string): void {
   snapshot = createCitizenWorld(seed, SCHEMA_VERSION);
   post({ type: 'READY', seed });
+  // Publish minute-0 presentation snapshot so paused/evidence loads still render citizens.
+  post({
+    type: 'STEP_COMPLETE',
+    renderSnapshot: toRenderSnapshot(snapshot),
+    stepMs: 0,
+  });
 }
 
 function handleStep(count = 1): void {

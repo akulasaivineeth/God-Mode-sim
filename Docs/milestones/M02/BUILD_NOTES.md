@@ -224,3 +224,45 @@ Bounded presentation + evidence harness fixes — simulation authority unchanged
   water coverage in capture harness.
 - **Evidence harness** (`scripts/capture-r12-evidence.mjs`): full release package with
   BEFORE/AFTER river panel, ROI validation JSON, asset/network summary.
+
+## R13 asset-first M02 closure (PRODUCT-DIRECTION)
+
+Narrow vertical slice: **one obvious stylized human** on the HOME → STORE → WORKSHOP
+route. Simulation authority unchanged; no town/river redesign.
+
+- **Citizen scale normalization** (`src/rendering/citizenModelScale.ts`): measure Kenney
+  `alex-character.glb` rest bbox (~0.67 model units); scale to **~1.8 world units** tall
+  with foot offset from bbox min-Y. Fixes the prior `0.02` magic constant that rendered
+  Alex invisible (~0.013 units when bbox collapsed against a 90-unit authorship guess).
+- **Selection chrome** (`CitizenVisual.tsx` + `sharedMaterials.ts`): removed floating
+  yellow cone; subtle translucent blue ground ring only; ring hidden during evidence
+  portrait mode so the humanoid is the subject.
+- **Evidence camera** (`App.tsx` `frameCitizenSimPortrait`): east-side 3/4 sim-position
+  framing from worker truth (not collapsed SkinnedMesh bbox heuristics alone).
+- **SkinnedMesh bounds fallback** (`evidencePortrait.ts`): synthesize standing humanoid
+  volume when live bbox collapses (portrait metrics only).
+- **Closure evidence harness** (`scripts/capture-m02-closure-evidence.mjs`): R13 fail-closed
+  image-space proof — rejects identical A/B SHA-256, requires ROI pixel delta (clipPhase
+  recorded only, never overrides zero delta), mixer seek API (`citizenPresentationControl.ts`),
+  gameplay-scale street HOME/STORE/WORKSHOP shots (no evidence body-scale boost), honest
+  static-sit fallback (contrasting idle frame B when Kenney `sit` clip is visually static),
+  full regression set (overview/angled/river/square/north-star). Release:
+  `review-evidence-m02-013-builder-r13`.
+
+## R13 unified gameplay scale + M02-015 closure (FIX_REQUIRED)
+
+In-place history convergence on `milestone/m02-one-citizen` — **no simulation changes**:
+
+- **Preserved from R12 (`c61ae04`):** bounds-derived portrait metrics (`evidencePortrait.ts` +
+  `citizenBoundsRegistry.ts`), bridge-derived river preset + water-coverage gates, strict
+  metadata/asset/network checks, archival supersession of `capture-r12-evidence.mjs`.
+- **Preserved from R13 (`e606308`):** `citizenModelScale.ts` → ~1.8 m Kenney Alex at gameplay
+  scale (no `MODEL_SCALE=0.02` or evidence-only body boost), subtle selection ring (yellow cone
+  removed), prefab-backed HOME/STORE/WORKSHOP route + doorstep street presets, 89/89 tests +
+  M00 golden `fac095d1`.
+- **Authority sweep:** single live path `Scene` → `CitizenVisual.tsx` (no `Citizen.tsx`);
+  one scale authority; one closure harness (`capture-m02-closure-evidence.mjs`).
+- **R14 proof closure:** live 1× mixer (`animationsSuppressed: false`); minute-0 IDLE before
+  daylight advance; dual-frame WALK/SIT-EAT/WORK with ROI motion + distinct SHA-256 (no
+  `allowDuplicateHash`, no idle-contrast sit fallback); gameplay-scale street shots; full
+  regression + river semantics. Release: `review-evidence-m02-014-builder-r14`.

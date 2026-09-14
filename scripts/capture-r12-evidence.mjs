@@ -1,5 +1,5 @@
 /**
- * R12 evidence capture — bounds-derived portrait framing + bridge river subject.
+ * R12 evidence capture — SUPERSEDED by scripts/capture-m02-closure-evidence.mjs (R14).
  *
  * Usage: node scripts/capture-r12-evidence.mjs
  */

@@ -8,10 +8,12 @@ import {
   Box3,
   Object3D,
   PerspectiveCamera,
+  SkinnedMesh,
   Sphere,
   Vector3,
 } from 'three';
 import { getCitizenWorldBoundsFromRegistry } from './citizenBoundsRegistry';
+import { TARGET_CITIZEN_HEIGHT } from './citizenModelScale';
 
 export interface PortraitOpts {
   /** Minimum fraction of viewport area occupied by projected citizen bounds. */
@@ -47,14 +49,41 @@ const BOX_CORNER_OFFSETS: [number, number, number][] = [
   [1, 1, 1],
 ];
 
+const _fallbackSize = new Vector3();
+const _worldCenter = new Vector3();
+
 export function getCitizenWorldBounds(body: Object3D): Box3 {
-  const cached = getCitizenWorldBoundsFromRegistry();
-  if (cached && !cached.isEmpty()) {
-    return cached;
-  }
   body.updateWorldMatrix(true, true);
   const box = new Box3();
+  let hasSkinned = false;
+  body.traverse((child) => {
+    if (child instanceof SkinnedMesh) {
+      child.computeBoundingBox();
+      if (child.boundingBox) {
+        const skinned = child.boundingBox.clone().applyMatrix4(child.matrixWorld);
+        box.union(skinned);
+        hasSkinned = true;
+      }
+    }
+  });
+  if (hasSkinned) {
+    box.getSize(_fallbackSize);
+    if (_fallbackSize.y >= TARGET_CITIZEN_HEIGHT * 0.25) {
+      return box;
+    }
+  }
   box.setFromObject(body);
+  box.getSize(_fallbackSize);
+  if (_fallbackSize.y >= TARGET_CITIZEN_HEIGHT * 0.35) {
+    return box;
+  }
+  // SkinnedMesh bbox often collapses — synthesize a standing humanoid volume at feet.
+  body.getWorldPosition(_worldCenter);
+  const halfW = 0.28;
+  box.setFromCenterAndSize(
+    _worldCenter.clone().add(new Vector3(0, TARGET_CITIZEN_HEIGHT * 0.5, 0)),
+    new Vector3(halfW * 2, TARGET_CITIZEN_HEIGHT, halfW * 2),
+  );
   return box;
 }
 
@@ -152,7 +181,11 @@ export function computePortraitCameraFromBounds(
   const margin = opts.margin ?? 1.28;
   const cached = getCitizenWorldBoundsFromRegistry();
   const bounds =
-    cached && !cached.isEmpty() ? cached : body ? getCitizenWorldBounds(body) : null;
+    body != null
+      ? getCitizenWorldBounds(body)
+      : cached && !cached.isEmpty()
+        ? cached
+        : null;
   if (!bounds || bounds.isEmpty()) {
     throw new Error('Citizen bounds are empty — animated body not ready');
   }
@@ -206,6 +239,26 @@ export function computePortraitCameraFromBounds(
       throw new Error('Unable to find unobstructed portrait camera for citizen bounds');
     }
     best = { position: fallback, projection: candidate.projection, score: candidate.score };
+  }
+
+  const minArea = opts.minScreenAreaFraction ?? 0;
+  if (minArea > 0 && best.projection.areaFraction < minArea) {
+    const dist = best.position.distanceTo(target);
+    const dir = best.position.clone().sub(target).normalize();
+    for (let tighten = 0; tighten < 8; tighten += 1) {
+      const closer = target.clone().add(dir.clone().multiplyScalar(dist * 0.82 ** (tighten + 1)));
+      const candidate = scoreCandidate(
+        bounds,
+        camera,
+        viewportWidth,
+        viewportHeight,
+        closer,
+        target,
+      );
+      if (!candidate) break;
+      best = { position: closer, projection: candidate.projection, score: candidate.score };
+      if (candidate.projection.areaFraction >= minArea && candidate.projection.fullyOnScreen) break;
+    }
   }
 
   return {
