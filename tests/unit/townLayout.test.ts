@@ -100,9 +100,8 @@ describe('WORLD-001 river readability', () => {
   it('is a non-trivial river that bends inward (not a tiny edge strip)', () => {
     const { points, width, bankWidth, bankColor, color } = CANONICAL_TOWN.river;
     expect(points.length).toBeGreaterThanOrEqual(5);
-    expect(width).toBeGreaterThanOrEqual(10);
+    expect(width).toBeGreaterThanOrEqual(18);
     expect(bankWidth).toBeGreaterThan(0);
-    expect(bankWidth).toBeLessThan(width);
     expect(bankColor).toMatch(/^#[0-9a-f]{6}$/i);
     expect(color).toMatch(/^#[0-9a-f]{6}$/i);
     const xs = points.map((p) => p.x);

@@ -14,12 +14,16 @@ import { execSync } from 'node:child_process';
 const OUT = '/opt/cursor/artifacts/wf01_evidence';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
 const NORTH_STAR = 'Docs/art-direction/references/god-mode-town-north-star.png';
-const RELEASE_TAG = 'review-evidence-wf01-builder-r4';
+const RELEASE_TAG = 'review-evidence-wf01-builder-r5';
 const REPO = 'akulasaivineeth/God-Mode-sim';
-const R2_OVERVIEW_URL =
-  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf01-builder-r2/01_wf01_overview.png';
-const R3_OVERVIEW_URL =
-  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf01-builder-r3/01_wf01_overview.png';
+const R4_OVERVIEW_URL =
+  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf01-builder-r4/01_wf01_overview.png';
+
+const RIVER_EVIDENCE_THRESHOLDS = {
+  g1OverviewRoiWater: 0.02,
+  g2Continuity: 0.35,
+  g3RiverObliqueWater: 0.04,
+};
 
 const SHOTS = [
   { name: '01_wf01_overview', cam: 'overview', waitMs: 2400, diagnostics: true },
@@ -120,23 +124,86 @@ async function downloadReferenceOverview(url, dest) {
   execSync(`curl -fsSL "${url}" -o "${dest}"`, { stdio: 'inherit' });
 }
 
-function buildCompareHtml(r2Url, r3Url, r4Url, northStarUrl) {
+function buildCompareHtml(r4Url, r5Url, northStarUrl) {
   return `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>WF01 Visual Gate R4.1</title>
+<html><head><meta charset="utf-8"><title>WF01 Visual Gate R5</title>
 <style>
 body{font-family:system-ui,sans-serif;background:#1a1a1a;color:#eee;margin:0;padding:16px}
-h1{font-size:1.1rem} .row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+h1{font-size:1.1rem} .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .col{background:#2a2a2a;padding:8px;border-radius:8px} img{width:100%;height:auto;border-radius:4px}
 .label{font-weight:600;margin-bottom:6px;font-size:0.85rem}
 </style></head><body>
-<h1>WF01 Visual Gate — R2 → R3 → R4.1 → North Star</h1>
+<h1>WF01 Visual Gate — R4.1 → R5 → North Star</h1>
 <div class="row">
-  <div class="col"><div class="label">R2 Overview</div><img src="${r2Url}" alt="r2"/></div>
-  <div class="col"><div class="label">R3 Overview</div><img src="${r3Url}" alt="r3"/></div>
-  <div class="col"><div class="label">R4.1 Overview</div><img src="${r4Url}" alt="r4"/></div>
+  <div class="col"><div class="label">R4.1 BEFORE Overview</div><img src="${r4Url}" alt="r4"/></div>
+  <div class="col"><div class="label">R5 CURRENT Overview</div><img src="${r5Url}" alt="r5"/></div>
   <div class="col"><div class="label">North Star Reference</div><img src="${northStarUrl}" alt="north-star"/></div>
 </div>
 </body></html>`;
+}
+
+async function analysePngRiverMetrics(page, pngBuffer) {
+  return page.evaluate(
+    async ({ buffer, thresholds }) => {
+      const blob = new Blob([new Uint8Array(buffer)], { type: 'image/png' });
+      const bitmap = await createImageBitmap(blob);
+      const canvas = document.createElement('canvas');
+      canvas.width = bitmap.width;
+      canvas.height = bitmap.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(bitmap, 0, 0);
+      const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const isWater = (r, g, b) => {
+        if (b < 90 || b <= r + 15) return false;
+        if (g > b + 10) return false;
+        if (r > 140) return false;
+        const saturation = b - Math.min(r, g);
+        return saturation >= 18 && b > g;
+      };
+      const rx0 = Math.floor(width * 0.55);
+      const ry0 = 0;
+      const rx1 = width;
+      const ry1 = height;
+      let roiTotal = 0;
+      let roiWater = 0;
+      let frameTotal = 0;
+      let frameWater = 0;
+      const midY = Math.floor((ry0 + ry1) / 2);
+      let currentRun = 0;
+      let maxRun = 0;
+      for (let y = 0; y < height; y += 1) {
+        for (let x = 0; x < width; x += 1) {
+          const i = (y * width + x) * 4;
+          const water = isWater(data[i], data[i + 1], data[i + 2]);
+          frameTotal += 1;
+          if (water) frameWater += 1;
+          if (x >= rx0 && x < rx1 && y >= ry0 && y < ry1) {
+            roiTotal += 1;
+            if (water) roiWater += 1;
+            if (y === midY) {
+              if (water) {
+                currentRun += 1;
+                maxRun = Math.max(maxRun, currentRun);
+              } else {
+                currentRun = 0;
+              }
+            }
+          }
+        }
+      }
+      const roiWidth = rx1 - rx0;
+      return {
+        waterFraction: roiTotal > 0 ? roiWater / roiTotal : 0,
+        fullFrameWaterFraction: frameTotal > 0 ? frameWater / frameTotal : 0,
+        continuityFraction: roiWidth > 0 ? maxRun / roiWidth : 0,
+        thresholds,
+        g1: roiTotal > 0 ? roiWater / roiTotal >= thresholds.g1OverviewRoiWater : false,
+        g2: roiWidth > 0 ? maxRun / roiWidth >= thresholds.g2Continuity : false,
+        g3: frameTotal > 0 ? frameWater / frameTotal >= thresholds.g3RiverObliqueWater : false,
+      };
+    },
+    { buffer: [...pngBuffer], thresholds: RIVER_EVIDENCE_THRESHOLDS },
+  );
 }
 
 async function publishRelease(files, manifest) {
@@ -147,7 +214,7 @@ async function publishRelease(files, manifest) {
     /* first publish */
   }
   const notes = [
-    'WF01 Revision 4.1 — structural composition correction (depressed river, district props, terrain LOD)',
+    'WF01 Revision 5 — terrain carve river corridor + district massing + image-space diagnostics',
     '',
     `Overview: ${manifest.overviewDiagnostics?.drawCalls} draw calls / ${manifest.overviewDiagnostics?.triangles} triangles`,
     `Street: ${manifest.streetDiagnostics?.drawCalls} draw calls / ${manifest.streetDiagnostics?.triangles} triangles`,
@@ -157,7 +224,7 @@ async function publishRelease(files, manifest) {
   ].join('\n');
   const fileArgs = files.map((f) => `${path.join(OUT, f)}#${f}`).join(' ');
   execSync(
-    `gh release create ${RELEASE_TAG} --repo ${REPO} --title "WF01 builder evidence (Revision 4.1)" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
+    `gh release create ${RELEASE_TAG} --repo ${REPO} --title "WF01 builder evidence (Revision 5)" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
     { stdio: 'inherit' },
   );
   return `https://github.com/${REPO}/releases/tag/${RELEASE_TAG}`;
@@ -219,20 +286,22 @@ async function main() {
 
   assertCleanAssets(watchers);
 
-  const r2File = path.join(OUT, '00_before_r2_overview.png');
-  const r3File = path.join(OUT, '00_before_r3_overview.png');
-  await downloadReferenceOverview(R2_OVERVIEW_URL, r2File);
-  await downloadReferenceOverview(R3_OVERVIEW_URL, r3File);
+  const r4File = path.join(OUT, '00_before_r4_overview.png');
+  await downloadReferenceOverview(R4_OVERVIEW_URL, r4File);
 
   const northStarOut = path.join(OUT, '00_north_star_reference.png');
   if (existsSync(NORTH_STAR)) {
     await copyFile(NORTH_STAR, northStarOut);
   }
 
+  const overviewPng = readFileSync(path.join(OUT, '01_wf01_overview.png'));
+  const riverPng = readFileSync(path.join(OUT, '07_wf01_river_bridge_park.png'));
+  const overviewRiverMetrics = await analysePngRiverMetrics(page, overviewPng);
+  const riverObliqueMetrics = await analysePngRiverMetrics(page, riverPng);
+
   const releaseBase = `https://github.com/${REPO}/releases/download/${RELEASE_TAG}`;
   const compareHtml = buildCompareHtml(
-    `${releaseBase}/00_before_r2_overview.png`,
-    `${releaseBase}/00_before_r3_overview.png`,
+    `${releaseBase}/00_before_r4_overview.png`,
     `${releaseBase}/01_wf01_overview.png`,
     `${releaseBase}/00_north_star_reference.png`,
   );
@@ -245,18 +314,25 @@ async function main() {
     overviewDiagnostics,
     streetDiagnostics,
     angledDiagnostics,
+    riverReadability: {
+      overview: overviewRiverMetrics,
+      riverOblique: riverObliqueMetrics,
+      gates: {
+        g1_overviewRoiWater: overviewRiverMetrics.g1,
+        g2_continuity: overviewRiverMetrics.g2,
+        g3_riverObliqueWater: riverObliqueMetrics.g3,
+      },
+    },
     consoleErrors: watchers.consoleErrors,
     pageErrors: watchers.pageErrors,
     networkAssetErrors: watchers.networkAssetErrors,
     assetRequestCount: watchers.assetRequests.length,
-    r2OverviewUrl: R2_OVERVIEW_URL,
-    r3OverviewUrl: R3_OVERVIEW_URL,
+    r4OverviewUrl: R4_OVERVIEW_URL,
   };
   await writeFile(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2));
 
   const releaseFiles = [
-    '00_before_r2_overview.png',
-    '00_before_r3_overview.png',
+    '00_before_r4_overview.png',
     '00_north_star_reference.png',
     '01_wf01_overview.png',
     '02_wf01_angled.png',

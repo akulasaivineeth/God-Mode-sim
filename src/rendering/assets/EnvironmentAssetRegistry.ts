@@ -75,33 +75,22 @@ export function resolveVegetationUrl(placement: VegetationPlacement): string {
   return QUATERNIUS_ASSETS[placement.asset as keyof typeof QUATERNIUS_ASSETS];
 }
 
-/** Kenney/Quaternius prop clusters for district readability — WF01 R4.1. */
+/** Kenney/Quaternius prop clusters for district readability — WF01 R5 massing. */
 export function buildDistrictCompositionPlacements(): VegetationPlacement[] {
   const placements: VegetationPlacement[] = [];
 
-  // Riverside Park river-facing path + framing (park anchor fixed at 72,38).
-  const parkRiverPath = [
-    { x: 78, z: 38 },
-    { x: 82, z: 38 },
-    { x: 86, z: 38 },
-  ];
-  for (let i = 0; i < parkRiverPath.length; i += 1) {
-    placements.push({
-      position: parkRiverPath[i],
-      asset: 'pathShort',
-      scale: 1.1,
-      rotY: Math.PI / 2,
-      source: 'kenney',
-    });
-  }
+  // Civic cluster framing (2 trees — budget-conscious).
   placements.push(
-    { position: { x: 80, z: 42 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
-    { position: { x: 84, z: 34 }, asset: 'commonTree1', scale: 0.8, source: 'quaternius' },
-    { position: { x: 76, z: 34 }, asset: 'pine1', scale: 0.75, source: 'quaternius' },
-    { position: { x: 88, z: 40 }, asset: 'fern', scale: 0.9, source: 'quaternius' },
+    { position: { x: -22, z: -12 }, asset: 'commonTree1', scale: 0.85, source: 'quaternius' },
+    { position: { x: -28, z: -44 }, asset: 'pine1', scale: 0.75, source: 'quaternius' },
   );
 
-  // Future residential lot corner markers — one bush per lot at road-facing corner.
+  // Residential branch hedge line along z=-42 (4 bushes).
+  for (let x = 24; x <= 60; x += 12) {
+    placements.push({ position: { x, z: -44 }, asset: 'bush', scale: 0.9, source: 'quaternius' });
+  }
+
+  // Future lot corner markers — one bush per lot frontage.
   for (const plot of CANONICAL_TOWN.vacantPlots) {
     placements.push({
       position: { x: plot.center.x - plot.width * 0.42, z: plot.center.z + plot.depth * 0.38 },
@@ -112,21 +101,27 @@ export function buildDistrictCompositionPlacements(): VegetationPlacement[] {
     });
   }
 
-  // Orchard tree-small grid on farm-3 (6 instances).
+  // Riverside Park river-facing path + tree arc (anchor fixed at 72,38).
+  for (const pos of [{ x: 80, z: 38 }, { x: 86, z: 38 }]) {
+    placements.push({ position: pos, asset: 'pathShort', scale: 1.1, rotY: Math.PI / 2, source: 'kenney' });
+  }
+  placements.push(
+    { position: { x: 76, z: 42 }, asset: 'commonTree1', scale: 0.85, source: 'quaternius' },
+    { position: { x: 82, z: 44 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
+    { position: { x: 88, z: 36 }, asset: 'pine1', scale: 0.75, source: 'quaternius' },
+    { position: { x: 84, z: 34 }, asset: 'fern', scale: 0.9, source: 'quaternius' },
+  );
+
+  // Orchard tree-small grid on farm-3 (6 instances) + row boundary bushes.
   const orchard = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3');
   if (orchard) {
-    const cols = 3;
-    const rows = 2;
-    for (let r = 0; r < rows; r += 1) {
-      for (let c = 0; c < cols; c += 1) {
+    for (let r = 0; r < 2; r += 1) {
+      for (let c = 0; c < 3; c += 1) {
         placements.push({
-          position: {
-            x: orchard.center.x + (c - 1) * 3.2,
-            z: orchard.center.z + (r - 0.5) * 2.8,
-          },
+          position: { x: orchard.center.x + (c - 1) * 3.2, z: orchard.center.z + (r - 0.5) * 2.8 },
           asset: 'treeSmall',
           scale: 0.9 + (r + c) * 0.04,
-          rotY: (r * cols + c) * 0.7,
+          rotY: (r * 3 + c) * 0.7,
           source: 'kenney',
         });
       }
@@ -140,35 +135,28 @@ export function buildDistrictCompositionPlacements(): VegetationPlacement[] {
 /** Corridor accents — deterministic, no runtime randomness. */
 export const M02_CORRIDOR_VEGETATION: readonly VegetationPlacement[] = [
   { position: { x: 8, z: -5 }, asset: 'commonTree1', scale: 0.9, source: 'quaternius' },
-  { position: { x: 5, z: -2 }, asset: 'bushFlowers', scale: 1.1, source: 'quaternius' },
   { position: { x: -5, z: 5 }, asset: 'commonTree2', scale: 1.0, source: 'quaternius' },
   { position: { x: -14, z: 18 }, asset: 'pine1', scale: 0.85, source: 'quaternius' },
   { position: { x: 22, z: 8 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
-  { position: { x: 35, z: 18 }, asset: 'flowers', scale: 0.95, source: 'quaternius' },
   { position: { x: -8, z: 26 }, asset: 'bush', scale: 1.05, source: 'quaternius' },
   { position: { x: 42, z: -18 }, asset: 'bush', scale: 1.0, source: 'quaternius' },
-  { position: { x: -32, z: 12 }, asset: 'flowers', scale: 0.9, source: 'quaternius' },
 ];
 
 /** Riverbank rock/shrub accents — WF01 eastern frame. */
 export const RIVERBANK_VEGETATION: readonly VegetationPlacement[] = [
   { position: { x: 62, z: -12 }, asset: 'pebble1', scale: 0.8, source: 'quaternius' },
   { position: { x: 66, z: 18 }, asset: 'pebble2', scale: 0.9, source: 'quaternius' },
-  { position: { x: 60, z: 42 }, asset: 'bush', scale: 1.0, source: 'quaternius' },
   { position: { x: 70, z: -38 }, asset: 'fern', scale: 0.9, source: 'quaternius' },
   { position: { x: 82, z: -28 }, asset: 'pine1', scale: 1.05, source: 'quaternius' },
   { position: { x: 86, z: 22 }, asset: 'commonTree1', scale: 1.0, source: 'quaternius' },
-  { position: { x: 84, z: 58 }, asset: 'pine2', scale: 0.95, source: 'quaternius' },
-  { position: { x: 78, z: -68 }, asset: 'commonTree2', scale: 0.9, source: 'quaternius' },
   { position: { x: 92, z: -8 }, asset: 'fern', scale: 0.85, source: 'quaternius' },
-  { position: { x: 88, z: 72 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
 ];
 
 /** Dense north/west/east forest frame — WF01 periphery. */
 export function buildPeripheryForest(): VegetationPlacement[] {
   const placements: VegetationPlacement[] = [];
   const northEdge = [
-    { x: -95, z: -102 }, { x: -35, z: -104 }, { x: 35, z: -104 }, { x: 95, z: -102 },
+    { x: -95, z: -102 }, { x: -35, z: -104 }, { x: 35, z: -104 },
   ];
   const westEdge = [
     { x: -104, z: -70 }, { x: -106, z: 0 }, { x: -104, z: 65 },

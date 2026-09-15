@@ -2,25 +2,19 @@ import { describe, expect, it } from 'vitest';
 import { CANONICAL_TOWN } from '@/world/townLayout';
 import {
   buildRiverRibbonGeometry,
-  RIVER_WATER_FLOOR_DROP,
-  RIVER_WATER_SURFACE_DROP,
+  R5_RIVER_CROSS_SECTION,
 } from '@/rendering/environment/riverGeometry';
 
-describe('WF01 R4.1 river cross-section', () => {
-  const { points, width, bankWidth, color, bankColor } = CANONICAL_TOWN.river;
+describe('WF01 R5 river ribbon geometry', () => {
+  const { points, color, bankColor } = CANONICAL_TOWN.river;
 
-  it('builds depressed channel with floor below surface', () => {
-    const { water, waterFloor, bank } = buildRiverRibbonGeometry(points, width, bankWidth, {
+  it('builds water and bank meshes from cross-section authority', () => {
+    const { water, bank } = buildRiverRibbonGeometry(points, R5_RIVER_CROSS_SECTION, {
       waterColor: color,
       bankColor,
     });
     expect(water.attributes.position.count).toBeGreaterThan(0);
-    expect(waterFloor.attributes.position.count).toBeGreaterThan(0);
     expect(bank.attributes.position.count).toBeGreaterThan(0);
-
-    const waterY = water.attributes.position.getY(0);
-    const floorY = waterFloor.attributes.position.getY(0);
-    expect(waterY - floorY).toBeCloseTo(RIVER_WATER_FLOOR_DROP - RIVER_WATER_SURFACE_DROP, 4);
   });
 
   it('keeps bridge anchor on polyline at z=0', () => {

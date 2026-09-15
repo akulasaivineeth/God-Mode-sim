@@ -28,6 +28,16 @@
 4. **Camera-controls e2e** — `maxDistance` raised to 136 so Overview preset is not orbit-clamped on reset.
 5. **Evidence** — release `review-evidence-wf01-builder-r3` with R2→R3→north-star compare at genuine daytime.
 
+## Revision 5 corrections (terrain carve + image-space guarantee)
+
+1. **`riverCrossSection.ts`** — single geometric authority for corridor width, carve depth, water/bank heights.
+2. **Rendering-only terrain carve** — `TownLandscape` applies `presentationTerrainHeightAt()`; simulation `terrainHeightAt()` unchanged.
+3. **Exposed water corridor** — wider water ribbon with thin bank lips; reduced emissive; valley vertex coloring.
+4. **District massing** — civic/residential/commercial/industrial/park/periphery placement clusters via registry (no new buildings).
+5. **Geometry unit tests** — carve continuity, water-above-terrain, projected corridor width at bridge.
+6. **Evidence G1–G3** — pixel classification in capture harness manifest (diagnostic, not unit-test authority).
+7. **Evidence** — release `review-evidence-wf01-builder-r5` with R4.1→R5→north-star compare.
+
 ## Revision 4.1 corrections (structural composition)
 
 1. **Shared instancer** — `InstancedGltfPlacements.tsx` extracted; vegetation and roads delegate to one GLTF instancing path.
@@ -39,7 +49,17 @@
 
 ## Performance measurement
 
-`npm run measure:render-budget` + evidence capture (2026-09-15, R4.1):
+`npm run measure:render-budget` + evidence capture (2026-09-15, R5):
+
+| Preset | Draw calls | Triangles |
+|--------|-----------|-----------|
+| Overview | 140 | 140,176 |
+| Street | 83 | ~131k |
+| Angled | 128 | ~140k |
+
+Within WF01 limits (Overview ≤140 DC, <150k tris). River carve adds no extra mesh authority; placement budget recovered via periphery/corridor trim.
+
+`npm run measure:render-budget` (2026-09-15, R4.1):
 
 | Preset | Draw calls | Triangles |
 |--------|-----------|-----------|

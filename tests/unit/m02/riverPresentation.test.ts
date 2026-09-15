@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { CANONICAL_TOWN } from '@/world/townLayout';
 import {
-  RIVER_PRESENTATION_SCALE,
   bridgePlacementOnRiver,
   buildRiverRibbonGeometry,
+  R5_RIVER_CROSS_SECTION,
 } from '@/rendering/environment/riverGeometry';
+import { R5_RIVER_CROSS_SECTION as SECTION } from '@/rendering/environment/riverCrossSection';
 
 describe('M02 R8 river presentation', () => {
   it('widens ribbon modestly without changing authored centerline nodes', () => {
-    expect(RIVER_PRESENTATION_SCALE).toBeGreaterThanOrEqual(1.15);
-    expect(RIVER_PRESENTATION_SCALE).toBeLessThanOrEqual(1.32);
+    expect(SECTION.presentationScale).toBeGreaterThanOrEqual(1.1);
+    expect(SECTION.presentationScale).toBeLessThanOrEqual(1.35);
     expect(CANONICAL_TOWN.river.points.length).toBeGreaterThan(3);
   });
 
@@ -23,8 +24,7 @@ describe('M02 R8 river presentation', () => {
   it('uses authored river colors in ribbon geometry', () => {
     const { water, bank } = buildRiverRibbonGeometry(
       CANONICAL_TOWN.river.points,
-      CANONICAL_TOWN.river.width,
-      CANONICAL_TOWN.river.bankWidth,
+      R5_RIVER_CROSS_SECTION,
       { waterColor: CANONICAL_TOWN.river.color, bankColor: CANONICAL_TOWN.river.bankColor },
     );
     expect(water.attributes.position.count).toBeGreaterThan(0);

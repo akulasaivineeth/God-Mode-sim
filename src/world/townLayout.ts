@@ -490,7 +490,7 @@ export const CANONICAL_TOWN: TownLayout = {
     color: '#4c5540',
   },
   river: {
-    // WF01 R4.1 — same polyline/bridge anchor; depressed blue channel + vegetated berms.
+    // WF01 R5 — same polyline/bridge anchor; cross-section owned by riverCrossSection.ts.
     points: [
       { x: 96, z: -115 },
       { x: 90, z: -78 },
@@ -500,10 +500,10 @@ export const CANONICAL_TOWN: TownLayout = {
       { x: 86, z: 78 },
       { x: 96, z: 115 },
     ],
-    width: 12,
-    color: '#1e7ec8',
+    width: 20,
+    color: '#2a8fd4',
     bankWidth: 3.5,
-    bankColor: '#3d5c34',
+    bankColor: '#4a5c38',
   },
   trees: buildTrees(),
   forest: buildForest(),
