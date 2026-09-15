@@ -16,8 +16,8 @@ describe('M02 R12 river bridge evidence camera', () => {
   it('derives bridge placement on authored polyline near z=0', () => {
     const { bridge } = riverFrameVectorsAtBridge(CANONICAL_TOWN.river.points, 0);
     expect(bridge.z).toBe(0);
-    expect(bridge.x).toBeGreaterThan(32);
-    expect(bridge.x).toBeLessThan(38);
+    expect(bridge.x).toBeGreaterThan(68);
+    expect(bridge.x).toBeLessThan(80);
   });
 
   it('uses a lower oblique altitude distinct from overview/angled', () => {

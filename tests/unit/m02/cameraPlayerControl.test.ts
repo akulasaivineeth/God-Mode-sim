@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Vector3 } from 'three';
+import { CAMERA_PRESETS } from '@/rendering/cameraPresets';
 import { clampOrbitTarget, PLAYER_CAMERA_LIMITS } from '@/rendering/cameraPlayerControl';
 
 describe('cameraPlayerControl', () => {
@@ -23,5 +24,11 @@ describe('cameraPlayerControl', () => {
   it('uses practical max distance tighter than legacy 180', () => {
     expect(PLAYER_CAMERA_LIMITS.maxDistance).toBeLessThan(180);
     expect(PLAYER_CAMERA_LIMITS.maxDistance).toBeGreaterThan(90);
+  });
+
+  it('allows the WF01 overview preset without orbit clamping', () => {
+    const { position, target } = CAMERA_PRESETS.overview;
+    const dist = new Vector3(...position).distanceTo(new Vector3(...target));
+    expect(dist).toBeLessThanOrEqual(PLAYER_CAMERA_LIMITS.maxDistance);
   });
 });

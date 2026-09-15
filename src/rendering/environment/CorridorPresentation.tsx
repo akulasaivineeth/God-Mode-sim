@@ -1,5 +1,5 @@
 /**
- * M02 corridor road hierarchy — curbs, crosswalk, entrance aprons (presentation only).
+ * WF01 corridor presentation — curbs, crosswalk, entrance aprons (presentation only).
  */
 import { useMemo } from 'react';
 import { terrainHeightAt } from '@/world/townLayout';
@@ -9,35 +9,31 @@ import { InstancedScatter } from '../InstancedScatter';
 import { SCATTER_GEOM } from '../scatterGeometries';
 import { MAT } from '../sharedMaterials';
 
-/** Zebra stripes at the main east-west crossing Alex uses. */
-function ZebraCrosswalk() {
+function ZebraCrosswalk({ x, z }: { x: number; z: number }) {
   const stripes = useMemo(() => {
     const points = [];
     for (let i = -3; i <= 3; i += 1) {
-      points.push({ x: i * 0.55, z: 0, rotY: 0, y: terrainHeightAt(i * 0.55, 0) + 0.055 });
+      points.push({ x: x + i * 0.55, z, rotY: 0, y: terrainHeightAt(x + i * 0.55, z) + 0.055 });
     }
     return points;
-  }, []);
+  }, [x, z]);
 
   return (
-    <group position={[0, 0, 0]}>
-      <InstancedScatter
-        points={stripes}
-        geometry={SCATTER_GEOM.crossStripe}
-        material={MAT.stoneLight}
-        yLift={0}
-        castShadow={false}
-      />
-    </group>
+    <InstancedScatter
+      points={stripes}
+      geometry={SCATTER_GEOM.crossStripe}
+      material={MAT.stoneLight}
+      yLift={0}
+      castShadow={false}
+    />
   );
 }
 
-/** Raised curb strips flanking the core east-west road segment. */
 function CorridorCurbs() {
   const curbs = useMemo(
     () => [
-      { from: { x: -20, z: -3.8 }, to: { x: 20, z: -3.8 } },
-      { from: { x: -20, z: 3.8 }, to: { x: 20, z: 3.8 } },
+      { from: { x: -35, z: -3.8 }, to: { x: 35, z: -3.8 } },
+      { from: { x: -35, z: 3.8 }, to: { x: 35, z: 3.8 } },
     ],
     [],
   );
@@ -64,17 +60,11 @@ function CorridorCurbs() {
 }
 
 export function CorridorPresentation() {
-  const crossY = terrainHeightAt(0, 0);
   return (
     <group>
       <CorridorCurbs />
-      <ZebraCrosswalk />
-      <ModelAsset
-        url={KENNEY_ASSETS.roadCrossing}
-        position={[0, crossY + 0.04, 0]}
-        scale={1.5}
-        castShadow={false}
-      />
+      <ZebraCrosswalk x={0} z={0} />
+      <ZebraCrosswalk x={24} z={12} />
       <ModelAsset
         url={KENNEY_ASSETS.drivewayShort}
         position={[11, terrainHeightAt(11, -6), -6]}

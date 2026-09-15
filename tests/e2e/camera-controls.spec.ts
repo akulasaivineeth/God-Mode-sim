@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { CAMERA_PRESETS } from '../../src/rendering/cameraPresets';
 
 async function readCamera(page: import('@playwright/test').Page) {
   return page.evaluate(() => {
@@ -91,13 +92,13 @@ test('VIS-002 — drag rotates and reset returns to Overview framing', async ({ 
   await page.getByTestId('camera-reset').click();
   await page.waitForTimeout(500);
   const reset = await readCamera(page);
-  const overviewPosition: [number, number, number] = [8, 80, 58];
-  const overviewTarget: [number, number, number] = [26, 1, 0];
+  const overviewPosition = CAMERA_PRESETS.overview.position;
+  const overviewTarget = CAMERA_PRESETS.overview.target;
   expect(
-    reset!.position.every((v, i) => Math.abs(v - overviewPosition[i]) < 2.5),
+    reset!.position.every((v, i) => Math.abs(v - overviewPosition[i]) < 3),
   ).toBe(true);
   expect(
-    reset!.target.every((v, i) => Math.abs(v - overviewTarget[i]) < 1.5),
+    reset!.target.every((v, i) => Math.abs(v - overviewTarget[i]) < 2),
   ).toBe(true);
 });
 

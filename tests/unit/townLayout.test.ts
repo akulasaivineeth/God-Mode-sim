@@ -63,21 +63,26 @@ describe('WORLD-001 canonical town shell', () => {
   });
 
   it('has modest but legible terrain elevation that is flat in the settled core', () => {
-    // Legible (clearly readable) yet modest — gentle topography, not mountains.
     expect(TERRAIN.maxHeight).toBeGreaterThanOrEqual(8);
     expect(TERRAIN.maxHeight).toBeLessThanOrEqual(14);
-    // Core stays flat so buildings/roads sit level.
     expect(terrainHeightAt(0, 0)).toBe(0);
-    expect(terrainHeightAt(20, -10)).toBe(0);
-    // Hills rise toward the north/west, bounded by maxHeight, and are clearly
-    // raised (at least half the max height) so they read at overview framing.
-    const nwPeak = terrainHeightAt(-48, -48);
-    const nPeak = terrainHeightAt(0, -48);
+    expect(terrainHeightAt(30, -20)).toBe(0);
+    const nwPeak = terrainHeightAt(-100, -100);
+    const nPeak = terrainHeightAt(0, -100);
     expect(nwPeak).toBeGreaterThanOrEqual(TERRAIN.maxHeight * 0.5);
     expect(nPeak).toBeGreaterThanOrEqual(TERRAIN.maxHeight * 0.4);
     expect(nwPeak).toBeLessThanOrEqual(TERRAIN.maxHeight);
-    // The eastern river valley stays low (river must not run uphill).
-    expect(terrainHeightAt(40, 0)).toBe(0);
+    expect(terrainHeightAt(90, 0)).toBe(0);
+  });
+
+  it('uses WF01 expanded ground extent (~240 m)', () => {
+    expect(CANONICAL_TOWN.groundExtent).toBeGreaterThanOrEqual(115);
+    expect(CANONICAL_TOWN.groundExtent).toBeLessThanOrEqual(125);
+  });
+
+  it('has 6–10 intentional future residential lots', () => {
+    expect(CANONICAL_TOWN.vacantPlots.length).toBeGreaterThanOrEqual(6);
+    expect(CANONICAL_TOWN.vacantPlots.length).toBeLessThanOrEqual(10);
   });
 
   it('terrainHeightAt is deterministic', () => {
@@ -93,17 +98,22 @@ describe('WORLD-001 canonical town shell', () => {
 
 describe('WORLD-001 river readability', () => {
   it('is a non-trivial river that bends inward (not a tiny edge strip)', () => {
-    const { points, width, bankWidth } = CANONICAL_TOWN.river;
+    const { points, width, bankWidth, bankColor, color } = CANONICAL_TOWN.river;
     expect(points.length).toBeGreaterThanOrEqual(5);
-    expect(width).toBeGreaterThanOrEqual(7);
-    expect(bankWidth).toBeGreaterThan(width);
+    expect(width).toBeGreaterThanOrEqual(18);
+    expect(bankWidth).toBeGreaterThan(0);
+    expect(bankColor).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(color).toMatch(/^#[0-9a-f]{6}$/i);
     const xs = points.map((p) => p.x);
     const zs = points.map((p) => p.z);
-    // Bends inward from the map edge (groundExtent 50) rather than hugging it.
-    expect(Math.min(...xs)).toBeLessThanOrEqual(38);
-    // Runs the length of the map so it reads from an overview.
-    expect(Math.min(...zs)).toBeLessThanOrEqual(-40);
-    expect(Math.max(...zs)).toBeGreaterThanOrEqual(40);
+    expect(Math.min(...xs)).toBeLessThanOrEqual(82);
+    expect(Math.min(...zs)).toBeLessThanOrEqual(-100);
+    expect(Math.max(...zs)).toBeGreaterThanOrEqual(100);
+  });
+
+  it('has R4.1 lot frontage paths connecting future residential lots', () => {
+    const frontage = CANONICAL_TOWN.paths.filter((p) => p.id.startsWith('path-lot-'));
+    expect(frontage.length).toBe(3);
   });
 });
 

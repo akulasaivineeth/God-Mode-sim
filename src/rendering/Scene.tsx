@@ -18,6 +18,7 @@ import { Town } from './Town';
 import { DedicatedBuildings } from './assets/BuildingVisualRegistry';
 import { CitizenVisual } from './assets/CitizenVisual';
 import { CorridorPresentation } from './environment/CorridorPresentation';
+import { RoadNetwork } from './environment/RoadNetwork';
 import { PracticalLighting } from './environment/PracticalLighting';
 import { TownAmenities } from './environment/TownAmenities';
 import { TownLandscape } from './environment/TownLandscape';
@@ -70,6 +71,7 @@ function SceneContent({
       <DayNightLighting timeOfDay={timeOfDay} />
       <PracticalLighting timeOfDay={timeOfDay} />
       <TownLandscape />
+      <RoadNetwork />
       <Town />
       <CorridorPresentation />
       <TownAmenities />

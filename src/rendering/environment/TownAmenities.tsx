@@ -103,11 +103,14 @@ export function TownAmenities() {
 
       {CANONICAL_TOWN.farmPlots.map((plot) => {
         const y = terrainHeightAt(plot.center.x, plot.center.z);
+        const isOrchard = plot.id === 'farm-3';
+        const rowCount = isOrchard ? 4 : 5;
         const rows = [];
-        for (let r = -2; r <= 2; r += 1) {
+        for (let r = 0; r < rowCount; r += 1) {
+          const offset = (r - (rowCount - 1) / 2) * (isOrchard ? 1.4 : 1.2);
           rows.push(
-            <mesh key={r} position={[plot.center.x, y + 0.12, plot.center.z + r * 1.2]} receiveShadow>
-              <boxGeometry args={[plot.width * 0.85, 0.2, 0.35]} />
+            <mesh key={r} position={[plot.center.x, y + 0.12, plot.center.z + offset]} receiveShadow>
+              <boxGeometry args={[plot.width * 0.88, 0.2, isOrchard ? 0.28 : 0.35]} />
               <primitive object={r % 2 === 0 ? MAT.farmRowA : MAT.farmRowB} attach="material" />
             </mesh>,
           );
