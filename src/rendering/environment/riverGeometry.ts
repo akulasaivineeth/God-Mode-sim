@@ -1,18 +1,31 @@
 /**
  * Continuous river ribbon mesh from authored polyline — presentation only.
  *
- * Presentation width may exceed authored simulation width (1.15–1.35×) so the
- * water reads clearly in Overview/Angled without moving canonical river nodes.
+ * R4.1: depressed blue channel with narrow vegetated berms outside the water
+ * edge. Authored centerline and bridge anchor unchanged.
  */
 import { BufferAttribute, BufferGeometry, Color } from 'three';
 import { terrainHeightAt } from '@/world/townLayout';
 
-/** Modest visual widening — authored centerline unchanged (R8). */
+/** Modest visual widening — authored centerline unchanged. */
 export const RIVER_PRESENTATION_SCALE = 1.32;
+
+/** Water surface sits below ground so the channel reads as carved terrain. */
+export const RIVER_WATER_SURFACE_DROP = 0.1;
+/** Channel floor for depth cue — presentation only. */
+export const RIVER_WATER_FLOOR_DROP = 0.45;
+/** Narrow berm slightly above surrounding grass. */
+export const RIVER_BANK_LIFT = 0.04;
 
 export interface RiverRibbonColors {
   waterColor: string;
   bankColor: string;
+}
+
+export interface RiverRibbonGeometry {
+  water: BufferGeometry;
+  waterFloor: BufferGeometry;
+  bank: BufferGeometry;
 }
 
 export function buildRiverRibbonGeometry(
@@ -20,15 +33,18 @@ export function buildRiverRibbonGeometry(
   waterWidth: number,
   bankWidth: number,
   colors: RiverRibbonColors,
-): { water: BufferGeometry; bank: BufferGeometry } {
+): RiverRibbonGeometry {
   const bankVerts: number[] = [];
   const waterVerts: number[] = [];
+  const floorVerts: number[] = [];
   const bankColors: number[] = [];
   const waterColors: number[] = [];
+  const floorColors: number[] = [];
 
   const bankColor = new Color(colors.bankColor);
-  const bankDark = bankColor.clone().multiplyScalar(0.82);
+  const bankDark = bankColor.clone().multiplyScalar(0.78);
   const waterColor = new Color(colors.waterColor);
+  const waterDeep = waterColor.clone().multiplyScalar(0.55);
 
   const visualWaterHalf = (waterWidth * RIVER_PRESENTATION_SCALE) / 2;
   const visualBankHalf = (bankWidth * RIVER_PRESENTATION_SCALE) / 2;
@@ -44,18 +60,33 @@ export function buildRiverRibbonGeometry(
     const nz = dx / len;
     const groundY = terrainHeightAt(curr.x, curr.z);
     const t = i / Math.max(1, points.length - 1);
-    const bc = bankColor.clone().lerp(bankDark, t * 0.35);
+    const bc = bankColor.clone().lerp(bankDark, t * 0.25);
 
-    bankVerts.push(
-      curr.x + nx * visualBankHalf, groundY + 0.14, curr.z + nz * visualBankHalf,
-      curr.x - nx * visualBankHalf, groundY + 0.14, curr.z - nz * visualBankHalf,
-    );
-    waterVerts.push(
-      curr.x + nx * visualWaterHalf, groundY - 0.16, curr.z + nz * visualWaterHalf,
-      curr.x - nx * visualWaterHalf, groundY - 0.16, curr.z - nz * visualWaterHalf,
-    );
-    bankColors.push(bc.r, bc.g, bc.b, bc.r, bc.g, bc.b);
+    const innerL = { x: curr.x + nx * visualWaterHalf, z: curr.z + nz * visualWaterHalf };
+    const innerR = { x: curr.x - nx * visualWaterHalf, z: curr.z - nz * visualWaterHalf };
+    const outerL = {
+      x: curr.x + nx * (visualWaterHalf + visualBankHalf),
+      z: curr.z + nz * (visualWaterHalf + visualBankHalf),
+    };
+    const outerR = {
+      x: curr.x - nx * (visualWaterHalf + visualBankHalf),
+      z: curr.z - nz * (visualWaterHalf + visualBankHalf),
+    };
+
+    const waterY = groundY - RIVER_WATER_SURFACE_DROP;
+    const floorY = groundY - RIVER_WATER_FLOOR_DROP;
+    const bankY = groundY + RIVER_BANK_LIFT;
+
+    waterVerts.push(innerL.x, waterY, innerL.z, innerR.x, waterY, innerR.z);
+    floorVerts.push(innerL.x, floorY, innerL.z, innerR.x, floorY, innerR.z);
+    bankVerts.push(outerL.x, bankY, outerL.z, innerL.x, bankY, innerL.z);
+    bankVerts.push(innerR.x, bankY, innerR.z, outerR.x, bankY, outerR.z);
+
     waterColors.push(waterColor.r, waterColor.g, waterColor.b, waterColor.r, waterColor.g, waterColor.b);
+    floorColors.push(waterDeep.r, waterDeep.g, waterDeep.b, waterDeep.r, waterDeep.g, waterDeep.b);
+    for (let j = 0; j < 4; j += 1) {
+      bankColors.push(bc.r, bc.g, bc.b);
+    }
   }
 
   const indices: number[] = [];
@@ -67,10 +98,18 @@ export function buildRiverRibbonGeometry(
     indices.push(a, c, b, b, c, d);
   }
 
+  const bankIndices: number[] = [];
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const a = i * 4;
+    const b = a + 4;
+    bankIndices.push(a, b, a + 1, a + 1, b, b + 1);
+    bankIndices.push(a + 2, b + 2, a + 3, a + 3, b + 2, b + 3);
+  }
+
   const bankGeo = new BufferGeometry();
   bankGeo.setAttribute('position', new BufferAttribute(new Float32Array(bankVerts), 3));
   bankGeo.setAttribute('color', new BufferAttribute(new Float32Array(bankColors), 3));
-  bankGeo.setIndex(indices);
+  bankGeo.setIndex(bankIndices);
   bankGeo.computeVertexNormals();
 
   const waterGeo = new BufferGeometry();
@@ -79,7 +118,13 @@ export function buildRiverRibbonGeometry(
   waterGeo.setIndex(indices);
   waterGeo.computeVertexNormals();
 
-  return { water: waterGeo, bank: bankGeo };
+  const floorGeo = new BufferGeometry();
+  floorGeo.setAttribute('position', new BufferAttribute(new Float32Array(floorVerts), 3));
+  floorGeo.setAttribute('color', new BufferAttribute(new Float32Array(floorColors), 3));
+  floorGeo.setIndex(indices);
+  floorGeo.computeVertexNormals();
+
+  return { water: waterGeo, waterFloor: floorGeo, bank: bankGeo };
 }
 
 /** Bridge placement on the authored polyline at a target Z (presentation only). */

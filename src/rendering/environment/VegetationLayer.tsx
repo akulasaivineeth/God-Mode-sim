@@ -4,6 +4,7 @@
 import { useMemo } from 'react';
 import { CANONICAL_TOWN } from '@/world/townLayout';
 import {
+  buildDistrictCompositionPlacements,
   buildPeripheryForest,
   M02_CORRIDOR_VEGETATION,
   RIVERBANK_VEGETATION,
@@ -25,14 +26,17 @@ export function VegetationLayer() {
     ];
   }, []);
 
+  const districtComposition = useMemo(() => buildDistrictCompositionPlacements(), []);
+
   const allPlacements = useMemo(
     () => [
       ...M02_CORRIDOR_VEGETATION,
       ...buildPeripheryForest(),
       ...RIVERBANK_VEGETATION,
       ...parkAndSquare,
+      ...districtComposition,
     ],
-    [parkAndSquare],
+    [parkAndSquare, districtComposition],
   );
 
   return <InstancedVegetation placements={allPlacements} />;

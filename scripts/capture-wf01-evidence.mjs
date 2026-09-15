@@ -14,10 +14,12 @@ import { execSync } from 'node:child_process';
 const OUT = '/opt/cursor/artifacts/wf01_evidence';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
 const NORTH_STAR = 'Docs/art-direction/references/god-mode-town-north-star.png';
-const RELEASE_TAG = 'review-evidence-wf01-builder-r3';
+const RELEASE_TAG = 'review-evidence-wf01-builder-r4';
 const REPO = 'akulasaivineeth/God-Mode-sim';
-const BEFORE_OVERVIEW_URL =
+const R2_OVERVIEW_URL =
   'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf01-builder-r2/01_wf01_overview.png';
+const R3_OVERVIEW_URL =
+  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf01-builder-r3/01_wf01_overview.png';
 
 const SHOTS = [
   { name: '01_wf01_overview', cam: 'overview', waitMs: 2400, diagnostics: true },
@@ -114,23 +116,24 @@ async function captureShot(page, shot) {
   return result;
 }
 
-async function downloadBeforeOverview(dest) {
-  execSync(`curl -fsSL "${BEFORE_OVERVIEW_URL}" -o "${dest}"`, { stdio: 'inherit' });
+async function downloadReferenceOverview(url, dest) {
+  execSync(`curl -fsSL "${url}" -o "${dest}"`, { stdio: 'inherit' });
 }
 
-function buildCompareHtml(beforeUrl, afterUrl, northStarUrl) {
+function buildCompareHtml(r2Url, r3Url, r4Url, northStarUrl) {
   return `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>WF01 Visual Gate R3</title>
+<html><head><meta charset="utf-8"><title>WF01 Visual Gate R4.1</title>
 <style>
 body{font-family:system-ui,sans-serif;background:#1a1a1a;color:#eee;margin:0;padding:16px}
-h1{font-size:1.1rem} .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+h1{font-size:1.1rem} .row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
 .col{background:#2a2a2a;padding:8px;border-radius:8px} img{width:100%;height:auto;border-radius:4px}
 .label{font-weight:600;margin-bottom:6px;font-size:0.85rem}
 </style></head><body>
-<h1>WF01 Visual Gate — R2 → R3 → North Star</h1>
+<h1>WF01 Visual Gate — R2 → R3 → R4.1 → North Star</h1>
 <div class="row">
-  <div class="col"><div class="label">BEFORE (WF01 R2 Overview)</div><img src="${beforeUrl}" alt="before"/></div>
-  <div class="col"><div class="label">WF01 R3 AFTER Overview</div><img src="${afterUrl}" alt="after"/></div>
+  <div class="col"><div class="label">R2 Overview</div><img src="${r2Url}" alt="r2"/></div>
+  <div class="col"><div class="label">R3 Overview</div><img src="${r3Url}" alt="r3"/></div>
+  <div class="col"><div class="label">R4.1 Overview</div><img src="${r4Url}" alt="r4"/></div>
   <div class="col"><div class="label">North Star Reference</div><img src="${northStarUrl}" alt="north-star"/></div>
 </div>
 </body></html>`;
@@ -144,7 +147,7 @@ async function publishRelease(files, manifest) {
     /* first publish */
   }
   const notes = [
-    'WF01 Revision 3 — Riverside presentation pass (daylight, river, district storytelling)',
+    'WF01 Revision 4.1 — structural composition correction (depressed river, district props, terrain LOD)',
     '',
     `Overview: ${manifest.overviewDiagnostics?.drawCalls} draw calls / ${manifest.overviewDiagnostics?.triangles} triangles`,
     `Street: ${manifest.streetDiagnostics?.drawCalls} draw calls / ${manifest.streetDiagnostics?.triangles} triangles`,
@@ -154,7 +157,7 @@ async function publishRelease(files, manifest) {
   ].join('\n');
   const fileArgs = files.map((f) => `${path.join(OUT, f)}#${f}`).join(' ');
   execSync(
-    `gh release create ${RELEASE_TAG} --repo ${REPO} --title "WF01 builder evidence (Revision 3)" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
+    `gh release create ${RELEASE_TAG} --repo ${REPO} --title "WF01 builder evidence (Revision 4.1)" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
     { stdio: 'inherit' },
   );
   return `https://github.com/${REPO}/releases/tag/${RELEASE_TAG}`;
@@ -216,8 +219,10 @@ async function main() {
 
   assertCleanAssets(watchers);
 
-  const beforeFile = path.join(OUT, '00_before_r2_overview.png');
-  await downloadBeforeOverview(beforeFile);
+  const r2File = path.join(OUT, '00_before_r2_overview.png');
+  const r3File = path.join(OUT, '00_before_r3_overview.png');
+  await downloadReferenceOverview(R2_OVERVIEW_URL, r2File);
+  await downloadReferenceOverview(R3_OVERVIEW_URL, r3File);
 
   const northStarOut = path.join(OUT, '00_north_star_reference.png');
   if (existsSync(NORTH_STAR)) {
@@ -227,6 +232,7 @@ async function main() {
   const releaseBase = `https://github.com/${REPO}/releases/download/${RELEASE_TAG}`;
   const compareHtml = buildCompareHtml(
     `${releaseBase}/00_before_r2_overview.png`,
+    `${releaseBase}/00_before_r3_overview.png`,
     `${releaseBase}/01_wf01_overview.png`,
     `${releaseBase}/00_north_star_reference.png`,
   );
@@ -243,12 +249,14 @@ async function main() {
     pageErrors: watchers.pageErrors,
     networkAssetErrors: watchers.networkAssetErrors,
     assetRequestCount: watchers.assetRequests.length,
-    beforeOverviewUrl: BEFORE_OVERVIEW_URL,
+    r2OverviewUrl: R2_OVERVIEW_URL,
+    r3OverviewUrl: R3_OVERVIEW_URL,
   };
   await writeFile(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2));
 
   const releaseFiles = [
     '00_before_r2_overview.png',
+    '00_before_r3_overview.png',
     '00_north_star_reference.png',
     '01_wf01_overview.png',
     '02_wf01_angled.png',

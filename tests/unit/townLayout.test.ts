@@ -98,15 +98,23 @@ describe('WORLD-001 canonical town shell', () => {
 
 describe('WORLD-001 river readability', () => {
   it('is a non-trivial river that bends inward (not a tiny edge strip)', () => {
-    const { points, width, bankWidth } = CANONICAL_TOWN.river;
+    const { points, width, bankWidth, bankColor, color } = CANONICAL_TOWN.river;
     expect(points.length).toBeGreaterThanOrEqual(5);
-    expect(width).toBeGreaterThanOrEqual(7);
-    expect(bankWidth).toBeGreaterThan(width);
+    expect(width).toBeGreaterThanOrEqual(10);
+    expect(bankWidth).toBeGreaterThan(0);
+    expect(bankWidth).toBeLessThan(width);
+    expect(bankColor).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(color).toMatch(/^#[0-9a-f]{6}$/i);
     const xs = points.map((p) => p.x);
     const zs = points.map((p) => p.z);
     expect(Math.min(...xs)).toBeLessThanOrEqual(82);
     expect(Math.min(...zs)).toBeLessThanOrEqual(-100);
     expect(Math.max(...zs)).toBeGreaterThanOrEqual(100);
+  });
+
+  it('has R4.1 lot frontage paths connecting future residential lots', () => {
+    const frontage = CANONICAL_TOWN.paths.filter((p) => p.id.startsWith('path-lot-'));
+    expect(frontage.length).toBe(3);
   });
 });
 

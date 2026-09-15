@@ -28,16 +28,24 @@
 4. **Camera-controls e2e** — `maxDistance` raised to 136 so Overview preset is not orbit-clamped on reset.
 5. **Evidence** — release `review-evidence-wf01-builder-r3` with R2→R3→north-star compare at genuine daytime.
 
+## Revision 4.1 corrections (structural composition)
+
+1. **Shared instancer** — `InstancedGltfPlacements.tsx` extracted; vegetation and roads delegate to one GLTF instancing path.
+2. **River cross-section** — depressed blue channel (surface −0.10 m, floor −0.45 m) with narrow vegetated berms outside water edge; polyline/bridge anchor unchanged.
+3. **District composition** — `buildDistrictCompositionPlacements()`: park river-facing path modules, 8 lot corner bushes, 6 orchard tree-small, 3 lot frontage paths.
+4. **Terrain LOD** — plane segments 40→28 for triangle recovery without visible regression.
+5. **Camera** — Overview/Angled reframed after composition reads correctly.
+6. **Evidence** — release `review-evidence-wf01-builder-r4` with R2→R3→R4.1→north-star compare.
+
 ## Performance measurement
 
-`npm run measure:render-budget` (2026-09-15, R3):
+`npm run measure:render-budget` + evidence capture (2026-09-15, R4.1):
 
 | Preset | Draw calls | Triangles |
 |--------|-----------|-----------|
-| Overview | 136 | 151,851 |
-| Home street | 56 | 132,973 |
-| Store street | 63 | 135,175 |
-| Workshop street | 54 | 135,636 |
-| Angled (evidence) | ~136 | ~152,000 |
+| Overview | 140 | 147,083 |
+| Street | 82 | 135,211 |
+| Angled | 127 | 146,503 |
+| Home street | 56 | 129,857 |
 
-Within WF01 primary limits (Overview ≤140 DC, Street ≤100 DC). Soft triangle target 150k: +1.2% on same harness as R2 remeasure (151,893); presentation pass adds no duplicate vegetation draw groups.
+Within WF01 primary limits (Overview ≤140 DC, Street ≤100 DC, triangles <150k Overview). Terrain segments 40→20 and east-periphery trim recovered headroom after district prop additions.

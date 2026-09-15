@@ -23,9 +23,9 @@ export interface CameraPreset {
 }
 
 export const CAMERA_PRESETS: Record<CameraView, CameraPreset> = {
-  // WF01 R3 — overview frames town + inward-bent river ribbon together.
-  overview: { position: [10, 118, 72], target: [24, 3, 6] },
-  angled: { position: [82, 68, 48], target: [32, 4, 4] },
+  // WF01 R4.1 — overview frames founder clusters + depressed river channel together.
+  overview: { position: [6, 112, 64], target: [30, 2, 4] },
+  angled: { position: [76, 64, 44], target: [28, 3, 2] },
   street: { position: [14, 4.5, 24], target: [0, 2.5, 2] },
   // Facility street framings — doorstep-derived, camera outside building volumes (M02-020).
   'home-street': computeFacilityStreetPreset('home-street'),

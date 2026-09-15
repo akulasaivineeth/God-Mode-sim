@@ -2,7 +2,7 @@
  * Authored environment asset paths — reusable vegetation/prop vocabulary (M02 R6/R8).
  * Kenney GLBs are repackaged per-pack with matching Textures/colormap.png.
  */
-import type { Vec2 } from '@/world/townLayout';
+import { CANONICAL_TOWN, type Vec2 } from '@/world/townLayout';
 
 export const KENNEY_ASSETS = {
   homeCottage: '/assets/glb/kenney/suburban/home-cottage.glb',
@@ -49,7 +49,8 @@ export const QUATERNIUS_ASSETS = {
   pebble2: '/assets/gltf/quaternius/Pebble_Round_2.gltf',
 } as const;
 
-export type VegetationAssetKey = keyof typeof QUATERNIUS_ASSETS | 'treeLarge';
+export type KenneyPropKey = 'treeSmall' | 'treeLarge' | 'fenceLow' | 'pathShort' | 'pathLong';
+export type VegetationAssetKey = keyof typeof QUATERNIUS_ASSETS | KenneyPropKey;
 
 export interface VegetationPlacement {
   position: Vec2;
@@ -59,12 +60,82 @@ export interface VegetationPlacement {
   source: 'kenney' | 'quaternius';
 }
 
+const KENNEY_PROP_ASSETS: Record<KenneyPropKey, string> = {
+  treeSmall: KENNEY_ASSETS.treeSmall,
+  treeLarge: KENNEY_ASSETS.treeLarge,
+  fenceLow: KENNEY_ASSETS.fenceLow,
+  pathShort: KENNEY_ASSETS.pathShort,
+  pathLong: KENNEY_ASSETS.pathLong,
+};
+
 export function resolveVegetationUrl(placement: VegetationPlacement): string {
   if (placement.source === 'kenney') {
-    return KENNEY_ASSETS.treeLarge;
+    return KENNEY_PROP_ASSETS[placement.asset as KenneyPropKey] ?? KENNEY_ASSETS.treeLarge;
   }
   return QUATERNIUS_ASSETS[placement.asset as keyof typeof QUATERNIUS_ASSETS];
 }
+
+/** Kenney/Quaternius prop clusters for district readability — WF01 R4.1. */
+export function buildDistrictCompositionPlacements(): VegetationPlacement[] {
+  const placements: VegetationPlacement[] = [];
+
+  // Riverside Park river-facing path + framing (park anchor fixed at 72,38).
+  const parkRiverPath = [
+    { x: 78, z: 38 },
+    { x: 82, z: 38 },
+    { x: 86, z: 38 },
+  ];
+  for (let i = 0; i < parkRiverPath.length; i += 1) {
+    placements.push({
+      position: parkRiverPath[i],
+      asset: 'pathShort',
+      scale: 1.1,
+      rotY: Math.PI / 2,
+      source: 'kenney',
+    });
+  }
+  placements.push(
+    { position: { x: 80, z: 42 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
+    { position: { x: 84, z: 34 }, asset: 'commonTree1', scale: 0.8, source: 'quaternius' },
+    { position: { x: 76, z: 34 }, asset: 'pine1', scale: 0.75, source: 'quaternius' },
+    { position: { x: 88, z: 40 }, asset: 'fern', scale: 0.9, source: 'quaternius' },
+  );
+
+  // Future residential lot corner markers — one bush per lot at road-facing corner.
+  for (const plot of CANONICAL_TOWN.vacantPlots) {
+    placements.push({
+      position: { x: plot.center.x - plot.width * 0.42, z: plot.center.z + plot.depth * 0.38 },
+      asset: 'bush',
+      scale: 0.95,
+      rotY: ((plot.center.x + plot.center.z) % 5) * 0.4,
+      source: 'quaternius',
+    });
+  }
+
+  // Orchard tree-small grid on farm-3 (6 instances).
+  const orchard = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3');
+  if (orchard) {
+    const cols = 3;
+    const rows = 2;
+    for (let r = 0; r < rows; r += 1) {
+      for (let c = 0; c < cols; c += 1) {
+        placements.push({
+          position: {
+            x: orchard.center.x + (c - 1) * 3.2,
+            z: orchard.center.z + (r - 0.5) * 2.8,
+          },
+          asset: 'treeSmall',
+          scale: 0.9 + (r + c) * 0.04,
+          rotY: (r * cols + c) * 0.7,
+          source: 'kenney',
+        });
+      }
+    }
+  }
+
+  return placements;
+}
+
 
 /** Corridor accents — deterministic, no runtime randomness. */
 export const M02_CORRIDOR_VEGETATION: readonly VegetationPlacement[] = [
@@ -102,9 +173,7 @@ export function buildPeripheryForest(): VegetationPlacement[] {
   const westEdge = [
     { x: -104, z: -70 }, { x: -106, z: 0 }, { x: -104, z: 65 },
   ];
-  const eastEdge = [
-    { x: 100, z: -75 }, { x: 102, z: -20 }, { x: 101, z: 25 }, { x: 100, z: 75 },
-  ];
+  // East edge omitted — riverbank vegetation provides eastern frame (R4.1 perf trim).
   const variants: VegetationPlacement[] = [
     { position: { x: 0, z: 0 }, asset: 'pine1', source: 'quaternius' },
     { position: { x: 0, z: 0 }, asset: 'pine2', source: 'quaternius' },
@@ -112,7 +181,7 @@ export function buildPeripheryForest(): VegetationPlacement[] {
     { position: { x: 0, z: 0 }, asset: 'commonTree2', source: 'quaternius' },
   ];
   let i = 0;
-  for (const pos of [...northEdge, ...westEdge, ...eastEdge]) {
+  for (const pos of [...northEdge, ...westEdge]) {
     const variant = variants[i % variants.length];
     placements.push({
       position: pos,

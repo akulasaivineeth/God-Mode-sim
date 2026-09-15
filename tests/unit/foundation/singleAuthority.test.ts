@@ -27,7 +27,7 @@ describe('Foundation — single authority inventory', () => {
     expect(pipeline).toContain('GLTFLoader');
     expect(pipeline).toContain('prepareStaticGltfRoot');
     expect(pipeline).toContain('prepareSkinnedCitizenRoot');
-    for (const consumer of ['ModelAsset.tsx', 'CitizenVisual.tsx', 'InstancedVegetation.tsx']) {
+    for (const consumer of ['ModelAsset.tsx', 'CitizenVisual.tsx', 'InstancedGltfPlacements.tsx']) {
       const src = readFileSync(path.join(root, 'rendering/assets', consumer), 'utf8');
       expect(src).toContain('./gltfPipeline');
     }

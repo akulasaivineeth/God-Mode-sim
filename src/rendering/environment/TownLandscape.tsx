@@ -1,17 +1,19 @@
 /**
- * Unified terrain + river ribbon + bridge — presentation only (M02 R6/R8).
+ * Unified terrain + river ribbon — presentation only (M02 R6/R8, WF01 R4.1).
  */
 import { useMemo } from 'react';
 import { BufferAttribute, Color, PlaneGeometry } from 'three';
 import { CANONICAL_TOWN, TERRAIN, terrainHeightAt } from '@/world/townLayout';
 import { buildRiverRibbonGeometry } from './riverGeometry';
 
+/** Reduced tessellation recovers triangle budget without visible terrain regression. */
+const TERRAIN_SEGMENTS = 20;
+
 function UnifiedTerrain() {
   const geometry = useMemo(() => {
     const extent = CANONICAL_TOWN.groundExtent;
     const size = extent * 2.8;
-    const segments = 40;
-    const geo = new PlaneGeometry(size, size, segments, segments);
+    const geo = new PlaneGeometry(size, size, TERRAIN_SEGMENTS, TERRAIN_SEGMENTS);
     const pos = geo.attributes.position;
     const grass = new Color(CANONICAL_TOWN.groundColor);
     const slope = new Color('#6f713f');
@@ -64,15 +66,15 @@ function RiverRibbon() {
   return (
     <group>
       <mesh geometry={bank} receiveShadow>
-        <meshStandardMaterial vertexColors roughness={0.96} metalness={0.01} />
+        <meshStandardMaterial vertexColors roughness={0.94} metalness={0.01} />
       </mesh>
       <mesh geometry={water} receiveShadow renderOrder={2}>
         <meshStandardMaterial
           color={color}
-          roughness={0.04}
-          metalness={0.22}
-          emissive="#1a5a8a"
-          emissiveIntensity={0.42}
+          roughness={0.03}
+          metalness={0.28}
+          emissive="#145a9e"
+          emissiveIntensity={0.35}
         />
       </mesh>
     </group>

@@ -408,6 +408,10 @@ const paths: readonly RoadSegment[] = [
   { id: 'path-square-housing', from: { x: 4, z: -4 }, to: { x: 13, z: -10 }, width: PATH_WIDTH },
   { id: 'path-park-river', from: { x: 72, z: 38 }, to: { x: 88, z: 38 }, width: 1.4 },
   { id: 'path-cafe-cluster', from: { x: -18, z: 18 }, to: { x: -30, z: 12 }, width: 1.4 },
+  // WF01 R4.1 — lot frontage cues connecting future residential lots to the branch road.
+  { id: 'path-lot-1-frontage', from: { x: 48, z: -42 }, to: { x: 48, z: -48 }, width: 1.2 },
+  { id: 'path-lot-2-frontage', from: { x: 62, z: -42 }, to: { x: 62, z: -48 }, width: 1.2 },
+  { id: 'path-lot-3-frontage', from: { x: 76, z: -42 }, to: { x: 76, z: -48 }, width: 1.2 },
 ];
 
 function buildForest(): Forest {
@@ -486,7 +490,7 @@ export const CANONICAL_TOWN: TownLayout = {
     color: '#4c5540',
   },
   river: {
-    // WF01 R3 — bend inward for Overview legibility; bluer water + sandy banks.
+    // WF01 R4.1 — same polyline/bridge anchor; depressed blue channel + vegetated berms.
     points: [
       { x: 96, z: -115 },
       { x: 90, z: -78 },
@@ -496,10 +500,10 @@ export const CANONICAL_TOWN: TownLayout = {
       { x: 86, z: 78 },
       { x: 96, z: 115 },
     ],
-    width: 10,
-    color: '#2a6fa8',
-    bankWidth: 16,
-    bankColor: '#9a8b5a',
+    width: 12,
+    color: '#1e7ec8',
+    bankWidth: 3.5,
+    bankColor: '#3d5c34',
   },
   trees: buildTrees(),
   forest: buildForest(),
