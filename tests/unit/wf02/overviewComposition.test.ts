@@ -5,12 +5,18 @@ import {
   resolveNormalizedLayout,
   resolveRotatedFootprint,
 } from '@/rendering/assets/modelLayout';
-import { buildPeripheryForest } from '@/rendering/assets/EnvironmentAssetRegistry';
 import {
   buildDistrictMassingSpec,
   toGltfPlacements,
 } from '@/rendering/environment/districtMassing';
 import { isOverlayExcluded, buildOverlayCells } from '@/rendering/environment/compositionMask';
+import { isCompositionTierVisible } from '@/rendering/environment/compositionVisibility';
+import {
+  DISTRICT_CANOPY_RESTORE,
+  ORCHARD_PERIMETER,
+  PARK_RIVER_ARC,
+  PERIPHERY_FOREST_FRAME,
+} from '@/rendering/environment/natureMassPlacements';
 import { CANONICAL_TOWN } from '@/world/townLayout';
 import { KENNEY_ASSETS } from '@/rendering/assets/EnvironmentAssetRegistry';
 
@@ -32,7 +38,7 @@ function presentationAabb(buildingId: string) {
   };
 }
 
-describe('WF02 R4.1 overview composition', () => {
+describe('WF02 R5.1 overview composition', () => {
   it('excludes main road center from ground overlay cells', () => {
     expect(isOverlayExcluded(0, 0)).toBe(true);
     expect(isOverlayExcluded(10, 10)).toBe(false);
@@ -40,6 +46,12 @@ describe('WF02 R4.1 overview composition', () => {
 
   it('excludes river corridor from overlay cells', () => {
     expect(isOverlayExcluded(88, 38)).toBe(true);
+  });
+
+  it('uses two ground tint zones (residential + farm)', () => {
+    const spec = buildDistrictMassingSpec();
+    expect(spec.groundZones).toHaveLength(1);
+    expect(spec.groundZones[0]?.id).toBe('residential');
   });
 
   it('deploys Kenney treeSmall orchard grid at farm-3', () => {
@@ -66,17 +78,24 @@ describe('WF02 R4.1 overview composition', () => {
     expect(spec.fenceSegments.length).toBeGreaterThan(20);
   });
 
-  it('removes periphery forest for Phase A recovery', () => {
-    expect(buildPeripheryForest()).toEqual([]);
+  it('restores R5.1 nature mass placement tables', () => {
+    expect(DISTRICT_CANOPY_RESTORE).toHaveLength(5);
+    expect(PERIPHERY_FOREST_FRAME).toHaveLength(4);
+    expect(ORCHARD_PERIMETER).toHaveLength(0);
+    expect(PARK_RIVER_ARC).toHaveLength(0);
   });
 
-  it('excludes road and path corridors from ground tint overlay cells', () => {
-    expect(isOverlayExcluded(0, 0)).toBe(true);
-    const storePath = CANONICAL_TOWN.paths.find((p) => p.id === 'path-square-store');
-    expect(storePath).toBeDefined();
-    const midX = (storePath!.from.x + storePath!.to.x) / 2;
-    const midZ = (storePath!.from.z + storePath!.to.z) / 2;
-    expect(isOverlayExcluded(midX, midZ)).toBe(true);
+  it('gates periphery tier to overview and angled only', () => {
+    expect(isCompositionTierVisible('periphery', 'overview')).toBe(true);
+    expect(isCompositionTierVisible('periphery', 'angled')).toBe(true);
+    expect(isCompositionTierVisible('periphery', 'street')).toBe(false);
+    expect(isCompositionTierVisible('periphery', 'store-street')).toBe(false);
+  });
+
+  it('gates district tier for street and attachment presets', () => {
+    expect(isCompositionTierVisible('district', 'street')).toBe(true);
+    expect(isCompositionTierVisible('district', 'store-street')).toBe(true);
+    expect(isCompositionTierVisible('district', 'overview')).toBe(true);
   });
 
   it('keeps store/workshop presentation AABB gap non-negative', () => {

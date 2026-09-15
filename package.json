@@ -18,6 +18,7 @@
     "capture:m02-evidence": "node scripts/capture-m02-closure-evidence.mjs",
     "capture:wf01-evidence": "node scripts/capture-wf01-evidence.mjs",
     "capture:wf02-evidence": "node scripts/capture-wf02-evidence.mjs",
+    "repack:wf02-atlas": "node scripts/wf02-r51-repack-atlas.mjs",
     "generate:model-layout-manifest": "node scripts/generate-model-layout-manifest.mjs",
     "measure:render-budget": "node scripts/measure-render-budget.mjs",
     "export-review-bundle": "vite-node scripts/export-review-bundle.ts"
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@gltf-transform/core": "^4.5.0",
     "@playwright/test": "^1.51.1",
     "@types/node": "^22.13.10",
     "@types/react": "^19.0.12",
@@ -42,6 +44,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "sharp": "^0.35.4",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.1",
     "vite": "^6.2.2",

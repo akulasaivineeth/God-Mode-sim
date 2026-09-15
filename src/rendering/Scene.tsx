@@ -75,7 +75,7 @@ function SceneContent({
       <RoadNetwork />
       <Town />
       <CorridorPresentation />
-      <OverviewCompositionLayer />
+      <OverviewCompositionLayer cameraView={cameraView} />
       <TownAmenities />
       <DedicatedBuildings />
       <VegetationLayer />

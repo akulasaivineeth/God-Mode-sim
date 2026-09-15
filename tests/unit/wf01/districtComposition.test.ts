@@ -41,20 +41,16 @@ describe('WF01 R5 district composition', () => {
     expect(massingOrchard.length).toBeGreaterThanOrEqual(16);
   });
 
-  it('R4.1 park edge massing uses district ground tint zone (no duplicate kenney path modules)', () => {
+  it('R5.1 park edge uses terrain vertex band and ParkRiverArc (no park ground tint zone)', () => {
     const spec = buildDistrictMassingSpec();
     const parkZone = spec.groundZones.find((z) => z.id === 'park');
-    expect(parkZone).toBeDefined();
-    expect(parkZone!.minX).toBeLessThanOrEqual(72);
-    expect(parkZone!.maxX).toBeGreaterThanOrEqual(88);
+    expect(parkZone).toBeUndefined();
+    expect(spec.groundZones).toHaveLength(1);
   });
 
-  it('R4.1 residential branch frontage scatter along z≈-44', () => {
+  it('R5.1 residential branch frontage scatter along z≈-22', () => {
     const spec = buildDistrictMassingSpec();
-    const hedgeXs = new Set([14, 20, 26, 32, 38, 44, 50, 56]);
-    const hedge = spec.frontageScatter.filter(
-      (p) => Math.abs(p.z + 44) < 1 && [...hedgeXs].some((x) => Math.abs(p.x - x) < 2),
-    );
+    const hedge = spec.frontageScatter.filter((p) => Math.abs(p.z + 22) < 1);
     expect(hedge.length).toBeGreaterThanOrEqual(4);
   });
 });

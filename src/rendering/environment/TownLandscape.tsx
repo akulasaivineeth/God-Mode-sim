@@ -24,10 +24,13 @@ function UnifiedTerrain() {
     const size = extent * 2.8;
     const geo = new PlaneGeometry(size, size, TERRAIN_SEGMENTS, TERRAIN_SEGMENTS);
     const pos = geo.attributes.position;
-    const grass = new Color('#5a7348');
-    const slope = new Color('#8a9a58');
-    const hilltop = new Color('#c4a868');
+    const grass = new Color('#6a8450');
+    const slope = new Color('#8a9860');
+    const hilltop = new Color('#c8a868');
     const valley = new Color('#4a5a38');
+    const garden = new Color('#9aaa68');
+    const farmBand = new Color('#b8a058');
+    const parkLawn = new Color('#78a860');
     const colors = new Float32Array(pos.count * 3);
     const tmp = new Color();
     const edgeFade = extent * 2.2;
@@ -45,8 +48,14 @@ function UnifiedTerrain() {
       pos.setZ(i, h - 0.08 * edgeLift);
 
       const inCorridor = isInsideRiverCorridor(wx, wz, points, section);
+      const inResidential = wx >= 8 && wx <= 82 && wz >= -65 && wz <= -8;
+      const inFarm = wx >= 36 && wx <= 70 && wz >= 72 && wz <= 103;
+      const inPark = wx >= 58 && wx <= 88 && wz >= 24 && wz <= 52;
       const t = Math.min(1, h / (TERRAIN.maxHeight * 0.85));
       if (inCorridor) tmp.copy(valley);
+      else if (inPark) tmp.copy(parkLawn).lerp(garden, t * 0.35);
+      else if (inFarm) tmp.copy(farmBand).lerp(slope, t * 0.4);
+      else if (inResidential) tmp.copy(garden).lerp(slope, t * 0.45);
       else if (t < 0.5) tmp.copy(grass).lerp(slope, t / 0.5);
       else tmp.copy(slope).lerp(hilltop, (t - 0.5) / 0.5);
       colors[i * 3] = tmp.r;

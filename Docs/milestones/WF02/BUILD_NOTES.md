@@ -2,49 +2,41 @@
 
 ## Base
 
-- Plan revision 2 at `e322f5fcff24a4ea3656755703c21b36173cc297` (scale plumbing)
-- Plan revision 3 at `8be181cd244bb9817aae13200e01d4b3d3b5c886` (composition/art-direction correction)
-- Plan revision 4.1 at `783755f705c28c6199fbb8c2b4caa8df05d5d15f` (plan); implementation handoff at branch HEAD
+- Plan revision 5.1 at `122d68dbebff34fd2bd7f5909fd547eaa6728a23` (plan); implementation at branch HEAD
+- Prior blocked: R4.1 @ `6dbd8b5` (WF02-003 visual gate)
 
-## Architecture
+## R5.1 architecture
 
-1. **`modelLayout.ts`** — pure layout from offline `modelLayoutManifest.json`
-2. **`buildingPresentationAnchors.ts`** — facade/sign/extras from layout + rotation
-3. **`OverviewCompositionLayer.tsx`** — R4.1 single orchestrator for district massing
-4. **`districtMassing.ts`** + **`compositionMask.ts`** — declarative specs + road/water exclusions
-5. **R3 submodules integrated:** `FutureLotPresentation`, `CommercialStreetLife`
+1. **Warm atlas normalization** — offline repack of 14 Kenney facility GLBs (`scripts/wf02-r51-repack-atlas.mjs`); originals in `_archive/pre-r5/`
+2. **`compositionVisibility.ts`** — preset-tier gating via `cameraView` (same path for gameplay + evidence)
+3. **`NatureMassLayer.tsx`** — merged instanced Quaternius mass (district + periphery tiers)
+4. **`OverviewCompositionLayer.tsx`** — orchestrator; ground tint reduced to 2 zones; terrain value bands
 
-## R4.1 composition additions
+## R5.1 presentation changes
 
-- **`DistrictGroundTint.tsx`** — clipped instanced ground overlays (5 zones, road/path/river mask)
-- **`CanopyMassing.tsx`** — Kenney treeSmall orchard 4×5 + civic/residential treeLarge/treeSmall
-- **`ResidentialHedges.tsx`** — Kenney fenceLow instanced hedges (≤48 segments)
-- **`FrontageBands.tsx`** — commercial/residential shrub scatter + civic radial pavers
-- **Phase A recovery:** periphery forest removed; legacy district Quaternius scatter relocated to Kenney massing
-- **Palette:** `DistrictPalette.ts` ground/canopy roles; roof tint **not** used (Kenney GLB audit)
-- **Terrain:** warmer meadow base `#5a7348`
-
-## Presentation transforms (render-only)
-
-Unchanged from R3 — see prior table. Workshop offset `[0.6, 0, 1.8]` + rot `-0.03`.
+- **Atlas roles:** warm_residential, warm_commercial, civic_cream, farm_straw, warm_industrial
+- **Nature mass:** 5 district + 4 periphery Quaternius (orchard/park read from Kenney grid + VegetationLayer baseline)
+- **Terrain:** meadow/garden/farm/park vertex value regions in `TownLandscape.tsx`
+- **Lighting:** warmer hemisphere ground `#b89868`
+- **Ground tint:** 2 zones (residential, farm), 5.0 m cell stride
 
 ## Preserved
 
 - `facilityPoints.ts`, simulation/**, LOCATIONS, M02 routes/entrances
-- Authoritative building centers and road topology
-- R2 category `targetWidth` values and 2.32 m presentation citizen
+- R2 `targetWidth`, 2.32 m presentation citizen, frozen Overview/Angled cameras
 
-## Performance (measured at R4.1 build — live GL after frame settle)
+## Performance (measured live GL @ R5.1 build)
 
 | Preset | Draw calls | Triangles |
 |---|---:|---:|
-| Overview 06:00 | **135** | **94,253** |
-| Overview 12:00 | **138** | **94,589** |
-| Street | **76** | **83,323** |
-| Angled | 124 | 94,908 |
+| Overview 06:00 | 138 | 130,565 |
+| Overview 12:00 | 141 | 130,901 |
+| Angled | 128 | 131,292 |
+| Street | 78 | 98,199 |
 
-Gates: Overview ≤140 ✅ | Street ≤100 ✅ | Overview <150k ✅
+Gates: Overview ≤140 DC / ≤135k tris ✅ | Street ≤100 DC ✅
 
-Headroom vs gates: ~2–5 Overview draw calls; ~55k triangles below 150k preferred gate.
+## Evidence hygiene
 
-**M03 note:** Triangle headroom is **not** 20-citizen skinned-mesh budget. M03 requires separate LOD/culling/impostor strategy per `Docs/milestones/WF01/M03_HEADROOM.md`.
+- Authoritative Overview: `01_wf02_overview_dawn.png`, `01b_wf02_overview_noon.png` only
+- Stale `01_wf02_overview.png` deleted at capture start; regeneration fails if recreated

@@ -4,6 +4,20 @@ Status: M02 visual foundation + WF01 Riverside World Foundation curated imports 
 
 Kenney GLBs reference `Textures/colormap.png` relative to each pack directory. **Repackaged per-pack** so atlases do not collide. No mesh edits; scale normalization via `ModelAsset.targetWidth` at placement time.
 
+## WF02 R5.1 warm atlas derivatives
+
+Offline hue normalization from approved Kenney pack `colormap.png` sources (512×512 PNG). Original GLBs archived at `public/assets/glb/kenney/_archive/pre-r5/`. Geometry/UVs unchanged; GLB JSON texture URI patched only.
+
+| Derived texture | Source pack | Role | Facilities |
+|---|---|---|---|
+| `suburban/Textures/colormap_warm_residential.png` | Suburban colormap | warm_residential | house-1–4, apartment |
+| `suburban/Textures/colormap_farm_straw.png` | Suburban colormap | farm_straw | farmhouse |
+| `commercial/Textures/colormap_warm_commercial.png` | Commercial colormap | warm_commercial | store, cafe, clinic |
+| `commercial/Textures/colormap_civic_cream.png` | Commercial colormap | civic_cream | community-hall, school |
+| `industrial/Textures/colormap_warm_industrial.png` | Industrial colormap | warm_industrial | workshop, warehouse, utility |
+
+Script: `npm run repack:wf02-atlas` (`scripts/wf02-r51-repack-atlas.mjs`).
+
 ## WF01 curated imports — full provenance
 
 | Local renamed path | Original Kenney identifier | Pack | Source URL | License | Download | Modifications |

@@ -5,14 +5,15 @@
 import { Color, MeshStandardMaterial } from 'three';
 
 export const DISTRICT_PALETTE = {
-  groundMeadow: '#5a7348',
-  groundResidential: '#c8b888',
-  groundCommercial: '#d4bc94',
-  groundFarm: '#b8a868',
-  groundPark: '#6a9a58',
+  groundMeadow: '#6a8450',
+  groundResidential: '#d4c090',
+  groundCommercial: '#d8bc98',
+  groundFarm: '#c8b070',
+  groundPark: '#78a860',
+  groundGarden: '#8a9860',
   canopyDeep: '#3d6b38',
-  canopyLight: '#7aaa58',
-  accentWarm: '#c87848',
+  canopyLight: '#8aba60',
+  accentWarm: '#d08050',
   accentCool: '#6a8a9a',
 } as const;
 

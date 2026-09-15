@@ -53,7 +53,7 @@ export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
   return (
     <group>
       <color attach="background" args={[skyColor]} />
-      <hemisphereLight args={['#e8f0ff', '#8a7848', hemiIntensity]} />
+      <hemisphereLight args={['#f0e8d8', '#b89868', hemiIntensity]} />
       <ambientLight intensity={ambientIntensity} />
       <directionalLight
         position={sunPosition}

@@ -75,10 +75,7 @@ export function resolveVegetationUrl(placement: VegetationPlacement): string {
   return QUATERNIUS_ASSETS[placement.asset as keyof typeof QUATERNIUS_ASSETS];
 }
 
-/**
- * WF02 R4.1 — overview district Quaternius moved to Kenney composition layer.
- * Retained for test compatibility; returns empty (VegetationLayer uses corridor/river/park only).
- */
+/** WF02 R5.1 — district Quaternius moved to NatureMassLayer tier tables. */
 export function buildDistrictCompositionPlacements(): VegetationPlacement[] {
   return [];
 }
@@ -102,7 +99,7 @@ export const RIVERBANK_VEGETATION: readonly VegetationPlacement[] = [
   { position: { x: 86, z: 22 }, asset: 'commonTree1', scale: 1.0, source: 'quaternius' },
 ];
 
-/** WF02 R4.1 Phase A recovery — periphery forest removed for triangle/DC budget. */
+/** WF02 R5.1 — periphery forest in NatureMassLayer PERIPHERY_FOREST_FRAME tier. */
 export function buildPeripheryForest(): VegetationPlacement[] {
   return [];
 }

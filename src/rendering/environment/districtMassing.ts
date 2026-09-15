@@ -89,14 +89,12 @@ function buildResidentialHedges(): MassingGltfPlacement[] {
 
 function buildFrontageScatter(): MassingScatterPoint[] {
   const points: MassingScatterPoint[] = [];
-  const commercialZ = [12, 15, 18, 22, 26, 30, 34, 38, 42, 46];
+  const commercialZ = [12, 18, 26, 34, 42];
   for (const z of commercialZ) {
     points.push({ x: -16.5, z, scale: 0.95, rotY: Math.PI / 2 });
-    points.push({ x: -14.8, z: z + 0.3, scale: 0.85, rotY: 0.2 });
   }
-  for (let x = 14; x <= 58; x += 6) {
+  for (let x = 14; x <= 58; x += 8) {
     points.push({ x, z: -22, scale: 1.0, rotY: 0.5 });
-    points.push({ x: x + 1.2, z: -44, scale: 0.9, rotY: 1.1 });
   }
   return points;
 }
@@ -108,11 +106,6 @@ function buildCivicPavers(): MassingScatterPoint[] {
     const a = (i / 8) * Math.PI * 2;
     const r = 7.2;
     points.push({ x: sq.x + Math.cos(a) * r, z: sq.z + Math.sin(a) * r, rotY: a, scale: 1.05 });
-  }
-  for (let i = 0; i < 32; i += 1) {
-    const a = (i / 32) * Math.PI * 2;
-    const r = 6.5 + (i % 3) * 0.35;
-    points.push({ x: sq.x + Math.cos(a) * r, z: sq.z + Math.sin(a) * r, rotY: a * 0.5, scale: 0.9 });
   }
   return points;
 }
@@ -145,38 +138,6 @@ export function buildDistrictMassingSpec(): DistrictMassingSpec {
         minZ: -65,
         maxZ: -8,
       },
-      {
-        id: 'commercial',
-        color: DISTRICT_PALETTE.groundCommercial,
-        minX: -58,
-        maxX: -2,
-        minZ: 8,
-        maxZ: 52,
-      },
-      {
-        id: 'farm',
-        color: DISTRICT_PALETTE.groundFarm,
-        minX: 36,
-        maxX: 70,
-        minZ: 72,
-        maxZ: 103,
-      },
-      {
-        id: 'park',
-        color: DISTRICT_PALETTE.groundPark,
-        minX: 58,
-        maxX: 88,
-        minZ: 24,
-        maxZ: 52,
-      },
-      {
-        id: 'civic',
-        color: DISTRICT_PALETTE.accentWarm,
-        minX: -28,
-        maxX: 8,
-        minZ: -28,
-        maxZ: 8,
-      },
     ],
     kenneyTrees,
     fenceSegments: buildResidentialHedges(),
@@ -188,7 +149,7 @@ export function buildDistrictMassingSpec(): DistrictMassingSpec {
 export function resolveGroundTintCells(zones: GroundTintZone[]): Map<string, OverlayCell[]> {
   const map = new Map<string, OverlayCell[]>();
   for (const zone of zones) {
-    map.set(zone.id, buildOverlayCells(zone.minX, zone.maxX, zone.minZ, zone.maxZ));
+    map.set(zone.id, buildOverlayCells(zone.minX, zone.maxX, zone.minZ, zone.maxZ, 5.0));
   }
   return map;
 }

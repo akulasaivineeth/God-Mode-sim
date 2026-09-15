@@ -17,7 +17,7 @@ function InstancedGroundTintZone({
   cells: { x: number; z: number; width: number; depth: number }[];
 }) {
   const geometry = useMemo(() => new BoxGeometry(1, 0.04, 1), []);
-  const material = useMemo(() => districtOverlayMaterial(color, 0.38), [color]);
+  const material = useMemo(() => districtOverlayMaterial(color, 0.32), [color]);
   const ref = useRef<InstancedMesh>(null);
 
   useLayoutEffect(() => {
