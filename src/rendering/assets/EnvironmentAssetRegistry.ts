@@ -6,9 +6,21 @@ import type { Vec2 } from '@/world/townLayout';
 
 export const KENNEY_ASSETS = {
   homeCottage: '/assets/glb/kenney/suburban/home-cottage.glb',
+  homeTypeA: '/assets/glb/kenney/suburban/home-type-a.glb',
+  homeTypeC: '/assets/glb/kenney/suburban/home-type-c.glb',
+  homeTypeD: '/assets/glb/kenney/suburban/home-type-d.glb',
+  apartmentBlock: '/assets/glb/kenney/suburban/apartment-block.glb',
+  farmhouse: '/assets/glb/kenney/suburban/farmhouse.glb',
   storeGeneral: '/assets/glb/kenney/commercial/store-general.glb',
   storeAwning: '/assets/glb/kenney/commercial/detail-awning.glb',
+  cafeBistro: '/assets/glb/kenney/commercial/cafe-bistro.glb',
+  cafeParasol: '/assets/glb/kenney/commercial/detail-parasol-a.glb',
+  clinic: '/assets/glb/kenney/commercial/clinic.glb',
+  school: '/assets/glb/kenney/commercial/school.glb',
+  communityHall: '/assets/glb/kenney/commercial/community-hall.glb',
   workshopIndustrial: '/assets/glb/kenney/industrial/workshop-industrial.glb',
+  warehouse: '/assets/glb/kenney/industrial/warehouse.glb',
+  utilityStation: '/assets/glb/kenney/industrial/utility-station.glb',
   alexCharacter: '/assets/glb/kenney/characters/alex-character.glb',
   treeSmall: '/assets/glb/kenney/suburban/tree-small.glb',
   treeLarge: '/assets/glb/kenney/suburban/tree-large.glb',
@@ -19,6 +31,8 @@ export const KENNEY_ASSETS = {
   roadStraight: '/assets/glb/kenney/roads/road-straight.glb',
   roadCrossing: '/assets/glb/kenney/roads/road-crossing.glb',
   roadBridge: '/assets/glb/kenney/roads/road-bridge.glb',
+  roadBend: '/assets/glb/kenney/roads/road-bend.glb',
+  roadCurvePavement: '/assets/glb/kenney/roads/road-curve-pavement.glb',
   roadDriveway: '/assets/glb/kenney/roads/road-driveway-double.glb',
 } as const;
 
@@ -58,35 +72,38 @@ export const M02_CORRIDOR_VEGETATION: readonly VegetationPlacement[] = [
   { position: { x: 5, z: -2 }, asset: 'bushFlowers', scale: 1.1, source: 'quaternius' },
   { position: { x: -5, z: 5 }, asset: 'commonTree2', scale: 1.0, source: 'quaternius' },
   { position: { x: -14, z: 18 }, asset: 'pine1', scale: 0.85, source: 'quaternius' },
-  // Facility entrance framing (R8)
   { position: { x: 14, z: -8 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
   { position: { x: -8, z: 14 }, asset: 'flowers', scale: 0.95, source: 'quaternius' },
   { position: { x: -8, z: 26 }, asset: 'bush', scale: 1.05, source: 'quaternius' },
+  { position: { x: -20, z: -16 }, asset: 'bush', scale: 1.0, source: 'quaternius' },
+  { position: { x: -32, z: 12 }, asset: 'flowers', scale: 0.9, source: 'quaternius' },
 ];
 
-/** Riverbank rock/shrub accents — denser eastern frame (R8). */
+/** Riverbank rock/shrub accents — WF01 eastern frame. */
 export const RIVERBANK_VEGETATION: readonly VegetationPlacement[] = [
-  { position: { x: 30, z: -6 }, asset: 'pebble1', scale: 0.8, source: 'quaternius' },
-  { position: { x: 32, z: 8 }, asset: 'pebble2', scale: 0.9, source: 'quaternius' },
-  { position: { x: 29, z: 22 }, asset: 'bush', scale: 1.0, source: 'quaternius' },
-  { position: { x: 33, z: -20 }, asset: 'fern', scale: 0.9, source: 'quaternius' },
-  { position: { x: 42, z: -14 }, asset: 'pine1', scale: 1.05, source: 'quaternius' },
-  { position: { x: 44, z: 12 }, asset: 'commonTree1', scale: 1.0, source: 'quaternius' },
-  { position: { x: 41, z: 28 }, asset: 'pine2', scale: 0.95, source: 'quaternius' },
-  { position: { x: 38, z: -32 }, asset: 'commonTree2', scale: 0.9, source: 'quaternius' },
+  { position: { x: 62, z: -12 }, asset: 'pebble1', scale: 0.8, source: 'quaternius' },
+  { position: { x: 66, z: 18 }, asset: 'pebble2', scale: 0.9, source: 'quaternius' },
+  { position: { x: 60, z: 42 }, asset: 'bush', scale: 1.0, source: 'quaternius' },
+  { position: { x: 70, z: -38 }, asset: 'fern', scale: 0.9, source: 'quaternius' },
+  { position: { x: 82, z: -28 }, asset: 'pine1', scale: 1.05, source: 'quaternius' },
+  { position: { x: 86, z: 22 }, asset: 'commonTree1', scale: 1.0, source: 'quaternius' },
+  { position: { x: 84, z: 58 }, asset: 'pine2', scale: 0.95, source: 'quaternius' },
+  { position: { x: 78, z: -68 }, asset: 'commonTree2', scale: 0.9, source: 'quaternius' },
+  { position: { x: 92, z: -8 }, asset: 'fern', scale: 0.85, source: 'quaternius' },
+  { position: { x: 88, z: 72 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
 ];
 
-/** Dense north/west/east forest frame — real asset families from registry data. */
+/** Dense north/west/east forest frame — WF01 periphery. */
 export function buildPeripheryForest(): VegetationPlacement[] {
   const placements: VegetationPlacement[] = [];
   const northEdge = [
-    { x: -42, z: -44 }, { x: -14, z: -45 }, { x: 14, z: -45 }, { x: 42, z: -44 },
+    { x: -95, z: -102 }, { x: -35, z: -104 }, { x: 35, z: -104 }, { x: 95, z: -102 },
   ];
   const westEdge = [
-    { x: -44, z: -30 }, { x: -46, z: 0 }, { x: -44, z: 28 },
+    { x: -104, z: -70 }, { x: -106, z: 0 }, { x: -104, z: 65 },
   ];
   const eastEdge = [
-    { x: 48, z: -28 }, { x: 50, z: -8 }, { x: 49, z: 10 }, { x: 48, z: 30 },
+    { x: 100, z: -75 }, { x: 102, z: -20 }, { x: 101, z: 25 }, { x: 100, z: 75 },
   ];
   const variants: VegetationPlacement[] = [
     { position: { x: 0, z: 0 }, asset: 'pine1', source: 'quaternius' },

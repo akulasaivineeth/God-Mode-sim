@@ -16,8 +16,8 @@ describe('M02 R8 river presentation', () => {
   it('places bridge on the authored polyline near the main east-west crossing', () => {
     const bridge = bridgePlacementOnRiver(CANONICAL_TOWN.river.points, 0);
     expect(bridge.z).toBe(0);
-    expect(bridge.x).toBeGreaterThan(32);
-    expect(bridge.x).toBeLessThan(38);
+    expect(bridge.x).toBeGreaterThan(82);
+    expect(bridge.x).toBeLessThan(95);
   });
 
   it('uses authored river colors in ribbon geometry', () => {

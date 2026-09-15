@@ -4,9 +4,7 @@
 import { useMemo } from 'react';
 import { BufferAttribute, Color, PlaneGeometry } from 'three';
 import { CANONICAL_TOWN, TERRAIN, terrainHeightAt } from '@/world/townLayout';
-import { ModelAsset } from '../assets/ModelAsset';
-import { KENNEY_ASSETS } from '../assets/EnvironmentAssetRegistry';
-import { bridgePlacementOnRiver, buildRiverRibbonGeometry } from './riverGeometry';
+import { buildRiverRibbonGeometry } from './riverGeometry';
 
 function UnifiedTerrain() {
   const geometry = useMemo(() => {
@@ -82,23 +80,10 @@ function RiverRibbon() {
 }
 
 export function TownLandscape() {
-  const bridge = useMemo(
-    () => bridgePlacementOnRiver(CANONICAL_TOWN.river.points, 0),
-    [],
-  );
-  const bridgeY = terrainHeightAt(bridge.x, bridge.z);
-
   return (
     <group>
       <UnifiedTerrain />
       <RiverRibbon />
-      <ModelAsset
-        url={KENNEY_ASSETS.roadBridge}
-        position={[bridge.x, bridgeY + 0.08, bridge.z]}
-        rotation={[0, bridge.rotY, 0]}
-        scale={2.35}
-        castShadow={false}
-      />
     </group>
   );
 }

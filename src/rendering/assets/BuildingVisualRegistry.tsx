@@ -1,19 +1,8 @@
 /**
- * Building presentation registry — maps authored IDs to final-style visuals (M02 R5).
- *
- * Simulation still references the same building IDs/coordinates in townLayout.
- * Visual assets never become simulation authority.
+ * Building presentation registry — WF01 prefab-backed facilities.
  */
-import { HomeVisual } from './buildings/HomeVisual';
-import { StoreVisual } from './buildings/StoreVisual';
-import { WorkshopVisual } from './buildings/WorkshopVisual';
+import { PrefabBuildings } from './buildings/PrefabBuildings';
 
 export function DedicatedBuildings() {
-  return (
-    <group>
-      <HomeVisual />
-      <StoreVisual />
-      <WorkshopVisual />
-    </group>
-  );
+  return <PrefabBuildings />;
 }
