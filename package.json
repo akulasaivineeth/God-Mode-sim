@@ -17,6 +17,8 @@
     "test:all": "npm run typecheck && npm run lint && npm run test && npm run test:e2e && npm run build",
     "capture:m02-evidence": "node scripts/capture-m02-closure-evidence.mjs",
     "capture:wf01-evidence": "node scripts/capture-wf01-evidence.mjs",
+    "capture:wf02-evidence": "node scripts/capture-wf02-evidence.mjs",
+    "generate:model-layout-manifest": "node scripts/generate-model-layout-manifest.mjs",
     "measure:render-budget": "node scripts/measure-render-budget.mjs",
     "export-review-bundle": "vite-node scripts/export-review-bundle.ts"
   },

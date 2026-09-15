@@ -6,8 +6,11 @@
  */
 import { Box3, Object3D, Vector3 } from 'three';
 
-/** Target standing height in world units (VIS-001 / M02 acceptance). */
+/** Simulation/collision authority height — unchanged from M02 (ARCH-002). */
 export const TARGET_CITIZEN_HEIGHT = 1.8;
+
+/** WF02 presentation-only visual height (simulation authority decoupled). */
+export const PRESENTATION_CITIZEN_HEIGHT = 2.32;
 
 /**
  * Measured rest height of Kenney alex-character.glb (CC0 registry) in model units.

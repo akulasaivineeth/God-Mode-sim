@@ -1,10 +1,11 @@
 /**
- * WF01 corridor presentation — curbs, crosswalk, entrance aprons (presentation only).
+ * WF02 corridor presentation — curbs, crosswalk, batched entrance aprons (presentation only).
  */
 import { useMemo } from 'react';
 import { terrainHeightAt } from '@/world/townLayout';
-import { ModelAsset } from '../assets/ModelAsset';
 import { KENNEY_ASSETS } from '../assets/EnvironmentAssetRegistry';
+import { InstancedGltfPlacements, type GltfInstancePlacement } from '../assets/InstancedGltfPlacements';
+import { resolveNormalizedLayout } from '../assets/modelLayout';
 import { InstancedScatter } from '../InstancedScatter';
 import { SCATTER_GEOM } from '../scatterGeometries';
 import { MAT } from '../sharedMaterials';
@@ -59,26 +60,59 @@ function CorridorCurbs() {
   );
 }
 
+function EntranceAprons() {
+  const houseLayout = resolveNormalizedLayout(KENNEY_ASSETS.homeCottage, 11.2);
+  const storeLayout = resolveNormalizedLayout(KENNEY_ASSETS.storeGeneral, 13.5);
+  const houseDepth = houseLayout.localBounds.size[2] * 0.5 + 0.8;
+  const storeDepth = storeLayout.localBounds.size[2] * 0.5 + 0.9;
+
+  const placements = useMemo((): GltfInstancePlacement[] => {
+    return [
+      {
+        url: KENNEY_ASSETS.drivewayShort,
+        x: 11,
+        z: -6,
+        rotY: Math.PI / 2,
+        scale: 2.4,
+        yOffset: 0.02,
+      },
+      {
+        url: KENNEY_ASSETS.roadDriveway,
+        x: -11,
+        z: 18,
+        rotY: Math.PI,
+        scale: 1.6,
+        yOffset: 0.02,
+      },
+      {
+        url: KENNEY_ASSETS.pathShort,
+        x: 11,
+        z: -6 - houseDepth * 0.35,
+        rotY: Math.PI / 2,
+        scale: 2.2,
+        yOffset: 0.02,
+      },
+      {
+        url: KENNEY_ASSETS.pathShort,
+        x: -11,
+        z: 11 + storeDepth * 0.25,
+        rotY: 0,
+        scale: 2.6,
+        yOffset: 0.02,
+      },
+    ];
+  }, [houseDepth, storeDepth]);
+
+  return <InstancedGltfPlacements placements={placements} />;
+}
+
 export function CorridorPresentation() {
   return (
     <group>
       <CorridorCurbs />
       <ZebraCrosswalk x={0} z={0} />
       <ZebraCrosswalk x={24} z={12} />
-      <ModelAsset
-        url={KENNEY_ASSETS.drivewayShort}
-        position={[11, terrainHeightAt(11, -6), -6]}
-        rotation={[0, Math.PI / 2, 0]}
-        scale={2.2}
-        castShadow={false}
-      />
-      <ModelAsset
-        url={KENNEY_ASSETS.roadDriveway}
-        position={[-11, terrainHeightAt(-11, 18), 18]}
-        rotation={[0, Math.PI, 0]}
-        scale={1.5}
-        castShadow={false}
-      />
+      <EntranceAprons />
     </group>
   );
 }

@@ -42,7 +42,11 @@ describe('Foundation — single authority inventory', () => {
   it('has one authoritative evidence harness outside archive', () => {
     const scripts = readdirSync(path.join(process.cwd(), 'scripts'));
     const liveCapture = scripts.filter((f) => f.startsWith('capture-') && f.endsWith('.mjs'));
-    expect(liveCapture).toEqual(['capture-m02-closure-evidence.mjs', 'capture-wf01-evidence.mjs']);
+    expect(liveCapture).toEqual([
+      'capture-m02-closure-evidence.mjs',
+      'capture-wf01-evidence.mjs',
+      'capture-wf02-evidence.mjs',
+    ]);
     const archived = readdirSync(path.join(process.cwd(), 'scripts/archive'));
     expect(archived.filter((f) => f.startsWith('capture-r'))).toHaveLength(5);
   });

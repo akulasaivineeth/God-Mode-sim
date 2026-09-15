@@ -18,16 +18,16 @@ describe('WF01 R5 district composition', () => {
     expect(lotMarkers.length).toBe(CANONICAL_TOWN.vacantPlots.length);
   });
 
-  it('places six orchard tree-small instances', () => {
+  it('places ten orchard tree-small instances (WF02 +4 edge trees)', () => {
     const placements = buildDistrictCompositionPlacements();
     const orchardTrees = placements.filter((p) => p.source === 'kenney' && p.asset === 'treeSmall');
-    expect(orchardTrees.length).toBe(6);
+    expect(orchardTrees.length).toBe(10);
   });
 
   it('places park river-facing path modules and tree arc', () => {
     const placements = buildDistrictCompositionPlacements();
     const parkPaths = placements.filter((p) => p.source === 'kenney' && p.asset === 'pathShort');
-    expect(parkPaths.length).toBe(2);
+    expect(parkPaths.length).toBe(3);
     const parkTrees = placements.filter(
       (p) => p.position.x >= 72 && p.position.x <= 90 && p.position.z >= 34 && p.position.z <= 46,
     );

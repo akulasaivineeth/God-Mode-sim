@@ -1,0 +1,199 @@
+/**
+ * WF02 North-Star Scale & Aesthetic Calibration evidence capture.
+ *
+ * Usage: npm run build && npm run preview -- --host 127.0.0.1 --port 4173 &
+ *        npm run capture:wf02-evidence
+ */
+import { chromium } from '@playwright/test';
+import { copyFile, mkdir, writeFile } from 'node:fs/promises';
+import { readFileSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import path from 'node:path';
+import { execSync } from 'node:child_process';
+
+const OUT = '/opt/cursor/artifacts/wf02_evidence';
+const BASE = 'http://127.0.0.1:4173/?evidence=1';
+const NORTH_STAR = 'Docs/art-direction/references/god-mode-town-north-star.png';
+const RELEASE_TAG = 'review-evidence-wf02-builder';
+const REPO = 'akulasaivineeth/God-Mode-sim';
+const WF01_OVERVIEW_URL =
+  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf01-builder-r5/01_wf01_overview.png';
+
+const SHOTS = [
+  { name: '01_wf02_overview', cam: 'overview', waitMs: 2400, diagnostics: true },
+  { name: '02_wf02_angled', cam: 'angled', waitMs: 2400, diagnostics: true },
+  { name: '03_wf02_civic', cam: 'square', waitMs: 2000 },
+  { name: '04_wf02_residential_lots', preset: { position: [58, 52, -38], target: [62, 0, -55] }, waitMs: 2000 },
+  { name: '05_wf02_commercial_work', cam: 'store-street', waitMs: 2200 },
+  { name: '06_wf02_farm_edge', preset: { position: [38, 38, 108], target: [48, 2, 86] }, waitMs: 2200 },
+  { name: '07_wf02_river_park', cam: 'river', waitMs: 2400 },
+  { name: '08_wf02_street_lived_in', cam: 'street', waitMs: 2200, diagnostics: true },
+  { name: '09_attachment_house1', preset: { position: [18, 6, -14], target: [11, 2, -8] }, waitMs: 1800 },
+  { name: '10_attachment_store', cam: 'store-street', waitMs: 2000 },
+  { name: '11_attachment_workshop', cam: 'workshop-street', waitMs: 2000 },
+  { name: '12_attachment_community', preset: { position: [-28, 12, -8], target: [-18, 3, -18] }, waitMs: 1800 },
+  { name: '13_attachment_farmhouse', preset: { position: [58, 10, 92], target: [48, 2, 86] }, waitMs: 1800 },
+  { name: '14_silhouette_residential', preset: { position: [42, 28, -22], target: [30, 1, -22] }, waitMs: 1800 },
+  { name: '15_organic_commercial', preset: { position: [-24, 14, 28], target: [-8, 2, 14] }, waitMs: 1800 },
+];
+
+function hashFile(file) {
+  return createHash('sha256').update(readFileSync(file)).digest('hex');
+}
+
+function gitSha() {
+  return execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+}
+
+function createAssetWatchers(page) {
+  const consoleErrors = [];
+  const pageErrors = [];
+  const networkAssetErrors = [];
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') consoleErrors.push(msg.text());
+  });
+  page.on('pageerror', (err) => pageErrors.push(String(err)));
+  page.on('response', (res) => {
+    const url = res.url();
+    if (url.includes('/assets/') && res.status() >= 400) {
+      networkAssetErrors.push(`${res.status()} ${url}`);
+    }
+  });
+  page.on('requestfailed', (req) => {
+    const url = req.url();
+    if (url.includes('/assets/')) {
+      networkAssetErrors.push(`FAILED ${url} ${req.failure()?.errorText ?? 'unknown'}`);
+    }
+  });
+  return { consoleErrors, pageErrors, networkAssetErrors };
+}
+
+function assertCleanAssets(watchers) {
+  const loaderErrors = watchers.consoleErrors.filter((line) =>
+    /gltf|glb|texture|failed to load|404|could not load/i.test(line),
+  );
+  const failures = [...watchers.networkAssetErrors, ...loaderErrors, ...watchers.pageErrors];
+  if (failures.length > 0) throw new Error(`Asset/network errors:\n${failures.join('\n')}`);
+}
+
+async function waitFrames(page, count = 10) {
+  for (let i = 0; i < count; i += 1) {
+    await page.evaluate(() => new Promise((r) => requestAnimationFrame(r)));
+  }
+}
+
+async function applyShotCamera(page, shot) {
+  if (shot.cam) {
+    await page.evaluate((cam) => window.__GODMODE_EVIDENCE__?.applyPreset(cam), shot.cam);
+  } else if (shot.preset) {
+    await page.evaluate(
+      ({ position, target }) => window.__GODMODE_EVIDENCE__?.setCamera(position, target),
+      shot.preset,
+    );
+  }
+}
+
+async function captureShot(page, shot) {
+  await applyShotCamera(page, shot);
+  await page.waitForTimeout(shot.waitMs ?? 2000);
+  await waitFrames(page, 10);
+  const file = path.join(OUT, `${shot.name}.png`);
+  await page.screenshot({ path: file, fullPage: false });
+  const result = { name: shot.name, file, hash: hashFile(file).slice(0, 12) };
+  if (shot.diagnostics) {
+    result.diagnostics = await page.evaluate(() =>
+      window.__GODMODE_EVIDENCE__?.sampleRenderDiagnosticsAfterFrames?.(12),
+    );
+  }
+  return result;
+}
+
+async function main() {
+  await mkdir(OUT, { recursive: true });
+  const browser = await chromium.launch();
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const watchers = createAssetWatchers(page);
+
+  await page.goto(BASE);
+  await page.getByTestId('r3f-canvas').waitFor({ state: 'visible', timeout: 30_000 });
+  await page.waitForFunction(
+    () => window.__GODMODE_EVIDENCE__?.getCaptureMeta()?.citizenPosition != null,
+    null,
+    { timeout: 30_000 },
+  );
+  await waitFrames(page, 15);
+
+  const results = [];
+  for (const shot of SHOTS) {
+    results.push(await captureShot(page, shot));
+  }
+
+  await page.evaluate(() => window.__GODMODE_EVIDENCE__?.applyPreset('overview'));
+  await page.evaluate(() => window.__GODMODE_EVIDENCE__?.stepToSimMinute(1230));
+  await page.waitForTimeout(2500);
+  await waitFrames(page, 10);
+  const nightFile = path.join(OUT, '16_wf02_night.png');
+  await page.screenshot({ path: nightFile, fullPage: false });
+  results.push({ name: '16_wf02_night', file: nightFile, hash: hashFile(nightFile).slice(0, 12) });
+
+  const overviewDiagnostics = await page.evaluate(async () => {
+    window.__GODMODE_EVIDENCE__?.applyPreset('overview');
+    await new Promise((r) => setTimeout(r, 2000));
+    return window.__GODMODE_EVIDENCE__?.sampleRenderDiagnosticsAfterFrames?.(12);
+  });
+  const streetDiagnostics = await page.evaluate(async () => {
+    window.__GODMODE_EVIDENCE__?.applyPreset('street');
+    await new Promise((r) => setTimeout(r, 2000));
+    return window.__GODMODE_EVIDENCE__?.sampleRenderDiagnosticsAfterFrames?.(12);
+  });
+  const angledDiagnostics = await page.evaluate(async () => {
+    window.__GODMODE_EVIDENCE__?.applyPreset('angled');
+    await new Promise((r) => setTimeout(r, 2000));
+    return window.__GODMODE_EVIDENCE__?.sampleRenderDiagnosticsAfterFrames?.(12);
+  });
+
+  assertCleanAssets(watchers);
+
+  const wf01File = path.join(OUT, '00_before_wf01_overview.png');
+  execSync(`curl -fsSL "${WF01_OVERVIEW_URL}" -o "${wf01File}"`, { stdio: 'inherit' });
+  const northStarDest = path.join(OUT, '00_north_star_reference.png');
+  if (existsSync(NORTH_STAR)) await copyFile(NORTH_STAR, northStarDest);
+
+  const compareHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>WF02 Visual Gate</title>
+<style>body{font-family:system-ui;background:#1a1a1a;color:#eee;padding:16px}
+.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.col{background:#2a2a2a;padding:8px;border-radius:8px}
+img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px}</style></head><body>
+<h1>WF02 — WF01 BEFORE → WF02 AFTER → North Star</h1><div class="row">
+<div class="col"><div class="label">WF01 BEFORE</div><img src="00_before_wf01_overview.png"/></div>
+<div class="col"><div class="label">WF02 AFTER</div><img src="01_wf02_overview.png"/></div>
+<div class="col"><div class="label">North Star</div><img src="00_north_star_reference.png"/></div>
+</div></body></html>`;
+  await writeFile(path.join(OUT, 'compare_before_after_northstar.html'), compareHtml);
+
+  const manifest = {
+    workItem: 'WF02',
+    sha: gitSha(),
+    overviewDiagnostics,
+    streetDiagnostics,
+    angledDiagnostics,
+    networkAssetErrors: watchers.networkAssetErrors,
+    consoleErrors: watchers.consoleErrors.filter((l) => /gltf|glb|asset|404/i.test(l)),
+    shots: results.map(({ name, hash, diagnostics }) => ({ name, hash, diagnostics })),
+    performanceGate: {
+      overviewDrawCallsMax: 140,
+      streetDrawCallsMax: 100,
+      overviewDrawCalls: overviewDiagnostics?.drawCalls,
+      streetDrawCalls: streetDiagnostics?.drawCalls,
+      overviewTriangles: overviewDiagnostics?.triangles,
+      streetTriangles: streetDiagnostics?.triangles,
+    },
+  };
+  await writeFile(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2));
+  await browser.close();
+  console.log(JSON.stringify(manifest, null, 2));
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
