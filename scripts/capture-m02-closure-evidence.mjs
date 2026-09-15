@@ -1,10 +1,10 @@
 /**
- * M02 closure evidence (M02-020) — unified gameplay scale + fail-closed street/anim proof.
+ * M02 closure evidence — single authoritative capture harness (Foundation Hardening).
  *
- * Single authoritative M02 capture harness. Legacy scripts (capture-r8..r12) are archival only.
+ * Supersedes archived scripts/capture-r8..r12-evidence.mjs.
  *
  * Usage: npm run build && npm run preview -- --host 127.0.0.1 --port 4173 &
- *        node scripts/capture-m02-closure-evidence.mjs
+ *        npm run capture:m02-evidence
  */
 import { chromium } from '@playwright/test';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
@@ -15,7 +15,7 @@ import { execSync } from 'node:child_process';
 
 const OUT = '/opt/cursor/artifacts/m02_closure_evidence';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
-const RELEASE_TAG = 'review-evidence-m02-020-builder-r17';
+const RELEASE_TAG = 'review-evidence-foundation-hardening-builder-r1';
 const PLAYER_BASE = 'http://127.0.0.1:4173/';
 const MIN_GAMEPLAY_PIXEL_HEIGHT = 80;
 const MIN_PORTRAIT_PIXEL_HEIGHT = 100;
@@ -1407,7 +1407,7 @@ async function publishRelease(scaleInfo, hashResults) {
 
   const fileArgs = files.map((f) => `${path.join(OUT, f)}#${f}`).join(' ');
   execSync(
-    `gh release create ${RELEASE_TAG} --repo ${repo} --title "M02 R17 / M02-021 FIX_REQUIRED evidence" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
+    `gh release create ${RELEASE_TAG} --repo ${repo} --title "Foundation Hardening regression evidence" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
     { stdio: 'inherit' },
   );
   console.log(`Published https://github.com/${repo}/releases/tag/${RELEASE_TAG}`);

@@ -1,15 +1,8 @@
 /**
  * M02 citizen presentation — shared Kenney CC0 character GLB with real clips (VIS-001).
  *
- * Plain English: One shared rig. The character model is loaded once and its
- * embedded animation clips (idle / walk / sit / interact / …) are played via an
- * AnimationMixer, chosen from the citizen's presentation pose. Simulation truth
- * (position/facing/needs/decisions) stays in the worker; this only interpolates
- * and animates presentation (ARCH-002). At high simulation speed the animation is
- * paused/snapped while the authoritative position keeps updating.
- *
- * M02 closure: model scale is derived from the GLB bounding box (~1.8 m tall).
- * Selection chrome is a subtle ground ring only — the humanoid is the subject.
+ * Foundation Hardening: shared GLTF pipeline, mixer lifecycle cleanup, throttled bounds
+ * updates, and per-citizen registry keys for ~20-citizen structural readiness.
  */
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
@@ -18,22 +11,24 @@ import {
   type AnimationAction,
   type Group,
   LoopRepeat,
-  Mesh,
 } from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 import { terrainHeightAt } from '@/world/townLayout';
 import { MAT } from '../sharedMaterials';
 import type { CitizenPose } from '../citizenPresentation';
 import { layoutCitizenModelFromObject } from '../citizenModelScale';
-import { registerPresentationControls } from '../citizenPresentationControl';
-import type { RenderCitizen } from '../types';
-import { registerCitizenBody, setCitizenWorldBounds } from '../citizenBoundsRegistry';
+import {
+  registerCitizenBody,
+  registerPresentationControls,
+  setCitizenWorldBounds,
+} from '../citizenPresentationRegistry';
 import { getCitizenWorldBounds } from '../evidencePortrait';
+import type { RenderCitizen } from '../types';
+import { GLTFLoader, prepareSkinnedCitizenRoot } from './gltfPipeline';
 import { KENNEY_ASSETS } from './EnvironmentAssetRegistry';
 
 const ALEX_GLB = KENNEY_ASSETS.alexCharacter;
+const BOUNDS_UPDATE_INTERVAL = 3;
 
 interface CitizenVisualProps {
   citizen: RenderCitizen;
@@ -50,7 +45,6 @@ function pickClip(names: string[], pose: CitizenPose): string | null {
     return has('walk') ?? find(/^walk$/i) ?? has('idle') ?? has('static');
   }
   if (pose === 'sit') {
-    // M02 vertical slice: seated/eating must read as sit, distinct from standing interact/work.
     return has('sit') ?? find(/^sit$/i) ?? has('idle');
   }
   if (pose === 'work') {
@@ -72,19 +66,14 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
   const currentAction = useRef<AnimationAction | null>(null);
   const activeClipName = useRef<string | null>(null);
   const walkPhase = useRef(0);
+  const boundsFrameCounter = useRef(0);
   const setCitizenPresentationClip = useDiagnosticsStore((s) => s.setCitizenPresentationClip);
   const setCitizenPresentationClipTime = useDiagnosticsStore((s) => s.setCitizenPresentationClipTime);
   const setCitizenPresentationPose = useDiagnosticsStore((s) => s.setCitizenPresentationPose);
   const evidencePortraitMode = useDiagnosticsStore((s) => s.evidencePortraitMode);
 
   const { scene, mixer, actions, clipNames, modelScale, footOffsetY } = useMemo(() => {
-    const cloned = cloneSkeleton(gltf.scene) as Group;
-    cloned.traverse((child) => {
-      if (child instanceof Mesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-      }
-    });
+    const { scene: cloned } = prepareSkinnedCitizenRoot(gltf.scene, gltf.animations);
     const layout = layoutCitizenModelFromObject(cloned);
     const mix = new AnimationMixer(cloned);
     const acts: Record<string, AnimationAction> = {};
@@ -125,9 +114,12 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
     });
     return () => {
       registerPresentationControls(null);
-      registerCitizenBody(null);
+      registerCitizenBody(citizen.id, null);
+      currentAction.current?.stop();
+      mixer.stopAllAction();
+      mixer.uncacheRoot(scene);
     };
-  }, [mixer, setCitizenPresentationClipTime]);
+  }, [citizen.id, mixer, scene, setCitizenPresentationClipTime]);
 
   useEffect(() => {
     setCitizenPresentationPose(citizen.pose);
@@ -140,9 +132,9 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
     root.position.set(citizen.x, y, citizen.z);
     root.rotation.y = citizen.facingRadians;
 
-    // Read pose from the latest snapshot so clip selection keeps up during fast sim steps.
     const liveCitizen =
-      useDiagnosticsStore.getState().renderSnapshot?.citizens?.[0] ?? citizen;
+      useDiagnosticsStore.getState().renderSnapshot?.citizens?.find((c) => c.id === citizen.id) ??
+      citizen;
     const livePose = liveCitizen.pose ?? citizen.pose;
     const clipName = pickClip(clipNames, livePose);
     if (clipName && clipName !== activeClipName.current) {
@@ -162,8 +154,11 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
     }
 
     if (bodyRef.current) {
-      registerCitizenBody(bodyRef.current);
-      setCitizenWorldBounds(getCitizenWorldBounds(bodyRef.current));
+      boundsFrameCounter.current += 1;
+      if (boundsFrameCounter.current >= BOUNDS_UPDATE_INTERVAL) {
+        boundsFrameCounter.current = 0;
+        setCitizenWorldBounds(citizen.id, getCitizenWorldBounds(bodyRef.current));
+      }
     }
 
     if (animationsSuppressed) {
@@ -198,7 +193,7 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
       <group
         ref={(node) => {
           bodyRef.current = node;
-          registerCitizenBody(node);
+          registerCitizenBody(citizen.id, node);
         }}
         scale={modelScale}
         position={[0, footOffsetY, 0]}

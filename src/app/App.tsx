@@ -55,6 +55,43 @@ export interface CitizenBoundsSnapshot {
   radius: number;
 }
 
+export interface RenderDiagnosticsSnapshot {
+  drawCalls: number;
+  triangles: number;
+  /** live-gl = post-frame renderer info; hud-store = FpsTracker 1 Hz cache */
+  source: 'live-gl' | 'hud-store';
+}
+
+function readRenderDiagnostics(): RenderDiagnosticsSnapshot {
+  const ctx = getEvidenceRendererContext();
+  if (ctx?.gl) {
+    const info = ctx.gl.info.render;
+    return { drawCalls: info.calls, triangles: info.triangles, source: 'live-gl' };
+  }
+  const state = useDiagnosticsStore.getState();
+  return {
+    drawCalls: state.renderCalls,
+    triangles: state.renderTriangles,
+    source: 'hud-store',
+  };
+}
+
+async function sampleRenderDiagnosticsAfterFrames(frameCount = 2): Promise<RenderDiagnosticsSnapshot> {
+  await new Promise<void>((resolve) => {
+    let remaining = frameCount;
+    const step = () => {
+      remaining -= 1;
+      if (remaining <= 0) {
+        resolve();
+        return;
+      }
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+  return readRenderDiagnostics();
+}
+
 /** Read-only evidence harness hooks (presentation only — zero simulation authority). */
 export interface GodModeEvidenceApi {
   setCamera: (position: [number, number, number], target: [number, number, number]) => void;
@@ -88,8 +125,9 @@ export interface GodModeEvidenceApi {
     isDaylight: boolean;
     citizenPosition: { x: number; z: number; facingRadians: number } | null;
   };
-  getRenderDiagnostics: () => { drawCalls: number; triangles: number };
-  /** Bounds-derived full-body portrait from live rendered citizen (presentation only). */
+  getRenderDiagnostics: () => RenderDiagnosticsSnapshot;
+  /** Wait for render frames then sample renderer counters (evidence/measurement path). */
+  sampleRenderDiagnosticsAfterFrames: (frameCount?: number) => Promise<RenderDiagnosticsSnapshot>;
   frameCitizenSimPortrait: (opts?: {
     margin?: number;
     minScreenAreaFraction?: number;
@@ -364,10 +402,9 @@ export function App() {
             : null,
         };
       },
-      getRenderDiagnostics: () => {
-        const state = useDiagnosticsStore.getState();
-        return { drawCalls: state.renderCalls, triangles: state.renderTriangles };
-      },
+      getRenderDiagnostics: () => readRenderDiagnostics(),
+      sampleRenderDiagnosticsAfterFrames: (frameCount = 2) =>
+        sampleRenderDiagnosticsAfterFrames(frameCount),
       frameCitizenSimPortrait: (opts = {}) => {
         window.__GODMODE_EVIDENCE__?.frameCitizenPortrait({
           margin: opts.margin ?? 1.35,

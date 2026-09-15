@@ -6,7 +6,6 @@
  */
 import {
   Box3,
-  Mesh,
   Object3D,
   PerspectiveCamera,
   Raycaster,
@@ -16,6 +15,7 @@ import {
 } from 'three';
 import { getCitizenWorldBoundsFromRegistry } from './citizenBoundsRegistry';
 import { TARGET_CITIZEN_HEIGHT } from './citizenModelScale';
+import { getVisibleOccluderMeshes } from './sceneOccluderCache';
 
 export interface PortraitOpts {
   /** Minimum fraction of viewport area occupied by projected citizen bounds. */
@@ -126,13 +126,7 @@ export function hasUnobstructedLineOfSight(
   }
 
   const samples = samplePointsFromBounds(bounds);
-  const meshes: Object3D[] = [];
-  scene.updateMatrixWorld(true);
-  scene.traverse((obj) => {
-    if (obj instanceof Mesh && obj.visible) {
-      meshes.push(obj);
-    }
-  });
+  const meshes = getVisibleOccluderMeshes(scene);
 
   for (const target of samples) {
     const distToTarget = cameraPos.distanceTo(target);

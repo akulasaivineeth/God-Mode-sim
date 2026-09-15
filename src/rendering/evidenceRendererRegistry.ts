@@ -1,13 +1,14 @@
 /**
  * Presentation-only registry for live renderer handles used by evidence harness (M02 R12).
  */
-import type { Object3D, PerspectiveCamera } from 'three';
+import type { Object3D, PerspectiveCamera, WebGLRenderer } from 'three';
 
 export interface EvidenceRendererContext {
   camera: PerspectiveCamera;
   scene: Object3D;
   width: number;
   height: number;
+  gl: WebGLRenderer;
 }
 
 let rendererContext: EvidenceRendererContext | null = null;

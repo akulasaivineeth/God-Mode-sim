@@ -4,13 +4,7 @@
  * Plain English: Draws the handcrafted low-poly town from the authored layout
  * (src/world/townLayout.ts): shaded terrain hills, a readable river with banks,
  * roads, sidewalks, pedestrian paths, zones, differentiated low-poly buildings,
- * an instanced forest/tree set, and instanced graves. Display only — it reads
- * immutable authored geometry (including the deterministic terrain heightfield)
- * and never touches simulation state (ARCH-002).
- *
- * Performance: repeated static geometry (trees, graves) uses InstancedMesh so
- * the whole forest costs a couple of draw calls, leaving M2/8GB headroom for the
- * 20 citizens arriving in M02.
+ * instanced vegetation (VegetationLayer), and instanced graves. Display only.
  */
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import {
@@ -34,6 +28,7 @@ import {
 } from '@/world/townLayout';
 import { usesDedicatedVisual } from './assets/dedicatedBuildingIds';
 import { MAT } from './sharedMaterials';
+import { getPooledMaterial } from './materialPool';
 
 function segmentTransform(from: Vec2, to: Vec2) {
   const dx = to.x - from.x;
@@ -67,10 +62,11 @@ function FlatStrip({
 }
 
 function FlatArea({ area, y }: { area: AreaRect; y: number }) {
+  const material = useMemo(() => getPooledMaterial(area.color, { roughness: 0.85 }), [area.color]);
   return (
     <mesh position={[area.center.x, y, area.center.z]} receiveShadow>
       <boxGeometry args={[area.width, 0.05, area.depth]} />
-      <meshStandardMaterial color={area.color} />
+      <primitive object={material} attach="material" />
     </mesh>
   );
 }
@@ -96,9 +92,10 @@ function GableRoof({
     geo.translate(0, 0, -depth / 2);
     return geo;
   }, [width, depth, height]);
+  const material = useMemo(() => getPooledMaterial(color, { roughness: 0.82 }), [color]);
   return (
     <mesh geometry={geometry} castShadow>
-      <meshStandardMaterial color={color} />
+      <primitive object={material} attach="material" />
     </mesh>
   );
 }
@@ -132,8 +129,8 @@ function BuildingMesh({ building }: { building: Building }) {
   const arch = BUILDING_ARCHETYPES[building.type];
   const baseY = terrainHeightAt(position.x, position.z);
   const roofHeight = arch.roof === 'flat' ? 0.5 : Math.max(1.6, size.height * 0.42);
-  const wallMat = useMemo(() => new MeshStandardMaterial({ color: wallColor }), [wallColor]);
-  const roofMat = useMemo(() => new MeshStandardMaterial({ color: roofColor }), [roofColor]);
+  const wallMat = useMemo(() => getPooledMaterial(wallColor, { roughness: 0.85 }), [wallColor]);
+  const roofMat = useMemo(() => getPooledMaterial(roofColor, { roughness: 0.82 }), [roofColor]);
 
   return (
     <group position={[position.x, baseY, position.z]}>
