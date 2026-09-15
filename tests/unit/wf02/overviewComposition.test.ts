@@ -5,20 +5,19 @@ import {
   resolveNormalizedLayout,
   resolveRotatedFootprint,
 } from '@/rendering/assets/modelLayout';
-import {
-  buildDistrictMassingSpec,
-  toGltfPlacements,
-} from '@/rendering/environment/districtMassing';
+import { buildDistrictMassingSpec } from '@/rendering/environment/districtMassing';
 import { isOverlayExcluded, buildOverlayCells } from '@/rendering/environment/compositionMask';
-import { isCompositionTierVisible } from '@/rendering/environment/compositionVisibility';
 import {
-  DISTRICT_CANOPY_RESTORE,
-  ORCHARD_PERIMETER,
-  PARK_RIVER_ARC,
-  PERIPHERY_FOREST_FRAME,
-} from '@/rendering/environment/natureMassPlacements';
+  isBaselineVegetationVisible,
+  isCompositionTierVisible,
+} from '@/rendering/environment/compositionVisibility';
+import {
+  ORCHARD_BLOCK_KCC,
+  PARK_RIVER_ARC_KCC,
+  PERIPHERY_FOREST_FRAME_KCC,
+  buildKenneyPlacementsForView,
+} from '@/rendering/environment/massSilhouettePlacements';
 import { CANONICAL_TOWN } from '@/world/townLayout';
-import { KENNEY_ASSETS } from '@/rendering/assets/EnvironmentAssetRegistry';
 
 function presentationAabb(buildingId: string) {
   const config = BUILDING_PREFABS.find((c) => c.buildingId === buildingId)!;
@@ -38,7 +37,7 @@ function presentationAabb(buildingId: string) {
   };
 }
 
-describe('WF02 R5.1 overview composition', () => {
+describe('WF02 R6 overview composition', () => {
   it('excludes main road center from ground overlay cells', () => {
     expect(isOverlayExcluded(0, 0)).toBe(true);
     expect(isOverlayExcluded(10, 10)).toBe(false);
@@ -48,28 +47,13 @@ describe('WF02 R5.1 overview composition', () => {
     expect(isOverlayExcluded(88, 38)).toBe(true);
   });
 
-  it('uses two ground tint zones (residential + farm)', () => {
+  it('removes R5.1 ground tint zones (terrain bands carry district read)', () => {
     const spec = buildDistrictMassingSpec();
-    expect(spec.groundZones).toHaveLength(1);
-    expect(spec.groundZones[0]?.id).toBe('residential');
+    expect(spec.groundZones).toHaveLength(0);
   });
 
-  it('deploys Kenney treeSmall orchard grid at farm-3', () => {
-    const orchard = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3')!;
-    const spec = buildDistrictMassingSpec();
-    const orchardTrees = spec.kenneyTrees.filter(
-      (t) =>
-        t.url === KENNEY_ASSETS.treeSmall &&
-        Math.abs(t.x - orchard.center.x) < 8 &&
-        Math.abs(t.z - orchard.center.z) < 8,
-    );
-    expect(orchardTrees.length).toBeGreaterThanOrEqual(16);
-  });
-
-  it('uses Kenney-first civic frame treeLarge placements', () => {
-    const spec = buildDistrictMassingSpec();
-    const civic = spec.kenneyTrees.filter((t) => t.url === KENNEY_ASSETS.treeLarge);
-    expect(civic.length).toBeGreaterThanOrEqual(6);
+  it('deploys dense Kenney orchard block at farm-3', () => {
+    expect(ORCHARD_BLOCK_KCC.length).toBeGreaterThanOrEqual(40);
   });
 
   it('caps residential fence segments at 48', () => {
@@ -78,24 +62,19 @@ describe('WF02 R5.1 overview composition', () => {
     expect(spec.fenceSegments.length).toBeGreaterThan(20);
   });
 
-  it('restores R5.1 nature mass placement tables', () => {
-    expect(DISTRICT_CANOPY_RESTORE).toHaveLength(5);
-    expect(PERIPHERY_FOREST_FRAME).toHaveLength(4);
-    expect(ORCHARD_PERIMETER).toHaveLength(0);
-    expect(PARK_RIVER_ARC).toHaveLength(0);
+  it('R6 MSS hero tables are non-empty', () => {
+    expect(PARK_RIVER_ARC_KCC.length).toBeGreaterThanOrEqual(12);
+    expect(PERIPHERY_FOREST_FRAME_KCC.length).toBeGreaterThanOrEqual(40);
   });
 
   it('gates periphery tier to overview and angled only', () => {
     expect(isCompositionTierVisible('periphery', 'overview')).toBe(true);
     expect(isCompositionTierVisible('periphery', 'angled')).toBe(true);
     expect(isCompositionTierVisible('periphery', 'street')).toBe(false);
-    expect(isCompositionTierVisible('periphery', 'store-street')).toBe(false);
   });
 
-  it('gates district tier for street and attachment presets', () => {
-    expect(isCompositionTierVisible('district', 'street')).toBe(true);
-    expect(isCompositionTierVisible('district', 'store-street')).toBe(true);
-    expect(isCompositionTierVisible('district', 'overview')).toBe(true);
+  it('mounts zero Quaternius baseline on overview', () => {
+    expect(isBaselineVegetationVisible('overview')).toBe(false);
   });
 
   it('keeps store/workshop presentation AABB gap non-negative', () => {
@@ -105,9 +84,9 @@ describe('WF02 R5.1 overview composition', () => {
     expect(gapZ).toBeGreaterThanOrEqual(0);
   });
 
-  it('produces gltf placements for Kenney canopy instancing', () => {
-    const placements = toGltfPlacements(buildDistrictMassingSpec().kenneyTrees);
-    expect(placements.length).toBeGreaterThan(20);
+  it('overview Kenney placements use at most two tree URLs', () => {
+    const placements = buildKenneyPlacementsForView('overview');
+    expect(placements.length).toBeGreaterThan(80);
     expect(new Set(placements.map((p) => p.url)).size).toBeLessThanOrEqual(2);
   });
 

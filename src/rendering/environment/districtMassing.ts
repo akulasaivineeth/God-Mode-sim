@@ -1,10 +1,9 @@
 /**
- * WF02 R4.1 declarative district composition specs — single presentation authority.
+ * WF02 R4.1 declarative district composition specs — R6: hedges only; KCC in massSilhouettePlacements.
  */
 import { CANONICAL_TOWN } from '@/world/townLayout';
 import { KENNEY_ASSETS } from '../assets/EnvironmentAssetRegistry';
-import { DISTRICT_PALETTE } from '../palette/DistrictPalette';
-import { buildOrchardGrid, buildOverlayCells, type KenneyTreePlacement, type OverlayCell } from './compositionMask';
+import { type OverlayCell, buildOverlayCells } from './compositionMask';
 
 export interface MassingScatterPoint {
   x: number;
@@ -33,16 +32,20 @@ export interface GroundTintZone {
   maxZ: number;
 }
 
+export interface KenneyTreePlacement {
+  url: string;
+  x: number;
+  z: number;
+  rotY?: number;
+  scale?: number;
+}
+
 export interface DistrictMassingSpec {
   groundZones: GroundTintZone[];
   kenneyTrees: KenneyTreePlacement[];
   fenceSegments: MassingGltfPlacement[];
   frontageScatter: MassingScatterPoint[];
   civicPavers: MassingScatterPoint[];
-}
-
-function kenney(url: string, x: number, z: number, scale = 1, rotY = 0): KenneyTreePlacement {
-  return { url, x, z, scale, rotY };
 }
 
 function fence(x: number, z: number, rotY: number, scale = 2.2): MassingGltfPlacement {
@@ -87,62 +90,13 @@ function buildResidentialHedges(): MassingGltfPlacement[] {
   return segments.slice(0, 48);
 }
 
-function buildFrontageScatter(): MassingScatterPoint[] {
-  const points: MassingScatterPoint[] = [];
-  const commercialZ = [12, 18, 26, 34, 42];
-  for (const z of commercialZ) {
-    points.push({ x: -16.5, z, scale: 0.95, rotY: Math.PI / 2 });
-  }
-  for (let x = 14; x <= 58; x += 8) {
-    points.push({ x, z: -22, scale: 1.0, rotY: 0.5 });
-  }
-  return points;
-}
-
-function buildCivicPavers(): MassingScatterPoint[] {
-  const sq = CANONICAL_TOWN.square.center;
-  const points: MassingScatterPoint[] = [];
-  for (let i = 0; i < 8; i += 1) {
-    const a = (i / 8) * Math.PI * 2;
-    const r = 7.2;
-    points.push({ x: sq.x + Math.cos(a) * r, z: sq.z + Math.sin(a) * r, rotY: a, scale: 1.05 });
-  }
-  return points;
-}
-
 export function buildDistrictMassingSpec(): DistrictMassingSpec {
-  const orchard = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3')!;
-  const kenneyTrees: KenneyTreePlacement[] = [
-    ...buildOrchardGrid(orchard.center, 4, 5, 2.4, KENNEY_ASSETS.treeSmall),
-    kenney(KENNEY_ASSETS.treeLarge, -14, -14, 1.15),
-    kenney(KENNEY_ASSETS.treeLarge, 14, -14, 1.1, 0.5),
-    kenney(KENNEY_ASSETS.treeLarge, -14, 14, 1.12, 1.0),
-    kenney(KENNEY_ASSETS.treeLarge, 14, 14, 1.08, 1.5),
-    kenney(KENNEY_ASSETS.treeLarge, 22, 78, 1.05),
-    kenney(KENNEY_ASSETS.treeLarge, 34, 86, 1.1, 0.8),
-    kenney(KENNEY_ASSETS.treeSmall, 16, -28, 1.0, 0.8),
-    kenney(KENNEY_ASSETS.treeSmall, 28, -31, 0.95, 1.6),
-    kenney(KENNEY_ASSETS.treeSmall, 20, -18, 0.92, 0.3),
-    kenney(KENNEY_ASSETS.treeSmall, 36, -20, 0.98, 1.1),
-    kenney(KENNEY_ASSETS.treeSmall, 48, -24, 1.02, 0.6),
-    kenney(KENNEY_ASSETS.treeSmall, 58, -18, 0.96, 1.4),
-  ];
-
   return {
-    groundZones: [
-      {
-        id: 'residential',
-        color: DISTRICT_PALETTE.groundResidential,
-        minX: 8,
-        maxX: 82,
-        minZ: -65,
-        maxZ: -8,
-      },
-    ],
-    kenneyTrees,
+    groundZones: [],
+    kenneyTrees: [],
     fenceSegments: buildResidentialHedges(),
-    frontageScatter: buildFrontageScatter(),
-    civicPavers: buildCivicPavers(),
+    frontageScatter: [],
+    civicPavers: [],
   };
 }
 

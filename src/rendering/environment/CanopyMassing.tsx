@@ -1,11 +1,13 @@
 /**
- * WF02 R4.1 Kenney-first canopy massing — orchard grid, civic frame, residential pairs.
+ * WF02 R6 Kenney Canopy Clusters — tier-gated instanced tree mass.
  */
 import { useMemo } from 'react';
-import { buildDistrictMassingSpec, toGltfPlacements } from './districtMassing';
+import type { CameraView } from '../cameraPresets';
+import { buildKenneyPlacementsForView } from './massSilhouettePlacements';
 import { InstancedGltfPlacements } from '../assets/InstancedGltfPlacements';
 
-export function CanopyMassing() {
-  const placements = useMemo(() => toGltfPlacements(buildDistrictMassingSpec().kenneyTrees), []);
+export function CanopyMassing({ cameraView }: { cameraView: CameraView }) {
+  const placements = useMemo(() => buildKenneyPlacementsForView(cameraView), [cameraView]);
+  if (placements.length === 0) return null;
   return <InstancedGltfPlacements placements={placements} />;
 }

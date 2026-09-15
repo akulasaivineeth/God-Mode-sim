@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CANONICAL_TOWN } from '@/world/townLayout';
 import { buildDistrictCompositionPlacements } from '@/rendering/assets/EnvironmentAssetRegistry';
 import { buildDistrictMassingSpec } from '@/rendering/environment/districtMassing';
+import { ORCHARD_BLOCK_KCC } from '@/rendering/environment/massSilhouettePlacements';
 
 describe('WF01 R5 district composition', () => {
   it('does not duplicate vacant lot markers (handled by FutureLotPresentation in R3+)', () => {
@@ -19,7 +20,7 @@ describe('WF01 R5 district composition', () => {
     expect(lotMarkers.length).toBe(0);
   });
 
-  it('R4.1 orchard Kenney treeSmall grid lives in district massing (not legacy registry)', () => {
+  it('R6 orchard Kenney block lives in massSilhouettePlacements (not legacy registry)', () => {
     const legacy = buildDistrictCompositionPlacements();
     const orchard = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3');
     const legacyOrchard = legacy.filter(
@@ -31,26 +32,18 @@ describe('WF01 R5 district composition', () => {
         Math.abs(p.position.z - orchard.center.z) < 5,
     );
     expect(legacyOrchard.length).toBe(0);
+    expect(ORCHARD_BLOCK_KCC.length).toBeGreaterThanOrEqual(40);
     const spec = buildDistrictMassingSpec();
-    const massingOrchard = spec.kenneyTrees.filter(
-      (t) =>
-        orchard &&
-        Math.abs(t.x - orchard.center.x) < 8 &&
-        Math.abs(t.z - orchard.center.z) < 8,
-    );
-    expect(massingOrchard.length).toBeGreaterThanOrEqual(16);
+    expect(spec.kenneyTrees).toHaveLength(0);
   });
 
-  it('R5.1 park edge uses terrain vertex band and ParkRiverArc (no park ground tint zone)', () => {
+  it('R6 removes ground tint zones (terrain vertex bands only)', () => {
     const spec = buildDistrictMassingSpec();
-    const parkZone = spec.groundZones.find((z) => z.id === 'park');
-    expect(parkZone).toBeUndefined();
-    expect(spec.groundZones).toHaveLength(1);
+    expect(spec.groundZones).toHaveLength(0);
   });
 
-  it('R5.1 residential branch frontage scatter along z≈-22', () => {
+  it('R6 frontage scatter removed from districtMassing (KCC + CVP replace)', () => {
     const spec = buildDistrictMassingSpec();
-    const hedge = spec.frontageScatter.filter((p) => Math.abs(p.z + 22) < 1);
-    expect(hedge.length).toBeGreaterThanOrEqual(4);
+    expect(spec.frontageScatter).toHaveLength(0);
   });
 });

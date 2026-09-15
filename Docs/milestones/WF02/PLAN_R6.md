@@ -1,6 +1,6 @@
 # WF02 Plan Revision 6 — Mass Representation Redesign (Low-Cost Screen-Space Silhouettes)
 
-**State:** WAITING_FOR_CHATGPT_PLAN_APPROVAL  
+**State:** APPROVED_TO_BUILD (implemented — awaiting Grok review)  
 **Supersedes:** Plan revision 5.1 (`Docs/milestones/WF02/PLAN_R5_1.md`)  
 **Investigation base SHA:** `fa64055444bd9644f28fbe467747ec85b5d901ab` (WF02-004 blocked @ R5.1)  
 **Branch:** `cursor/wf02-scale-calibration-754a`  

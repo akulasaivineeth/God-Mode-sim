@@ -14,9 +14,11 @@ import { execSync } from 'node:child_process';
 const OUT = '/opt/cursor/artifacts/wf02_evidence';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
 const NORTH_STAR = 'Docs/art-direction/references/god-mode-town-north-star.png';
-const RELEASE_TAG = 'review-evidence-wf02-r51-builder';
+const RELEASE_TAG_PREFIX = 'review-evidence-wf02-r6';
 const R41_BLOCKED_URL =
   'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf02-r41-6dbd8b5/01_wf02_overview_dawn.png';
+const R51_BLOCKED_URL =
+  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf02-r51-fa64055/01_wf02_overview_dawn.png';
 const R2_OVERVIEW_URL =
   'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf02-r2-builder/01_wf02_overview_dawn.png';
 const R3_OVERVIEW_URL =
@@ -177,6 +179,12 @@ async function main() {
 
   const wf01File = path.join(OUT, '00_before_wf01_overview.png');
   execSync(`curl -fsSL "${WF01_OVERVIEW_URL}" -o "${wf01File}"`, { stdio: 'inherit' });
+  const r51Blocked = path.join(OUT, '00_prior_r51_blocked_overview_dawn.png');
+  try {
+    execSync(`curl -fsSL "${R51_BLOCKED_URL}" -o "${r51Blocked}"`, { stdio: 'pipe' });
+  } catch {
+    console.warn(`R5.1 blocked reference unavailable: ${R51_BLOCKED_URL}`);
+  }
   const r41Blocked = path.join(OUT, '00_prior_r41_blocked_overview_dawn.png');
   try {
     execSync(`curl -fsSL "${R41_BLOCKED_URL}" -o "${r41Blocked}"`, { stdio: 'pipe' });
@@ -198,23 +206,26 @@ async function main() {
   const northStarDest = path.join(OUT, '00_north_star_reference.png');
   if (existsSync(NORTH_STAR)) await copyFile(NORTH_STAR, northStarDest);
 
-  const compareHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>WF02 Visual Gate</title>
+  const compareHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>WF02 R6 Visual Gate</title>
 <style>body{font-family:system-ui;background:#1a1a1a;color:#eee;padding:16px}
 .row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.col{background:#2a2a2a;padding:8px;border-radius:8px}
 img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px;font-size:12px}</style></head><body>
-<h1>WF02 — WF01 → R4.1 blocked → R5.1 CURRENT → North Star (Overview dawn)</h1><div class="row">
+<h1>WF02 R6 — WF01 → R4.1 → R5.1 blocked → R6 CURRENT → North Star (Overview dawn)</h1><div class="row">
 <div class="col"><div class="label">WF01 BEFORE</div><img src="00_before_wf01_overview.png"/></div>
 <div class="col"><div class="label">R4.1 blocked</div><img src="00_prior_r41_blocked_overview_dawn.png"/></div>
-<div class="col"><div class="label">R5.1 CURRENT</div><img src="01_wf02_overview_dawn.png"/></div>
-<div class="col"><div class="label">R5.1 noon</div><img src="01b_wf02_overview_noon.png"/></div>
+<div class="col"><div class="label">R5.1 blocked</div><img src="00_prior_r51_blocked_overview_dawn.png"/></div>
+<div class="col"><div class="label">R6 CURRENT dawn</div><img src="01_wf02_overview_dawn.png"/></div>
+<div class="col"><div class="label">R6 noon</div><img src="01b_wf02_overview_noon.png"/></div>
 <div class="col"><div class="label">North Star</div><img src="00_north_star_reference.png"/></div>
 </div></body></html>`;
   await writeFile(path.join(OUT, 'compare_before_after_northstar.html'), compareHtml);
 
+  const sha = gitSha();
   const manifest = {
     workItem: 'WF02',
-    planRevision: '5.1',
-    sha: gitSha(),
+    planRevision: '6',
+    sha,
+    releaseTag: `${RELEASE_TAG_PREFIX}-${sha.slice(0, 7)}`,
     overviewDiagnostics,
     overviewNoonDiagnostics: results.find((r) => r.name === '01b_wf02_overview_noon')?.diagnostics,
     streetDiagnostics,
@@ -231,13 +242,15 @@ img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px;font-s
       streetTriangles: streetDiagnostics?.triangles,
     },
     notes: [
-      'WF02 R5.1 warm atlas + nature mass + preset-tier visibility (presentation-only)',
+      'WF02 R6 Mass Silhouette System — Kenney Canopy Clusters + Canopy Volume Primitives (presentation-only)',
+      'Overview/Angled mount zero Quaternius; warm atlas frozen from R5.1',
       'Authoritative Overview: 01_wf02_overview_dawn.png / 01b_wf02_overview_noon.png only',
+      'Compare strip: WF01 → R4.1 blocked → R5.1 blocked → R6 → north star',
       'Simulation authority and facilityPoints unchanged from WF01',
-      'RGB diagnostics supplementary — not visual acceptance proxy',
     ],
   };
   await writeFile(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2));
+  console.log(`Release tag (publish before READY): ${manifest.releaseTag}`);
   await browser.close();
   console.log(JSON.stringify(manifest, null, 2));
 }

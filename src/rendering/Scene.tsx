@@ -78,7 +78,7 @@ function SceneContent({
       <OverviewCompositionLayer cameraView={cameraView} />
       <TownAmenities />
       <DedicatedBuildings />
-      <VegetationLayer />
+      <VegetationLayer cameraView={cameraView} />
       <FacilityInteractionSpots />
       {citizens.map((citizen) => (
         <CitizenVisual

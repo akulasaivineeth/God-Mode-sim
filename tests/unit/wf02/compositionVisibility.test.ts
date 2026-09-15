@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { isCompositionTierVisible } from '@/rendering/environment/compositionVisibility';
-import { ORCHARD_PERIMETER } from '@/rendering/environment/natureMassPlacements';
+import {
+  isBaselineVegetationVisible,
+  isCompositionTierVisible,
+} from '@/rendering/environment/compositionVisibility';
+import { ORCHARD_BLOCK_KCC } from '@/rendering/environment/massSilhouettePlacements';
 
-describe('WF02 R5.1 composition visibility tiers', () => {
+describe('WF02 R6 composition visibility tiers', () => {
   it('always shows core tier', () => {
     expect(isCompositionTierVisible('core', 'store-street')).toBe(true);
     expect(isCompositionTierVisible('core', 'overview')).toBe(true);
@@ -13,8 +16,15 @@ describe('WF02 R5.1 composition visibility tiers', () => {
     expect(isCompositionTierVisible('park', 'river')).toBe(true);
   });
 
-  it('shows orchard on overview via Kenney grid (Quaternius perimeter deferred for budget)', () => {
+  it('shows non-empty orchard block on overview', () => {
     expect(isCompositionTierVisible('orchard', 'overview')).toBe(true);
-    expect(ORCHARD_PERIMETER).toHaveLength(0);
+    expect(ORCHARD_BLOCK_KCC.length).toBeGreaterThan(0);
+  });
+
+  it('hides baseline Quaternius vegetation on overview and angled', () => {
+    expect(isBaselineVegetationVisible('overview')).toBe(false);
+    expect(isBaselineVegetationVisible('angled')).toBe(false);
+    expect(isBaselineVegetationVisible('street')).toBe(true);
+    expect(isBaselineVegetationVisible('store-street')).toBe(true);
   });
 });
