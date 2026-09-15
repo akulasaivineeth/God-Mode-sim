@@ -1,7 +1,6 @@
 /**
- * Shared Three.js materials for M02 rendering — single source of truth for
- * repeated corridor/town geometry. Imported by Town, M02CorridorPolish,
- * FacilityInteractionSpots, and CitizenMesh (M2 / 8 GB performance target).
+ * Shared Three.js materials for town/corridor rendering — singleton palette plus
+ * pooled per-color materials via materialPool.ts (Foundation Hardening).
  */
 import { MeshStandardMaterial } from 'three';
 
@@ -34,8 +33,6 @@ export const MAT = {
   trimWhite: new MeshStandardMaterial({ color: '#f0ece4', roughness: 0.75 }),
   industrial: new MeshStandardMaterial({ color: '#8a7a60', roughness: 0.8 }),
   crate: new MeshStandardMaterial({ color: '#a08050', roughness: 0.85 }),
-  skin: new MeshStandardMaterial({ color: '#d8a67c', roughness: 0.75 }),
-  shoe: new MeshStandardMaterial({ color: '#3a3840', roughness: 0.85 }),
   selectRing: new MeshStandardMaterial({
     color: '#7eb8dc',
     emissive: '#1a4060',
@@ -44,8 +41,6 @@ export const MAT = {
     opacity: 0.45,
   }),
   hazard: new MeshStandardMaterial({ color: '#d4a030', roughness: 0.7 }),
-  trunk: new MeshStandardMaterial({ color: '#5b4327', roughness: 0.88 }),
-  treeCanopy: new MeshStandardMaterial({ color: '#356b34', roughness: 0.9 }),
   grave: new MeshStandardMaterial({ color: '#b7bcc2', roughness: 0.8 }),
   farmRowA: new MeshStandardMaterial({ color: '#6a8a3a', roughness: 0.9 }),
   farmRowB: new MeshStandardMaterial({ color: '#7a9a48', roughness: 0.9 }),

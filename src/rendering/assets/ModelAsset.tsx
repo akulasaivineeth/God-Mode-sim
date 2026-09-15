@@ -1,10 +1,10 @@
 /**
- * Cached GLTF/GLB loader — presentation-only asset pipeline (M02 R5).
+ * Cached GLTF/GLB loader — shared presentation pipeline (Foundation Hardening).
  */
 import { useMemo } from 'react';
 import { useLoader } from '@react-three/fiber';
-import { Box3, Mesh, Object3D, Vector3 } from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { Box3, Object3D, Vector3 } from 'three';
+import { GLTFLoader, prepareStaticGltfRoot } from './gltfPipeline';
 
 export interface ModelAssetProps {
   url: string;
@@ -36,14 +36,7 @@ export function ModelAsset({
   const gltf = useLoader(GLTFLoader, url);
 
   const prepared = useMemo(() => {
-    const root = gltf.scene.clone(true);
-    root.traverse((child) => {
-      if (child instanceof Mesh) {
-        child.castShadow = castShadow;
-        child.receiveShadow = receiveShadow;
-      }
-    });
-    return root;
+    return prepareStaticGltfRoot(gltf.scene, { castShadow, receiveShadow }).root;
   }, [gltf, castShadow, receiveShadow]);
 
   const resolvedScale = useMemo(() => {

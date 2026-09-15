@@ -13,7 +13,7 @@ import {
   Quaternion,
   Vector3,
 } from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { GLTFLoader } from './gltfPipeline';
 import { terrainHeightAt } from '@/world/townLayout';
 import type { VegetationPlacement } from './EnvironmentAssetRegistry';
 import { resolveVegetationUrl } from './EnvironmentAssetRegistry';
