@@ -104,7 +104,7 @@ describe('WORLD-001 river readability', () => {
     expect(bankWidth).toBeGreaterThan(width);
     const xs = points.map((p) => p.x);
     const zs = points.map((p) => p.z);
-    expect(Math.min(...xs)).toBeLessThanOrEqual(95);
+    expect(Math.min(...xs)).toBeLessThanOrEqual(82);
     expect(Math.min(...zs)).toBeLessThanOrEqual(-100);
     expect(Math.max(...zs)).toBeGreaterThanOrEqual(100);
   });

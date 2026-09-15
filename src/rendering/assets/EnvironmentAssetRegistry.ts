@@ -72,10 +72,10 @@ export const M02_CORRIDOR_VEGETATION: readonly VegetationPlacement[] = [
   { position: { x: 5, z: -2 }, asset: 'bushFlowers', scale: 1.1, source: 'quaternius' },
   { position: { x: -5, z: 5 }, asset: 'commonTree2', scale: 1.0, source: 'quaternius' },
   { position: { x: -14, z: 18 }, asset: 'pine1', scale: 0.85, source: 'quaternius' },
-  { position: { x: 14, z: -8 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
-  { position: { x: -8, z: 14 }, asset: 'flowers', scale: 0.95, source: 'quaternius' },
+  { position: { x: 22, z: 8 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
+  { position: { x: 35, z: 18 }, asset: 'flowers', scale: 0.95, source: 'quaternius' },
   { position: { x: -8, z: 26 }, asset: 'bush', scale: 1.05, source: 'quaternius' },
-  { position: { x: -20, z: -16 }, asset: 'bush', scale: 1.0, source: 'quaternius' },
+  { position: { x: 42, z: -18 }, asset: 'bush', scale: 1.0, source: 'quaternius' },
   { position: { x: -32, z: 12 }, asset: 'flowers', scale: 0.9, source: 'quaternius' },
 ];
 

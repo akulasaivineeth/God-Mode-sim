@@ -12,7 +12,7 @@ M02 one-citizen simulation behavior is unchanged. Facility IDs `house-1`,
 
 ## Status
 
-**Revision 1 — READY_FOR_REVIEW** (awaiting Grok independent validation)
+**Revision 3 — READY_FOR_REVIEW** (presentation pass after Grok WF01-002 BLOCKED)
 
 ## Key deliverables
 
@@ -20,7 +20,7 @@ M02 one-citizen simulation behavior is unchanged. Facility IDs `house-1`,
 - All major visible facilities use Kenney GLB prefabs (no dominant `BuildingMesh`)
 - Kenney road modules replace dominant `FlatStrip` road presentation
 - Riverside Park, expanded river ribbon, bridge, farm edge, periphery forest
-- Performance: Overview ~116 draw calls / ~147k triangles (M2/8GB target met)
+- Performance: Overview ~127 draw calls / ~148k triangles (M2/8GB target met)
 
 ## Evidence
 

@@ -1,14 +1,14 @@
 # WF01 → M03 Render Headroom Note
 
-## Current one-citizen baseline (WF01 Revision 2)
+## Current one-citizen baseline (WF01 Revision 3)
 
 Measured via `npm run measure:render-budget` on M2/8GB target host:
 
 | Preset | Draw calls | Triangles |
 |--------|-----------|-----------|
-| Overview | ~116 | ~147,000 |
-| Home street | ~55 | ~133,500 |
-| Store street | ~63 | ~136,000 |
+| Overview | ~136 | ~152,000 |
+| Home street | ~56 | ~133,000 |
+| Store street | ~63 | ~135,000 |
 | Workshop street | ~54 | ~136,000 |
 
 WF01 world geometry is static and shared; the citizen is the primary dynamic draw contributor.
@@ -22,8 +22,8 @@ Assumptions (M03 plan):
 
 | Resource | Per citizen (measured/derived) | ×20 citizens | Headroom vs WF01 Overview |
 |----------|-------------------------------|--------------|---------------------------|
-| Draw calls | ~1–2 (skinned mesh + shadow pass) | +20–40 | 116 → ~156–176 (may exceed 140 soft target) |
-| Triangles | ~6–8k visible (LOD-dependent) | +120–160k | 147k → ~270–310k (exceeds 150k soft target) |
+| Draw calls | ~1–2 (skinned mesh + shadow pass) | +20–40 | 136 → ~156–176 (may exceed 140 soft target) |
+| Triangles | ~6–8k visible (LOD-dependent) | +120–160k | 152k → ~272–312k (exceeds 150k soft target) |
 
 ## Assessment
 

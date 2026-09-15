@@ -10,8 +10,8 @@ import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
 
 export const PLAYER_CAMERA_LIMITS = {
   minDistance: 6,
-  /** Overview preset ≈100 m; block fly-away speck views (was 180). */
-  maxDistance: 102,
+  /** WF01 overview preset ≈133 m; block fly-away speck views (was 180). */
+  maxDistance: 136,
   minPolarAngle: 0.18,
   maxPolarAngle: Math.PI * 0.48,
   targetBounds: {

@@ -1,11 +1,9 @@
 /**
  * Day/night lighting — SIM-TIME-004.
  *
- * Plain English: The sky colour and sun position are computed purely from the
- * simulated time of day (0 = midnight, 0.5 = noon). Because the lighting is a
- * direct function of authoritative simulated time, it stays exactly correct at
- * every speed — at 1000× the sun simply jumps instead of gliding, but it always
- * shows the true simulated hour (ARCH-005 / M01-GATE).
+ * Plain English: Sky colour and sun position are computed from simulated time of day.
+ * WF01 R3: dawn/dusk retain a readability floor so 06:00 world-start is clearly
+ * daytime without faking evidence-only exposure (clock-driven lighting preserved).
  */
 import { useMemo } from 'react';
 import { Color } from 'three';
@@ -21,13 +19,16 @@ const DAY_SKY = new Color('#8fc0f0');
 
 const SUN_DISTANCE = 60;
 
+/** Readable daylight floor during the sun-up arc (~06:00–18:00). */
+const DAWN_DAYLIGHT_FLOOR = 0.46;
+
 export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
   const { sunPosition, dirIntensity, ambientIntensity, hemiIntensity, skyColor } = useMemo(() => {
-    // Sun angle: 0 at 06:00 (east horizon), π/2 at noon (overhead),
-    // π at 18:00 (west horizon), -π/2 at midnight (below).
     const sunAngle = (timeOfDay - 0.25) * Math.PI * 2;
     const elevation = Math.sin(sunAngle);
-    const dayFactor = Math.max(0, elevation); // 0 at/under horizon, 1 at noon
+    const sunUp = elevation > -0.12;
+    const rawDay = Math.max(0, elevation);
+    const dayFactor = sunUp ? Math.max(DAWN_DAYLIGHT_FLOOR, rawDay) : 0;
 
     const sunPos: [number, number, number] = [
       Math.cos(sunAngle) * SUN_DISTANCE,
@@ -35,19 +36,16 @@ export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
       SUN_DISTANCE * 0.35,
     ];
 
-    // Sky: night → horizon (dawn/dusk glow) → day.
     const sky = NIGHT_SKY.clone();
-    // Horizon glow peaks when the sun is near the horizon (low |elevation|)
-    // but only while it is up-ish (sunrise/sunset), fading into day/night.
     const horizonGlow = Math.max(0, 1 - Math.abs(elevation) * 4) * (elevation > -0.25 ? 1 : 0);
     sky.lerp(HORIZON_SKY, horizonGlow);
     sky.lerp(DAY_SKY, dayFactor);
 
     return {
       sunPosition: sunPos,
-      dirIntensity: 0.35 + dayFactor * 1.15,
-      ambientIntensity: 0.46 + dayFactor * 0.42,
-      hemiIntensity: 0.4 + dayFactor * 0.48,
+      dirIntensity: 0.42 + dayFactor * 1.1,
+      ambientIntensity: 0.52 + dayFactor * 0.4,
+      hemiIntensity: 0.46 + dayFactor * 0.46,
       skyColor: `#${sky.getHexString()}`,
     };
   }, [timeOfDay]);

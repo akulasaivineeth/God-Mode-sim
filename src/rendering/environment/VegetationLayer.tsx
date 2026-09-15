@@ -26,7 +26,12 @@ export function VegetationLayer() {
   }, []);
 
   const allPlacements = useMemo(
-    () => [...M02_CORRIDOR_VEGETATION, ...buildPeripheryForest(), ...RIVERBANK_VEGETATION, ...parkAndSquare],
+    () => [
+      ...M02_CORRIDOR_VEGETATION,
+      ...buildPeripheryForest(),
+      ...RIVERBANK_VEGETATION,
+      ...parkAndSquare,
+    ],
     [parkAndSquare],
   );
 

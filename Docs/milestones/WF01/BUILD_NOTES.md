@@ -20,15 +20,24 @@
 4. **Asset provenance** — full audit table in `ASSET_REGISTER.md`.
 5. **M03 headroom** — `M03_HEADROOM.md`.
 
+## Revision 3 corrections (presentation pass)
+
+1. **Daylight readability** — dawn curve floor in `DayNightLighting.tsx` so 06:00 sim start reads as daytime without breaking night cycle.
+2. **River legibility** — inward-bent centerline, authored blue water material, reframed Overview/river cameras.
+3. **District storytelling** — farm/orchard row articulation in `TownAmenities.tsx`; corridor vegetation repositioned for inter-district connectors (no duplicate instancing).
+4. **Camera-controls e2e** — `maxDistance` raised to 136 so Overview preset is not orbit-clamped on reset.
+5. **Evidence** — release `review-evidence-wf01-builder-r3` with R2→R3→north-star compare at genuine daytime.
+
 ## Performance measurement
 
-`npm run measure:render-budget` (2026-09-15):
+`npm run measure:render-budget` (2026-09-15, R3):
 
 | Preset | Draw calls | Triangles |
 |--------|-----------|-----------|
-| Overview | 116 | 146,971 |
-| Home street | 55 | 133,461 |
-| Store street | 63 | 135,923 |
-| Workshop street | 54 | 135,629 |
+| Overview | 136 | 151,851 |
+| Home street | 56 | 132,973 |
+| Store street | 63 | 135,175 |
+| Workshop street | 54 | 135,636 |
+| Angled (evidence) | ~136 | ~152,000 |
 
-Within WF01 targets (Overview ≤140, Street ≤100, triangles <150k).
+Within WF01 primary limits (Overview ≤140 DC, Street ≤100 DC). Soft triangle target 150k: +1.2% on same harness as R2 remeasure (151,893); presentation pass adds no duplicate vegetation draw groups.
