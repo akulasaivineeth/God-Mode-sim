@@ -1,0 +1,274 @@
+{
+  "phase": "0b",
+  "baseSha": "743a2599409bfa0531807f2dc574aa25c475bc1b",
+  "cameras": {
+    "overview": {
+      "position": [
+        10,
+        93,
+        54
+      ],
+      "target": [
+        30,
+        2,
+        4
+      ]
+    },
+    "angled": {
+      "position": [
+        68,
+        53,
+        37
+      ],
+      "target": [
+        28,
+        3,
+        2
+      ]
+    }
+  },
+  "visualMappings": [
+    {
+      "id": "community-hall",
+      "auth": [
+        -18,
+        -18
+      ],
+      "visual": [
+        -16,
+        -14
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": 0,
+      "maxM": 6
+    },
+    {
+      "id": "clinic",
+      "auth": [
+        -42,
+        -14
+      ],
+      "visual": [
+        -38,
+        -12
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": -0.03,
+      "maxM": 6
+    },
+    {
+      "id": "school",
+      "auth": [
+        -24,
+        -48
+      ],
+      "visual": [
+        -22,
+        -44
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": 0,
+      "maxM": 6
+    },
+    {
+      "id": "house-1",
+      "auth": [
+        11,
+        -10
+      ],
+      "visual": [
+        14,
+        -8
+      ],
+      "rotY": -1.5707963267948966,
+      "rotD": 0,
+      "maxM": 4
+    },
+    {
+      "id": "house-2",
+      "auth": [
+        30,
+        -12
+      ],
+      "visual": [
+        28,
+        -10
+      ],
+      "rotY": -1.5707963267948966,
+      "rotD": 0.06,
+      "maxM": 4
+    },
+    {
+      "id": "house-3",
+      "auth": [
+        11,
+        -30
+      ],
+      "visual": [
+        14,
+        -28
+      ],
+      "rotY": 0,
+      "rotD": 0,
+      "maxM": 4
+    },
+    {
+      "id": "house-4",
+      "auth": [
+        30,
+        -30
+      ],
+      "visual": [
+        28,
+        -28
+      ],
+      "rotY": -1.5707963267948966,
+      "rotD": -0.04,
+      "maxM": 4
+    },
+    {
+      "id": "apartment",
+      "auth": [
+        52,
+        -22
+      ],
+      "visual": [
+        46,
+        -20
+      ],
+      "rotY": -1.5707963267948966,
+      "rotD": 0.04,
+      "maxM": 8
+    },
+    {
+      "id": "store",
+      "auth": [
+        -11,
+        11
+      ],
+      "visual": [
+        -10,
+        6
+      ],
+      "rotY": 0,
+      "rotD": 0,
+      "maxM": 5.5
+    },
+    {
+      "id": "cafe",
+      "auth": [
+        -30,
+        12
+      ],
+      "visual": [
+        -28,
+        10
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": 0.05,
+      "maxM": 5
+    },
+    {
+      "id": "workshop",
+      "auth": [
+        -11,
+        23
+      ],
+      "visual": [
+        -10,
+        20
+      ],
+      "rotY": 0,
+      "rotD": -0.03,
+      "maxM": 5
+    },
+    {
+      "id": "warehouse",
+      "auth": [
+        -38,
+        48
+      ],
+      "visual": [
+        -36,
+        42
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": 0,
+      "maxM": 8
+    },
+    {
+      "id": "utility",
+      "auth": [
+        -52,
+        30
+      ],
+      "visual": [
+        -48,
+        28
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": -0.05,
+      "maxM": 6
+    },
+    {
+      "id": "farmhouse",
+      "auth": [
+        28,
+        82
+      ],
+      "visual": [
+        32,
+        68
+      ],
+      "rotY": -1.5707963267948966,
+      "rotD": 0,
+      "maxM": 16
+    }
+  ],
+  "performanceLedger": {
+    "r6Baseline": {
+      "overviewDc": "117-120",
+      "overviewTris": "45536-45872"
+    },
+    "prototypeEstimate": {
+      "optionA_visualLayout": {
+        "dc": 0,
+        "tris": 0
+      },
+      "optionB_envelopeFills": {
+        "dc": "+6..+12",
+        "tris": "+18k..+35k"
+      },
+      "optionC_verticalLayer": {
+        "dc": "+1..+2",
+        "tris": "+4k..+10k"
+      },
+      "optionD_curatedProps": {
+        "dc": "+1..+2",
+        "tris": "+2k..+6k"
+      },
+      "target": {
+        "overviewDc": 125,
+        "overviewTris": 100000,
+        "hardCapDc": 135,
+        "hardCapTris": 118000
+      },
+      "m03Reserve": {
+        "dc": 5,
+        "tris": 8000,
+        "note": "LOD/culling required per M03_HEADROOM.md"
+      }
+    }
+  },
+  "verticalLayerDecision": {
+    "selected": true,
+    "mechanism": "PresentationTerrainLayer embankment skirts + CVP retaining edges",
+    "maxHeightM": 0.8,
+    "rollback": "Remove PresentationTerrainLayer from OverviewCompositionLayer; revert envelopeFillBuilders heights",
+    "simTerrainUnchanged": true
+  },
+  "assetImports": {
+    "phase0": 0,
+    "proposedPhase2": 5
+  }
+}

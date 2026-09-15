@@ -1,0 +1,291 @@
+{
+  "mappings": [
+    {
+      "id": "house-1",
+      "auth": {
+        "x": 11,
+        "z": -10
+      },
+      "visual": {
+        "x": 14,
+        "z": -8
+      },
+      "deltaM": 3.61,
+      "maxM": 4,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[10.5, 17.5]",
+        "z": "[-13.6, -2.4]",
+        "heightM": 7
+      }
+    },
+    {
+      "id": "house-2",
+      "auth": {
+        "x": 30,
+        "z": -12
+      },
+      "visual": {
+        "x": 28,
+        "z": -10
+      },
+      "deltaM": 2.83,
+      "maxM": 4,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[23.7, 32.3]",
+        "z": "[-15.5, -4.5]",
+        "heightM": 7.1
+      }
+    },
+    {
+      "id": "house-3",
+      "auth": {
+        "x": 11,
+        "z": -30
+      },
+      "visual": {
+        "x": 14,
+        "z": -28
+      },
+      "deltaM": 3.61,
+      "maxM": 4,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[8.5, 19.5]",
+        "z": "[-32.4, -23.6]",
+        "heightM": 8.8
+      }
+    },
+    {
+      "id": "house-4",
+      "auth": {
+        "x": 30,
+        "z": -30
+      },
+      "visual": {
+        "x": 28,
+        "z": -28
+      },
+      "deltaM": 2.83,
+      "maxM": 4,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[24.7, 31.3]",
+        "z": "[-33.6, -22.4]",
+        "heightM": 7.9
+      }
+    },
+    {
+      "id": "apartment",
+      "auth": {
+        "x": 52,
+        "z": -22
+      },
+      "visual": {
+        "x": 46,
+        "z": -20
+      },
+      "deltaM": 6.32,
+      "maxM": 8,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[39.7, 52.3]",
+        "z": "[-28.0, -12.0]",
+        "heightM": 14
+      }
+    },
+    {
+      "id": "community-hall",
+      "auth": {
+        "x": -18,
+        "z": -18
+      },
+      "visual": {
+        "x": -16,
+        "z": -14
+      },
+      "deltaM": 4.47,
+      "maxM": 6,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[-24.0, -8.0]",
+        "z": "[-18.9, -9.1]",
+        "heightM": 8.7
+      }
+    },
+    {
+      "id": "clinic",
+      "auth": {
+        "x": -42,
+        "z": -14
+      },
+      "visual": {
+        "x": -38,
+        "z": -12
+      },
+      "deltaM": 4.47,
+      "maxM": 6,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[-44.3, -31.7]",
+        "z": "[-18.8, -5.2]",
+        "heightM": 19.4
+      }
+    },
+    {
+      "id": "school",
+      "auth": {
+        "x": -24,
+        "z": -48
+      },
+      "visual": {
+        "x": -22,
+        "z": -44
+      },
+      "deltaM": 4.47,
+      "maxM": 6,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[-29.7, -14.3]",
+        "z": "[-52.8, -35.3]",
+        "heightM": 22.5
+      }
+    },
+    {
+      "id": "store",
+      "auth": {
+        "x": -11,
+        "z": 11
+      },
+      "visual": {
+        "x": -10,
+        "z": 6
+      },
+      "deltaM": 5.1,
+      "maxM": 5.5,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[-15.5, -4.5]",
+        "z": "[-0.8, 12.8]",
+        "heightM": 22.2
+      }
+    },
+    {
+      "id": "cafe",
+      "auth": {
+        "x": -30,
+        "z": 12
+      },
+      "visual": {
+        "x": -28,
+        "z": 10
+      },
+      "deltaM": 2.83,
+      "maxM": 5,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[-34.1, -21.9]",
+        "z": "[4.1, 15.9]",
+        "heightM": 16.3
+      }
+    },
+    {
+      "id": "workshop",
+      "auth": {
+        "x": -11,
+        "z": 23
+      },
+      "visual": {
+        "x": -10,
+        "z": 20
+      },
+      "deltaM": 3.16,
+      "maxM": 5,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[-17.5, -2.5]",
+        "z": "[13.3, 26.7]",
+        "heightM": 13.9
+      }
+    },
+    {
+      "id": "warehouse",
+      "auth": {
+        "x": -38,
+        "z": 48
+      },
+      "visual": {
+        "x": -36,
+        "z": 42
+      },
+      "deltaM": 6.32,
+      "maxM": 8,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[-45.5, -26.5]",
+        "z": "[36.3, 47.7]",
+        "heightM": 13.4
+      }
+    },
+    {
+      "id": "utility",
+      "auth": {
+        "x": -52,
+        "z": 30
+      },
+      "visual": {
+        "x": -48,
+        "z": 28
+      },
+      "deltaM": 4.47,
+      "maxM": 8,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[-54.0, -42.0]",
+        "z": "[21.3, 34.8]",
+        "heightM": 8
+      }
+    },
+    {
+      "id": "farmhouse",
+      "auth": {
+        "x": 28,
+        "z": 82
+      },
+      "visual": {
+        "x": 32,
+        "z": 68
+      },
+      "deltaM": 14.56,
+      "maxM": 16,
+      "withinMax": true,
+      "visualAabb": {
+        "x": "[26.9, 37.1]",
+        "z": "[61.8, 74.3]",
+        "heightM": 6.6
+      }
+    }
+  ],
+  "m02": {
+    "simEntrancesUnchanged": {
+      "house-1": {
+        "x": 11,
+        "z": -7.6
+      },
+      "store": {
+        "x": -11,
+        "z": 7.6
+      },
+      "workshop": {
+        "x": -11,
+        "z": 20.2
+      }
+    },
+    "storeWorkshopVisualGapZ": 0.52,
+    "gapGate": true,
+    "storeEntranceToVisualAabb": -5.15,
+    "workshopEntranceToVisualAabb": -6.5311789617808
+  },
+  "allWithinMaxOffset": true
+}
