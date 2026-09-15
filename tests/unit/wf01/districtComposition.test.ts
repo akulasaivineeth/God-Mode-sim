@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { CANONICAL_TOWN } from '@/world/townLayout';
 import { buildDistrictCompositionPlacements } from '@/rendering/assets/EnvironmentAssetRegistry';
+import { buildDistrictMassingSpec } from '@/rendering/environment/districtMassing';
 
 describe('WF01 R5 district composition', () => {
-  it('does not duplicate vacant lot markers (handled by FutureLotPresentation in R3)', () => {
+  it('does not duplicate vacant lot markers (handled by FutureLotPresentation in R3+)', () => {
     const placements = buildDistrictCompositionPlacements();
     const lotMarkers = placements.filter(
       (p) =>
@@ -18,10 +19,10 @@ describe('WF01 R5 district composition', () => {
     expect(lotMarkers.length).toBe(0);
   });
 
-  it('avoids duplicate orchard tree-small GLBs (farm rows carry orchard read)', () => {
-    const placements = buildDistrictCompositionPlacements();
+  it('R4.1 orchard Kenney treeSmall grid lives in district massing (not legacy registry)', () => {
+    const legacy = buildDistrictCompositionPlacements();
     const orchard = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3');
-    const orchardTrees = placements.filter(
+    const legacyOrchard = legacy.filter(
       (p) =>
         p.source === 'kenney' &&
         p.asset === 'treeSmall' &&
@@ -29,25 +30,31 @@ describe('WF01 R5 district composition', () => {
         Math.abs(p.position.x - orchard.center.x) < 6 &&
         Math.abs(p.position.z - orchard.center.z) < 5,
     );
-    expect(orchardTrees.length).toBe(0);
+    expect(legacyOrchard.length).toBe(0);
+    const spec = buildDistrictMassingSpec();
+    const massingOrchard = spec.kenneyTrees.filter(
+      (t) =>
+        orchard &&
+        Math.abs(t.x - orchard.center.x) < 8 &&
+        Math.abs(t.z - orchard.center.z) < 8,
+    );
+    expect(massingOrchard.length).toBeGreaterThanOrEqual(16);
   });
 
-  it('places park river-facing tree arc without duplicate kenney path modules', () => {
-    const placements = buildDistrictCompositionPlacements();
-    const parkPaths = placements.filter((p) => p.source === 'kenney' && p.asset === 'pathShort');
-    expect(parkPaths.length).toBe(0);
-    const parkTrees = placements.filter(
-      (p) => p.position.x >= 72 && p.position.x <= 90 && p.position.z >= 34 && p.position.z <= 46,
-    );
-    expect(parkTrees.length).toBeGreaterThanOrEqual(4);
+  it('R4.1 park edge massing uses district ground tint zone (no duplicate kenney path modules)', () => {
+    const spec = buildDistrictMassingSpec();
+    const parkZone = spec.groundZones.find((z) => z.id === 'park');
+    expect(parkZone).toBeDefined();
+    expect(parkZone!.minX).toBeLessThanOrEqual(72);
+    expect(parkZone!.maxX).toBeGreaterThanOrEqual(88);
   });
 
-  it('includes residential branch hedge line along z≈-44', () => {
-    const placements = buildDistrictCompositionPlacements();
-    const hedgeXs = new Set([24, 36, 48, 60]);
-    const hedge = placements.filter(
-      (p) => p.asset === 'bush' && Math.abs(p.position.z + 44) < 1 && hedgeXs.has(p.position.x),
+  it('R4.1 residential branch frontage scatter along z≈-44', () => {
+    const spec = buildDistrictMassingSpec();
+    const hedgeXs = new Set([14, 20, 26, 32, 38, 44, 50, 56]);
+    const hedge = spec.frontageScatter.filter(
+      (p) => Math.abs(p.z + 44) < 1 && [...hedgeXs].some((x) => Math.abs(p.x - x) < 2),
     );
-    expect(hedge.length).toBe(4);
+    expect(hedge.length).toBeGreaterThanOrEqual(4);
   });
 });

@@ -2,7 +2,7 @@
  * Authored environment asset paths — reusable vegetation/prop vocabulary (M02 R6/R8).
  * Kenney GLBs are repackaged per-pack with matching Textures/colormap.png.
  */
-import { CANONICAL_TOWN, type Vec2 } from '@/world/townLayout';
+import { type Vec2 } from '@/world/townLayout';
 
 export const KENNEY_ASSETS = {
   homeCottage: '/assets/glb/kenney/suburban/home-cottage.glb',
@@ -75,54 +75,12 @@ export function resolveVegetationUrl(placement: VegetationPlacement): string {
   return QUATERNIUS_ASSETS[placement.asset as keyof typeof QUATERNIUS_ASSETS];
 }
 
-/** Kenney/Quaternius prop clusters — WF02 R3 district composition envelopes. */
+/**
+ * WF02 R4.1 — overview district Quaternius moved to Kenney composition layer.
+ * Retained for test compatibility; returns empty (VegetationLayer uses corridor/river/park only).
+ */
 export function buildDistrictCompositionPlacements(): VegetationPlacement[] {
-  const placements: VegetationPlacement[] = [];
-
-  placements.push(
-    { position: { x: -22, z: -12 }, asset: 'commonTree1', scale: 0.95, source: 'quaternius' },
-    { position: { x: -28, z: -44 }, asset: 'pine1', scale: 0.88, source: 'quaternius' },
-    { position: { x: -8, z: -8 }, asset: 'bushFlowers', scale: 1.05, source: 'quaternius' },
-  );
-
-  for (let x = 24; x <= 60; x += 12) {
-    placements.push({ position: { x, z: -44 }, asset: 'bush', scale: 0.98, source: 'quaternius' });
-  }
-
-  // Residential street trees — staggered pair (budget-conscious quaternius use).
-  const residentialTrees: VegetationPlacement[] = [
-    { position: { x: 16, z: -28.5 }, asset: 'commonTree1', scale: 0.9, rotY: 0.8, source: 'quaternius' },
-    { position: { x: 28, z: -31.2 }, asset: 'commonTree2', scale: 0.95, rotY: 1.6, source: 'quaternius' },
-  ];
-  placements.push(...residentialTrees);
-
-  placements.push(
-    { position: { x: -18, z: 16 }, asset: 'bushFlowers', scale: 1.08, source: 'quaternius' },
-    { position: { x: -6, z: 22 }, asset: 'bush', scale: 1.05, source: 'quaternius' },
-    { position: { x: 2, z: 18 }, asset: 'commonTree2', scale: 0.92, source: 'quaternius' },
-    { position: { x: -4, z: 26 }, asset: 'flowers', scale: 0.95, source: 'quaternius' },
-  );
-
-  placements.push(
-    { position: { x: 76, z: 42 }, asset: 'commonTree1', scale: 0.95, source: 'quaternius' },
-    { position: { x: 82, z: 44 }, asset: 'bushFlowers', scale: 1.08, source: 'quaternius' },
-    { position: { x: 88, z: 36 }, asset: 'pine1', scale: 0.88, source: 'quaternius' },
-    { position: { x: 84, z: 34 }, asset: 'fern', scale: 0.98, source: 'quaternius' },
-    { position: { x: 78, z: 32 }, asset: 'pebble1', scale: 0.88, source: 'quaternius' },
-  );
-
-  const orchard = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3');
-  if (orchard) {
-    // Orchard read comes from InstancedFarmRows in TownAmenities — no duplicate treeSmall GLBs.
-    void orchard;
-  }
-
-  const farmhouse = CANONICAL_TOWN.buildings.find((b) => b.id === 'farmhouse');
-  if (farmhouse) {
-    void farmhouse;
-  }
-
-  return placements;
+  return [];
 }
 
 
@@ -144,28 +102,7 @@ export const RIVERBANK_VEGETATION: readonly VegetationPlacement[] = [
   { position: { x: 86, z: 22 }, asset: 'commonTree1', scale: 1.0, source: 'quaternius' },
 ];
 
-/** Dense north/west forest frame — WF02 R3 perf trim (4 trees). */
+/** WF02 R4.1 Phase A recovery — periphery forest removed for triangle/DC budget. */
 export function buildPeripheryForest(): VegetationPlacement[] {
-  const placements: VegetationPlacement[] = [];
-  const northEdge = [{ x: -95, z: -102 }, { x: 35, z: -104 }];
-  const westEdge = [{ x: -104, z: 0 }, { x: -104, z: 65 }];
-  const variants: VegetationPlacement[] = [
-    { position: { x: 0, z: 0 }, asset: 'pine1', source: 'quaternius' },
-    { position: { x: 0, z: 0 }, asset: 'pine2', source: 'quaternius' },
-    { position: { x: 0, z: 0 }, asset: 'commonTree1', source: 'quaternius' },
-    { position: { x: 0, z: 0 }, asset: 'commonTree2', source: 'quaternius' },
-  ];
-  let i = 0;
-  for (const pos of [...northEdge, ...westEdge]) {
-    const variant = variants[i % variants.length];
-    placements.push({
-      position: pos,
-      asset: variant.asset,
-      scale: 1.0 + (i % 3) * 0.12,
-      rotY: (i % 6) * 0.55,
-      source: variant.source,
-    });
-    i += 1;
-  }
-  return placements;
+  return [];
 }

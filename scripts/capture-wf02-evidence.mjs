@@ -14,7 +14,11 @@ import { execSync } from 'node:child_process';
 const OUT = '/opt/cursor/artifacts/wf02_evidence';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
 const NORTH_STAR = 'Docs/art-direction/references/god-mode-town-north-star.png';
-const RELEASE_TAG = 'review-evidence-wf02-builder';
+const RELEASE_TAG = 'review-evidence-wf02-r41-builder';
+const R2_OVERVIEW_URL =
+  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf02-r2-builder/01_wf02_overview_dawn.png';
+const R3_OVERVIEW_URL =
+  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf02-r3-8be181c/01_wf02_overview_dawn.png';
 const REPO = 'akulasaivineeth/God-Mode-sim';
 const WF01_OVERVIEW_URL =
   'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf01-builder-r5/01_wf01_overview.png';
@@ -163,23 +167,37 @@ async function main() {
 
   const wf01File = path.join(OUT, '00_before_wf01_overview.png');
   execSync(`curl -fsSL "${WF01_OVERVIEW_URL}" -o "${wf01File}"`, { stdio: 'inherit' });
+  const r2File = path.join(OUT, '00_wf02_r2_overview_dawn.png');
+  const r3File = path.join(OUT, '00_wf02_r3_overview_dawn.png');
+  for (const [url, dest] of [
+    [R2_OVERVIEW_URL, r2File],
+    [R3_OVERVIEW_URL, r3File],
+  ]) {
+    try {
+      execSync(`curl -fsSL "${url}" -o "${dest}"`, { stdio: 'pipe' });
+    } catch {
+      console.warn(`Optional compare asset unavailable: ${url}`);
+    }
+  }
   const northStarDest = path.join(OUT, '00_north_star_reference.png');
   if (existsSync(NORTH_STAR)) await copyFile(NORTH_STAR, northStarDest);
 
   const compareHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>WF02 Visual Gate</title>
 <style>body{font-family:system-ui;background:#1a1a1a;color:#eee;padding:16px}
-.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.col{background:#2a2a2a;padding:8px;border-radius:8px}
-img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px}</style></head><body>
-<h1>WF02 — WF01 BEFORE → WF02 AFTER → North Star</h1><div class="row">
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.col{background:#2a2a2a;padding:8px;border-radius:8px}
+img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px;font-size:12px}</style></head><body>
+<h1>WF02 — WF01 → R2 → R3 → R4.1 → North Star (Overview dawn)</h1><div class="row">
 <div class="col"><div class="label">WF01 BEFORE</div><img src="00_before_wf01_overview.png"/></div>
-<div class="col"><div class="label">WF02 R3 AFTER (06:00)</div><img src="01_wf02_overview_dawn.png"/></div>
+<div class="col"><div class="label">WF02 R2</div><img src="00_wf02_r2_overview_dawn.png"/></div>
+<div class="col"><div class="label">WF02 R3</div><img src="00_wf02_r3_overview_dawn.png"/></div>
+<div class="col"><div class="label">WF02 R4.1</div><img src="01_wf02_overview_dawn.png"/></div>
 <div class="col"><div class="label">North Star</div><img src="00_north_star_reference.png"/></div>
 </div></body></html>`;
   await writeFile(path.join(OUT, 'compare_before_after_northstar.html'), compareHtml);
 
   const manifest = {
     workItem: 'WF02',
-    planRevision: 3,
+    planRevision: '4.1',
     sha: gitSha(),
     overviewDiagnostics,
     streetDiagnostics,
@@ -196,7 +214,8 @@ img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px}</styl
       streetTriangles: streetDiagnostics?.triangles,
     },
     notes: [
-      'WF02 R3 composition and art-direction correction (presentation-only)',
+      'WF02 R4.1 overview-scale presentation composition layer (presentation-only)',
+      'Recovery-before-add: periphery forest removed; Kenney-first canopy massing',
       'Simulation authority and facilityPoints unchanged from WF01',
       'RGB diagnostics supplementary — not visual acceptance proxy',
     ],

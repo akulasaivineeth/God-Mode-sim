@@ -18,8 +18,7 @@ import { Town } from './Town';
 import { DedicatedBuildings } from './assets/BuildingVisualRegistry';
 import { CitizenVisual } from './assets/CitizenVisual';
 import { CorridorPresentation } from './environment/CorridorPresentation';
-import { CommercialStreetLife } from './environment/CommercialStreetLife';
-import { FutureLotPresentation } from './environment/FutureLotPresentation';
+import { OverviewCompositionLayer } from './environment/OverviewCompositionLayer';
 import { RoadNetwork } from './environment/RoadNetwork';
 import { PracticalLighting } from './environment/PracticalLighting';
 import { TownAmenities } from './environment/TownAmenities';
@@ -76,8 +75,7 @@ function SceneContent({
       <RoadNetwork />
       <Town />
       <CorridorPresentation />
-      <FutureLotPresentation />
-      <CommercialStreetLife />
+      <OverviewCompositionLayer />
       <TownAmenities />
       <DedicatedBuildings />
       <VegetationLayer />

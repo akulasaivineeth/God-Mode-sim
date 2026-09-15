@@ -28,8 +28,8 @@ function Fountain({ x, y, z }: { x: number; y: number; z: number }) {
 }
 
 function ringBenchPoints(cx: number, cy: number, cz: number, radius = 4.5) {
-  return [0, 1, 2, 3, 4, 5].map((i) => {
-    const a = (i / 6) * Math.PI * 2 + Math.PI / 6;
+  return [0, 1, 2, 3].map((i) => {
+    const a = (i / 4) * Math.PI * 2 + Math.PI / 6;
     return { x: cx + Math.cos(a) * radius, z: cz + Math.sin(a) * radius, y: cy, rotY: -a + Math.PI };
   });
 }
@@ -65,7 +65,7 @@ function InstancedFarmRows() {
     const rowsB: Array<{ x: number; z: number; y: number; width: number; depth: number }> = [];
     for (const plot of CANONICAL_TOWN.farmPlots) {
       const isOrchard = plot.id === 'farm-3';
-      const rowCount = isOrchard ? 3 : 4;
+      const rowCount = isOrchard ? 5 : 5;
       for (let r = 0; r < rowCount; r += 1) {
         const offset = (r - (rowCount - 1) / 2) * (isOrchard ? 1.4 : 1.2);
         const entry = {

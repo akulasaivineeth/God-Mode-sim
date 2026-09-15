@@ -3,10 +3,11 @@ import { CAMERA_PRESETS } from '@/rendering/cameraPresets';
 import {
   resolvePresentationTransform,
 } from '@/rendering/assets/buildings/buildingPresentationAnchors';
-import { buildDistrictCompositionPlacements } from '@/rendering/assets/EnvironmentAssetRegistry';
+import { buildDistrictMassingSpec } from '@/rendering/environment/districtMassing';
 import { CANONICAL_TOWN } from '@/world/townLayout';
+import { KENNEY_ASSETS } from '@/rendering/assets/EnvironmentAssetRegistry';
 
-describe('WF02 R3 composition envelopes', () => {
+describe('WF02 R3/R4.1 composition envelopes', () => {
   it('reframes civic square preset to show fountain and civic massing', () => {
     expect(CAMERA_PRESETS.square.position).toEqual([-22, 18, 24]);
     expect(CAMERA_PRESETS.square.target).toEqual([-4, 2, -8]);
@@ -23,36 +24,37 @@ describe('WF02 R3 composition envelopes', () => {
     expect(t.rotationDelta).toBeCloseTo(-0.03, 3);
   });
 
-  it('delegates orchard tree read to TownAmenities farm rows (no duplicate treeSmall GLBs)', () => {
-    const placements = buildDistrictCompositionPlacements();
+  it('R4.1 places Kenney treeSmall orchard grid via district massing', () => {
     const orchard = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3');
     expect(orchard).toBeDefined();
-    const orchardTrees = placements.filter(
-      (p) =>
-        p.source === 'kenney' &&
-        p.asset === 'treeSmall' &&
-        Math.abs(p.position.x - orchard!.center.x) < 6 &&
-        Math.abs(p.position.z - orchard!.center.z) < 5,
+    const spec = buildDistrictMassingSpec();
+    const orchardTrees = spec.kenneyTrees.filter(
+      (t) =>
+        t.url === KENNEY_ASSETS.treeSmall &&
+        Math.abs(t.x - orchard!.center.x) < 8 &&
+        Math.abs(t.z - orchard!.center.z) < 8,
     );
-    expect(orchardTrees.length).toBe(0);
+    expect(orchardTrees.length).toBeGreaterThanOrEqual(16);
   });
 
-  it('does not duplicate farmhouse treeLarge (approach handled by building anchors)', () => {
-    const placements = buildDistrictCompositionPlacements();
-    const farmhouseTrees = placements.filter((p) => p.source === 'kenney' && p.asset === 'treeLarge');
-    expect(farmhouseTrees.length).toBe(0);
+  it('R4.1 provides farmhouse approach treeLarge via district massing', () => {
+    const spec = buildDistrictMassingSpec();
+    const farmhouseTrees = spec.kenneyTrees.filter(
+      (t) => t.url === KENNEY_ASSETS.treeLarge && t.z > 75,
+    );
+    expect(farmhouseTrees.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('adds staggered residential street trees', () => {
-    const placements = buildDistrictCompositionPlacements();
-    const streetTrees = placements.filter(
-      (p) =>
-        (p.asset === 'commonTree1' || p.asset === 'commonTree2') &&
-        p.position.z < -10 &&
-        p.position.z > -35 &&
-        p.position.x >= 14 &&
-        p.position.x <= 30,
+  it('adds staggered residential Kenney street trees in district massing', () => {
+    const spec = buildDistrictMassingSpec();
+    const streetTrees = spec.kenneyTrees.filter(
+      (t) =>
+        t.url === KENNEY_ASSETS.treeSmall &&
+        t.z < -10 &&
+        t.z > -35 &&
+        t.x >= 14 &&
+        t.x <= 60,
     );
-    expect(streetTrees.length).toBeGreaterThanOrEqual(2);
+    expect(streetTrees.length).toBeGreaterThanOrEqual(4);
   });
 });
