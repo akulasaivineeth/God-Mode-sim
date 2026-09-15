@@ -49,7 +49,7 @@ export function PracticalLighting({ timeOfDay }: PracticalLightingProps) {
           <group key={f.label} position={[f.x, y + 2.2, f.z]}>
             <pointLight
               color="#ffd8a0"
-              intensity={nightFactor * 0.35}
+              intensity={nightFactor * 0.4}
               distance={12}
               decay={2}
             />
@@ -69,7 +69,7 @@ export function PracticalLighting({ timeOfDay }: PracticalLightingProps) {
           key={i}
           position={[lamp.x, lamp.y, lamp.z]}
           color="#ffe0a8"
-          intensity={nightFactor * 0.25}
+          intensity={nightFactor * 0.29}
           distance={10}
           decay={2}
         />

@@ -1,18 +1,18 @@
 /**
- * Real Quaternius/Kenney vegetation — grouped instancing, no cone prototypes.
+ * Real Quaternius/Kenney vegetation — tier-gated @ R6 (zero Quaternius on Overview/Angled).
  */
 import { useMemo } from 'react';
 import { CANONICAL_TOWN } from '@/world/townLayout';
+import type { CameraView } from '../cameraPresets';
 import {
-  buildDistrictCompositionPlacements,
-  buildPeripheryForest,
   M02_CORRIDOR_VEGETATION,
   RIVERBANK_VEGETATION,
   type VegetationPlacement,
 } from '../assets/EnvironmentAssetRegistry';
 import { InstancedVegetation } from '../assets/InstancedVegetation';
+import { isBaselineVegetationVisible } from './compositionVisibility';
 
-export function VegetationLayer() {
+export function VegetationLayer({ cameraView }: { cameraView: CameraView }) {
   const parkAndSquare: VegetationPlacement[] = useMemo(() => {
     const sq = CANONICAL_TOWN.square;
     const park = CANONICAL_TOWN.park;
@@ -26,18 +26,13 @@ export function VegetationLayer() {
     ];
   }, []);
 
-  const districtComposition = useMemo(() => buildDistrictCompositionPlacements(), []);
+  const allPlacements = useMemo(() => {
+    if (!isBaselineVegetationVisible(cameraView)) {
+      return [];
+    }
+    return [...M02_CORRIDOR_VEGETATION, ...RIVERBANK_VEGETATION, ...parkAndSquare];
+  }, [cameraView, parkAndSquare]);
 
-  const allPlacements = useMemo(
-    () => [
-      ...M02_CORRIDOR_VEGETATION,
-      ...buildPeripheryForest(),
-      ...RIVERBANK_VEGETATION,
-      ...parkAndSquare,
-      ...districtComposition,
-    ],
-    [parkAndSquare, districtComposition],
-  );
-
+  if (allPlacements.length === 0) return null;
   return <InstancedVegetation placements={allPlacements} />;
 }

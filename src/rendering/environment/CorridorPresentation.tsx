@@ -1,10 +1,11 @@
 /**
- * WF01 corridor presentation — curbs, crosswalk, entrance aprons (presentation only).
+ * WF02 R3 corridor presentation — instanced curbs, crosswalk, entrance aprons.
  */
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo, useRef } from 'react';
+import { BoxGeometry, Euler, type InstancedMesh, Matrix4, Quaternion, Vector3 } from 'three';
 import { terrainHeightAt } from '@/world/townLayout';
-import { ModelAsset } from '../assets/ModelAsset';
 import { KENNEY_ASSETS } from '../assets/EnvironmentAssetRegistry';
+import { InstancedGltfPlacements, type GltfInstancePlacement } from '../assets/InstancedGltfPlacements';
 import { InstancedScatter } from '../InstancedScatter';
 import { SCATTER_GEOM } from '../scatterGeometries';
 import { MAT } from '../sharedMaterials';
@@ -29,56 +30,64 @@ function ZebraCrosswalk({ x, z }: { x: number; z: number }) {
   );
 }
 
-function CorridorCurbs() {
-  const curbs = useMemo(
+function InstancedCorridorCurbs() {
+  const segments = useMemo(
     () => [
       { from: { x: -35, z: -3.8 }, to: { x: 35, z: -3.8 } },
       { from: { x: -35, z: 3.8 }, to: { x: 35, z: 3.8 } },
     ],
     [],
   );
+  const geometry = useMemo(() => new BoxGeometry(1, 0.1, 0.22), []);
+  const ref = useRef<InstancedMesh>(null);
 
-  return (
-    <group>
-      {curbs.map((seg, i) => {
-        const dx = seg.to.x - seg.from.x;
-        const dz = seg.to.z - seg.from.z;
-        const len = Math.hypot(dx, dz);
-        const angle = Math.atan2(dz, dx);
-        const cx = (seg.from.x + seg.to.x) / 2;
-        const cz = (seg.from.z + seg.to.z) / 2;
-        const y = terrainHeightAt(cx, cz) + 0.07;
-        return (
-          <mesh key={i} position={[cx, y, cz]} rotation={[0, -angle, 0]} receiveShadow>
-            <boxGeometry args={[len, 0.1, 0.22]} />
-            <primitive object={MAT.curb} attach="material" />
-          </mesh>
-        );
-      })}
-    </group>
-  );
+  useLayoutEffect(() => {
+    const mesh = ref.current;
+    if (!mesh) return;
+    const matrix = new Matrix4();
+    const quat = new Quaternion();
+    segments.forEach((seg, i) => {
+      const dx = seg.to.x - seg.from.x;
+      const dz = seg.to.z - seg.from.z;
+      const len = Math.hypot(dx, dz);
+      const angle = Math.atan2(dz, dx);
+      const cx = (seg.from.x + seg.to.x) / 2;
+      const cz = (seg.from.z + seg.to.z) / 2;
+      const y = terrainHeightAt(cx, cz) + 0.07;
+      quat.setFromEuler(new Euler(0, -angle, 0));
+      matrix.compose(new Vector3(cx, y, cz), quat, new Vector3(len, 1, 1));
+      mesh.setMatrixAt(i, matrix);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+  }, [segments]);
+
+  return <instancedMesh ref={ref} args={[geometry, MAT.curb, segments.length]} receiveShadow />;
+}
+
+function EntranceAprons() {
+  const placements = useMemo((): GltfInstancePlacement[] => {
+    return [
+      {
+        url: KENNEY_ASSETS.drivewayShort,
+        x: 11,
+        z: -6,
+        rotY: Math.PI / 2,
+        scale: 2.4,
+        yOffset: 0.02,
+      },
+    ];
+  }, []);
+
+  return <InstancedGltfPlacements placements={placements} />;
 }
 
 export function CorridorPresentation() {
   return (
     <group>
-      <CorridorCurbs />
+      <InstancedCorridorCurbs />
       <ZebraCrosswalk x={0} z={0} />
       <ZebraCrosswalk x={24} z={12} />
-      <ModelAsset
-        url={KENNEY_ASSETS.drivewayShort}
-        position={[11, terrainHeightAt(11, -6), -6]}
-        rotation={[0, Math.PI / 2, 0]}
-        scale={2.2}
-        castShadow={false}
-      />
-      <ModelAsset
-        url={KENNEY_ASSETS.roadDriveway}
-        position={[-11, terrainHeightAt(-11, 18), 18]}
-        rotation={[0, Math.PI, 0]}
-        scale={1.5}
-        castShadow={false}
-      />
+      <EntranceAprons />
     </group>
   );
 }

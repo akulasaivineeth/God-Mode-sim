@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { CAMERA_PRESETS } from '../../src/rendering/cameraPresets';
 
+test.describe.configure({ mode: 'serial' });
+
 async function readCamera(page: import('@playwright/test').Page) {
   return page.evaluate(() => {
     const api = (globalThis as unknown as { __GODMODE_PLAYER_CAMERA__?: { getState: () => unknown } })
@@ -21,6 +23,12 @@ async function waitForPlayerCamera(page: import('@playwright/test').Page) {
       .__GODMODE_PLAYER_CAMERA__;
     const state = api?.getState();
     return state != null && state.distance > 0;
+  });
+  await page.waitForFunction(() => {
+    const api = (globalThis as unknown as {
+      __GODMODE_EVIDENCE__?: { getCaptureMeta: () => { citizenPosition?: unknown } | null };
+    }).__GODMODE_EVIDENCE__;
+    return api?.getCaptureMeta()?.citizenPosition != null;
   });
 }
 
