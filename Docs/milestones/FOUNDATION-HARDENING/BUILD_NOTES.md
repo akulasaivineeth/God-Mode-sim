@@ -34,3 +34,10 @@ Enforced by `tests/unit/foundation/singleAuthority.test.ts`.
 - Archived: `scripts/archive/capture-r8..r12-evidence.mjs`
 
 VIS-002 camera UX unchanged: +/−/Reset, Reset→Overview, 6–102 m clamps.
+
+## Render budget (FH-001 measurement integrity)
+
+- **Root cause of false 119 claim:** `measure-render-budget.mjs` sampled `getRenderDiagnostics()` before preset settle and before FpsTracker/HUD sync (~1 Hz). Stale counters from the prior camera view were reported as Overview.
+- **Fix:** `sampleRenderDiagnosticsAfterFrames()` reads live `gl.info.render` post-frame; measure script uses capture-equivalent preset settle + reconciles live vs HUD counters.
+- **Measured truth:** Overview draw calls remain **~136** (M02 parity). Material pooling is allocation/lifecycle hardening, not draw-call batching.
+- Soft 110–120 target deferred to future instancing/batching work (no visual redesign in FH).

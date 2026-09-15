@@ -70,26 +70,27 @@ export function CameraControls({ view, applyNonce }: CameraControlsProps) {
     controls.update();
   }, [view, applyNonce, cameraOverrideNonce, camera, controls]);
 
-  useFrame(() => {
+  useFrame((r3f) => {
     registerEvidenceRendererContext({
       camera,
       scene,
       width: domElement.clientWidth,
       height: domElement.clientHeight,
+      gl: r3f.gl,
     });
 
-    const state = useDiagnosticsStore.getState();
+    const store = useDiagnosticsStore.getState();
     const body = getCitizenBody();
     const cachedBounds = getCitizenWorldBoundsFromRegistry();
 
-    if (state.evidencePortraitMode && state.evidencePortraitOpts && (body || cachedBounds)) {
+    if (store.evidencePortraitMode && store.evidencePortraitOpts && (body || cachedBounds)) {
       const frame = computePortraitCameraFromBounds(
         body,
         camera,
         scene,
         domElement.clientWidth,
         domElement.clientHeight,
-        state.evidencePortraitOpts,
+        store.evidencePortraitOpts,
       );
       camera.position.set(...frame.position);
       controls.target.set(...frame.target);

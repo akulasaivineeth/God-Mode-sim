@@ -17,16 +17,20 @@ Non-feature stabilization pass after M02 merge. No new gameplay, no visual redes
 |------|--------|-------|
 | GLTF loaders | Split `examples/jsm` + `addons` | `gltfPipeline.ts` |
 | Citizen registries | 2 singleton modules | `citizenPresentationRegistry.ts` |
-| Building materials | Per-mesh `new MeshStandardMaterial` | `materialPool.ts` |
+| Building materials | Per-mesh `new MeshStandardMaterial` | `materialPool.ts` (shared refs) |
 | Evidence scripts | 6 live capture scripts | 1 live + 5 archived |
 | Occlusion raycasts | Full scene traverse per check | `sceneOccluderCache.ts` |
 | Mixer lifecycle | No dispose | stopAllAction + uncacheRoot on unmount |
 
-## Performance target
+## Render budget (measured truth)
 
-M02 baseline: Overview ~136 draw calls / ~126k tris. Target ~110–120 without quality loss.
+M02 accepted baseline: Overview **136** draw calls / **126,241** tris; Home Street **64** / **119,039**.
 
-Measure: `npm run measure:render-budget`
+Material pooling reduces **material allocation duplication** (fewer unique `MeshStandardMaterial` instances). It does **not** by itself merge separate meshes into fewer renderer draw calls. After hardening, authoritative Overview remains **~136** draw calls.
+
+Soft target (~110–120 Overview draw calls) remains **future optimization** (instancing/batching) and is not a merge blocker.
+
+Measure with reconciled live-GL + HUD sampling: `npm run measure:render-budget`
 
 ## Deleted / archived
 
