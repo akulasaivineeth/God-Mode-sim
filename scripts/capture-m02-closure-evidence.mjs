@@ -1407,7 +1407,7 @@ async function publishRelease(scaleInfo, hashResults) {
 
   const fileArgs = files.map((f) => `${path.join(OUT, f)}#${f}`).join(' ');
   execSync(
-    `gh release create ${RELEASE_TAG} --repo ${repo} --title "M02 R17 / M02-021 FIX_REQUIRED evidence" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
+    `gh release create ${RELEASE_TAG} --repo ${repo} --title "Foundation Hardening regression evidence" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
     { stdio: 'inherit' },
   );
   console.log(`Published https://github.com/${repo}/releases/tag/${RELEASE_TAG}`);
