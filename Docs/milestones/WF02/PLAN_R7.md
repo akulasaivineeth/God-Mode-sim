@@ -1,7 +1,8 @@
 # WF02 Plan Revision 7 — Image-Space Composition Prototype Gate
 
-**State:** WAITING_FOR_CHATGPT_PLAN_APPROVAL  
+**State:** SUPERSEDED — see `Docs/milestones/WF02/PLAN_R7_1.md` (PLAN_CHANGES_REQUIRED @ `a5d3a1c`)  
 **Supersedes:** Plan revision 6 (`Docs/milestones/WF02/PLAN_R6.md`)  
+**Superseded by:** Plan revision 7.1 (`Docs/milestones/WF02/PLAN_R7_1.md`)  
 **Investigation base SHA:** `743a2599409bfa0531807f2dc574aa25c475bc1b` (WF02-005 blocked @ R6)  
 **Branch:** `cursor/wf02-scale-calibration-754a`  
 **Scope:** PLAN ONLY — no production code, asset import/repack, or evidence capture until `[GOD-MODE:CHATGPT-PLAN-DECISION] Decision: APPROVED_TO_BUILD`
