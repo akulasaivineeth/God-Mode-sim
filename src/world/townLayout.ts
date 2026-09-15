@@ -308,11 +308,14 @@ const MAIN_ROAD_HALF = 105;
 const roads: readonly RoadSegment[] = [
   { id: 'road-main-ew', from: { x: -MAIN_ROAD_HALF, z: 0 }, to: { x: MAIN_ROAD_HALF, z: 0 }, width: ROAD_WIDTH },
   { id: 'road-main-ns', from: { x: 0, z: -MAIN_ROAD_HALF }, to: { x: 0, z: MAIN_ROAD_HALF }, width: ROAD_WIDTH },
-  { id: 'road-residential', from: { x: 8, z: -18 }, to: { x: 78, z: -42 }, width: 4.5 },
+  { id: 'road-residential-spur', from: { x: 8, z: -18 }, to: { x: 8, z: -42 }, width: 4 },
+  { id: 'road-residential', from: { x: 8, z: -42 }, to: { x: 78, z: -42 }, width: 4.5 },
   { id: 'road-residential-loop', from: { x: 78, z: -42 }, to: { x: 45, z: -58 }, width: 4 },
-  { id: 'road-residential-return', from: { x: 45, z: -58 }, to: { x: 8, z: -42 }, width: 4 },
-  { id: 'road-commercial', from: { x: -48, z: 18 }, to: { x: -4, z: 18 }, width: 4.5 },
-  { id: 'road-industrial', from: { x: -52, z: 38 }, to: { x: -4, z: 38 }, width: 4.5 },
+  { id: 'road-residential-return', from: { x: 45, z: -58 }, to: { x: 8, z: -58 }, width: 4 },
+  { id: 'road-residential-loop-close', from: { x: 8, z: -58 }, to: { x: 8, z: -42 }, width: 4 },
+  { id: 'road-commercial', from: { x: -48, z: 18 }, to: { x: 0, z: 18 }, width: 4.5 },
+  { id: 'road-industrial', from: { x: -52, z: 38 }, to: { x: 0, z: 38 }, width: 4.5 },
+  { id: 'road-riverside-link', from: { x: 0, z: 38 }, to: { x: 24, z: 38 }, width: 4 },
   { id: 'road-farm', from: { x: 0, z: 58 }, to: { x: 75, z: 82 }, width: 4 },
   { id: 'road-riverside', from: { x: 24, z: 38 }, to: { x: 88, z: 38 }, width: 3.5 },
 ];

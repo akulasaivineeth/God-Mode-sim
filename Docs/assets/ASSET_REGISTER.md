@@ -1,49 +1,52 @@
 # Asset Register
 
-Status: M02 visual foundation + WF01 Riverside World Foundation curated imports.
+Status: M02 visual foundation + WF01 Riverside World Foundation curated imports (Revision 2 audit).
 
-## Third-party CC0 assets (repackaged R6)
+Kenney GLBs reference `Textures/colormap.png` relative to each pack directory. **Repackaged per-pack** so atlases do not collide. No mesh edits; scale normalization via `ModelAsset.targetWidth` at placement time.
 
-Kenney GLBs reference `Textures/colormap.png` relative to each pack directory. **R6 repackages by pack** so atlases do not collide.
+## WF01 curated imports — full provenance
 
-| Asset file | Creator | Source | License | Download date | Path | Usage |
-|------------|---------|--------|---------|---------------|------|-------|
-| `home-cottage.glb` + `Textures/colormap.png` | Kenney | [City Kit Suburban](https://opengameart.org/content/city-kit-suburban) | CC0 1.0 | 2026-09-13 | `public/assets/glb/kenney/suburban/` | M02 `house-1` (`building-type-b`) |
-| `store-general.glb`, `detail-awning.glb` + texture | Kenney | [City Kit Commercial](https://opengameart.org/content/city-kit-commercial) | CC0 1.0 | 2026-09-13 | `public/assets/glb/kenney/commercial/` | M02 `store` (`building-f` + awning) |
-| `workshop-industrial.glb` + texture | Kenney | [City Kit Industrial](https://opengameart.org/content/city-kit-industrial) | CC0 1.0 | 2026-09-13 | `public/assets/glb/kenney/industrial/` | M02 `workshop` (`building-l`) |
-| `alex-character.glb` + texture | Kenney | [Mini Characters](https://opengameart.org/content/mini-characters) | CC0 1.0 | 2026-09-13 | `public/assets/glb/kenney/characters/` | Alex (`character-male-a`); **32 embedded clips** (idle/walk/sit/interact/pick-up/…) played via `AnimationMixer` in `CitizenVisual` |
-| Roads subset + texture | Kenney | [City Kit Roads](https://opengameart.org/content/city-kit-roads) | CC0 1.0 | 2026-09-13 | `public/assets/glb/kenney/roads/` | Crosswalk, bridge, driveway |
-| `home-type-a.glb`, `home-type-c.glb`, `home-type-d.glb`, `apartment-block.glb`, `farmhouse.glb` + texture | Kenney | City Kit Suburban | CC0 1.0 | 2026-09-15 | `public/assets/glb/kenney/suburban/` | WF01 homes 2–4, apartments, farmhouse |
-| `cafe-bistro.glb`, `clinic.glb`, `school.glb`, `community-hall.glb`, `detail-parasol-a.glb` + texture | Kenney | City Kit Commercial | CC0 1.0 | 2026-09-15 | `public/assets/glb/kenney/commercial/` | WF01 cafe, clinic, school, community hall |
-| `warehouse.glb`, `utility-station.glb` + texture | Kenney | City Kit Industrial | CC0 1.0 | 2026-09-15 | `public/assets/glb/kenney/industrial/` | WF01 warehouse, utility |
-| Suburban props + texture | Kenney | City Kit Suburban | CC0 1.0 | 2026-09-13 | `public/assets/glb/kenney/suburban/` | Paths, fences, trees |
-| Quaternius nature subset | Quaternius | [Stylized Nature MegaKit Standard](https://opengameart.org/content/stylized-nature-megakit) | CC0 1.0 | 2026-09-13 | `public/assets/gltf/quaternius/` | Pine 1/2, CommonTree 1/2, bushes, flowers, pebbles + textures |
+| Local renamed path | Original Kenney identifier | Pack | Source URL | License | Download | Modifications |
+|--------------------|---------------------------|------|------------|---------|----------|---------------|
+| `public/assets/glb/kenney/suburban/home-type-a.glb` | `building-type-a.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 7.5 m for `house-2` |
+| `public/assets/glb/kenney/suburban/home-type-c.glb` | `building-type-c.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 7.5 m for `house-3` |
+| `public/assets/glb/kenney/suburban/home-type-d.glb` | `building-type-d.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 7.8 m for `house-4` |
+| `public/assets/glb/kenney/suburban/apartment-block.glb` | `building-type-e.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 11.5 m |
+| `public/assets/glb/kenney/suburban/farmhouse.glb` | `building-type-g.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 8.5 m |
+| `public/assets/glb/kenney/commercial/cafe-bistro.glb` | `building-b.glb` | City Kit Commercial 2.1 | https://kenney.nl/assets/city-kit-commercial | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 8.5 m + `detail-parasol-a` |
+| `public/assets/glb/kenney/commercial/clinic.glb` | `building-d.glb` | City Kit Commercial 2.1 | https://kenney.nl/assets/city-kit-commercial | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 9.5 m |
+| `public/assets/glb/kenney/commercial/community-hall.glb` | `building-e.glb` | City Kit Commercial 2.1 | https://kenney.nl/assets/city-kit-commercial | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 11.5 m |
+| `public/assets/glb/kenney/commercial/school.glb` | `building-h.glb` | City Kit Commercial 2.1 | https://kenney.nl/assets/city-kit-commercial | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 12.5 m |
+| `public/assets/glb/kenney/commercial/detail-parasol-a.glb` | `detail-parasol-a.glb` | City Kit Commercial 2.1 | https://kenney.nl/assets/city-kit-commercial | CC0 1.0 | 2026-09-15 | Unmodified; cafe prop |
+| `public/assets/glb/kenney/industrial/warehouse.glb` | `building-a.glb` | City Kit Industrial 2.0 | https://kenney.nl/assets/city-kit-industrial | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 13.5 m |
+| `public/assets/glb/kenney/industrial/utility-station.glb` | `building-c.glb` | City Kit Industrial 2.0 | https://kenney.nl/assets/city-kit-industrial | CC0 1.0 | 2026-09-15 | Renamed only; `targetWidth` 9.5 m |
 
-### Character animation (R7)
+## M02 baseline assets (unchanged)
 
-The **Kenney Mini Characters** `alex-character.glb` ships with 32 skeletal
-animation clips. M02 R7 plays them through a real `AnimationMixer` (idle / walk /
-sit / interact), cross-fading on pose change, rather than whole-model procedural
-bob. (Quaternius Universal Base Characters remained unreachable — 404/429 — so the
-CC0 Kenney character is the interim rig, which is sufficient since it carries real
-clips.)
+| Local path | Original identifier | Pack | Source | License | Download | Usage |
+|------------|--------------------|------|--------|---------|----------|-------|
+| `suburban/home-cottage.glb` | `building-type-b.glb` | City Kit Suburban | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-13 | M02 `house-1` |
+| `commercial/store-general.glb` | `building-f.glb` | City Kit Commercial | https://kenney.nl/assets/city-kit-commercial | CC0 1.0 | 2026-09-13 | M02 `store` |
+| `commercial/detail-awning.glb` | `detail-awning.glb` | City Kit Commercial | https://kenney.nl/assets/city-kit-commercial | CC0 1.0 | 2026-09-13 | Store awning |
+| `industrial/workshop-industrial.glb` | `building-l.glb` | City Kit Industrial | https://kenney.nl/assets/city-kit-industrial | CC0 1.0 | 2026-09-13 | M02 `workshop` |
+| `characters/alex-character.glb` | `character-male-a` | Mini Characters | https://kenney.nl/assets/mini-characters | CC0 1.0 | 2026-09-13 | Alex citizen rig (32 clips) |
+| `roads/road-straight.glb` | `road-straight.glb` | City Kit Roads 2.1 | https://kenney.nl/assets/city-kit-roads | CC0 1.0 | 2026-09-13 | Instanced spine |
+| `roads/road-crossing.glb` | `road-crossing.glb` | City Kit Roads 2.1 | https://kenney.nl/assets/city-kit-roads | CC0 1.0 | 2026-09-13 | Centre intersection |
+| `roads/road-bridge.glb` | `road-bridge.glb` | City Kit Roads 2.1 | https://kenney.nl/assets/city-kit-roads | CC0 1.0 | 2026-09-13 | River crossing |
+| `roads/road-bend.glb` | `road-bend.glb` | City Kit Roads 2.1 | https://kenney.nl/assets/city-kit-roads | CC0 1.0 | 2026-09-13 | Residential/industrial bends |
+| `roads/road-curve-pavement.glb` | `road-curve-pavement.glb` | City Kit Roads 2.1 | https://kenney.nl/assets/city-kit-roads | CC0 1.0 | 2026-09-13 | T-junction transitions |
+| `roads/road-driveway-double.glb` | `road-driveway-double.glb` | City Kit Roads 2.1 | https://kenney.nl/assets/city-kit-roads | CC0 1.0 | 2026-09-13 | Facility aprons |
+| Suburban props | various | City Kit Suburban | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-13 | Paths, fences, trees |
+| `gltf/quaternius/*` | Stylized Nature MegaKit | Quaternius | https://opengameart.org/content/stylized-nature-megakit | CC0 1.0 | 2026-09-13 | Instanced vegetation |
 
-## Project-original pipelines (R6)
+## Character animation (R7)
 
-| Pipeline | Usage |
-|----------|-------|
-| `BuildingVisualRegistry` + dedicated `*Visual.tsx` | Kenney GLB facilities; generic `BuildingMesh` skipped for M02 IDs |
-| `InstancedVegetation.tsx` | Groups placements by asset URL; instances real Quaternius/Kenney geometry |
-| `riverGeometry.ts` + `TownLandscape` | Continuous river ribbon + unified terrain |
-| `CorridorPresentation` | Curbs, zebra crosswalk, Kenney `roadCrossing`, entrance aprons |
-| `TownAmenities` | Fountain plaza, benches, lamps, park path |
-| `PracticalLighting` | Warm entrance/park lamps at night (presentation-only) |
-| `EVIDENCE_CAMERAS` + capture script | Distinct per-shot framing + SHA-256 uniqueness guard |
+Kenney Mini Characters `alex-character.glb` — 32 skeletal clips via `AnimationMixer` in `CitizenVisual`.
 
 ## North-star reference
 
-Primary benchmark: `Docs/art-direction/references/god-mode-town-north-star.png` (~3.2 MB PNG from `visual-reference/town-style-v1`). The truncated JPG is **retired**.
+`Docs/art-direction/references/god-mode-town-north-star.png`
 
-## Performance note
+## Performance note (WF01 R2)
 
-R6 targets Overview ≤140 draw calls (achieved ~177 on review host with real GLTF instancing — honest HUD). Street ~53 draws. Triangles ~87k overview. Shared materials + instanced vegetation; no hidden diagnostics.
+Overview ~116 draw calls / ~147k triangles with instanced roads + vegetation. See `Docs/milestones/WF01/M03_HEADROOM.md` for M03 citizen scaling estimate.

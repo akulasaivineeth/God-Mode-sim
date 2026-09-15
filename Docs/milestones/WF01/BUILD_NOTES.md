@@ -12,6 +12,14 @@
 4. Curated 12 additional Kenney GLBs from CC0 City Kit packs (documented in ASSET_REGISTER).
 5. Preserved M02 facility coordinates and `FACILITY_POINTS` entrances.
 
+## Revision 2 corrections (pre-Grok)
+
+1. **Evidence publishing** — `capture-wf01-evidence.mjs` publishes GitHub release `review-evidence-wf01-builder-r2` with BEFORE/WF01/north-star compare panel.
+2. **Asset instrumentation** — console/network listeners registered before `page.goto()`; fail-closed on asset errors.
+3. **Road topology** — `roadTopology.ts` junction exclusions + dedicated pieces at all major joins; road graph connectivity fixes in `townLayout.ts`.
+4. **Asset provenance** — full audit table in `ASSET_REGISTER.md`.
+5. **M03 headroom** — `M03_HEADROOM.md`.
+
 ## Performance measurement
 
 `npm run measure:render-budget` (2026-09-15):

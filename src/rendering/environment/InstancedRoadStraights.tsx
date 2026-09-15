@@ -15,7 +15,7 @@ import {
 import { GLTFLoader } from '../assets/gltfPipeline';
 import { KENNEY_ASSETS } from '../assets/EnvironmentAssetRegistry';
 import { terrainHeightAt } from '@/world/townLayout';
-import type { RoadTilePlacement } from './RoadNetwork';
+import type { RoadTilePlacement } from './roadTopology';
 
 interface MeshPart {
   geometry: BufferGeometry;
