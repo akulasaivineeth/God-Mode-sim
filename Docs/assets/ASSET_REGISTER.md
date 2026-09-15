@@ -49,4 +49,4 @@ Kenney Mini Characters `alex-character.glb` — 32 skeletal clips via `Animation
 
 ## Performance note (WF01 R2)
 
-Overview ~116 draw calls / ~147k triangles with instanced roads + vegetation. See `Docs/milestones/WF01/M03_HEADROOM.md` for M03 citizen scaling estimate.
+Overview **127** draw calls / **140,305** triangles (WF02 R3 measured). See `Docs/milestones/WF01/M03_HEADROOM.md` for M03 citizen scaling estimate.

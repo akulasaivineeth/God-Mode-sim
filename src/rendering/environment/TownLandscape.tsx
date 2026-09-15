@@ -25,9 +25,9 @@ function UnifiedTerrain() {
     const geo = new PlaneGeometry(size, size, TERRAIN_SEGMENTS, TERRAIN_SEGMENTS);
     const pos = geo.attributes.position;
     const grass = new Color(CANONICAL_TOWN.groundColor);
-    const slope = new Color('#6f713f');
-    const hilltop = new Color('#b0995f');
-    const valley = new Color('#3a4a30');
+    const slope = new Color('#8a9a58');
+    const hilltop = new Color('#c4a868');
+    const valley = new Color('#4a5a38');
     const colors = new Float32Array(pos.count * 3);
     const tmp = new Color();
     const edgeFade = extent * 2.2;

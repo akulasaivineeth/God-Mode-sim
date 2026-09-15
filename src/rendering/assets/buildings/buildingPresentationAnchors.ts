@@ -22,6 +22,7 @@ export type AnchorExtraKind =
   | 'road-driveway'
   | 'fence-left'
   | 'fence-right'
+  | 'fence-front'
   | 'parasol-right';
 
 export interface ResolvedAnchorExtra {
@@ -54,6 +55,7 @@ const EXTRA_ASSET: Record<AnchorExtraKind, string> = {
   'road-driveway': KENNEY_ASSETS.roadDriveway,
   'fence-left': KENNEY_ASSETS.fenceLow,
   'fence-right': KENNEY_ASSETS.fenceLow,
+  'fence-front': KENNEY_ASSETS.fenceLow,
   'parasol-right': KENNEY_ASSETS.cafeParasol,
 };
 
@@ -73,8 +75,8 @@ export function resolvePresentationTransform(buildingId: string): PresentationTr
     case 'utility':
       return { positionOffset: [-0.35, 0, -0.2], rotationDelta: -0.05 };
     case 'workshop':
-      // Presentation-only south shift — clears store overlap at 13.5/15.0 m widths.
-      return { positionOffset: [0, 0, 1.2], rotationDelta: 0 };
+      // Presentation-only offset — breaks store collinearity; sim center unchanged.
+      return { positionOffset: [0.6, 0, 1.8], rotationDelta: -0.03 };
     default:
       return { positionOffset: [0, 0, 0], rotationDelta: 0 };
   }
@@ -177,6 +179,14 @@ function resolveExtra(
         position: lateralOffset(facade, halfFacadeDepth * 0.55, 'right'),
         rotation: [0, Math.PI / 2, 0],
         scale: baseScale * 2.2 * scaleMultiplier,
+        castShadow: false,
+      };
+    case 'fence-front':
+      return {
+        url,
+        position: atFacade(facade, halfFacadeDepth + 0.35, 0.02),
+        rotation: [0, Math.PI / 2, 0],
+        scale: baseScale * 2.4 * scaleMultiplier,
         castShadow: false,
       };
     case 'parasol-right':

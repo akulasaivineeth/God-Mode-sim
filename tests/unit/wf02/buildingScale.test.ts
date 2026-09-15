@@ -45,17 +45,14 @@ describe('WF02 building presentation scale', () => {
     expect(urls.size).toBe(14);
   });
 
-  it('keeps M02 trio aligned (no presentation offset)', () => {
-    for (const id of ['house-1', 'store', 'workshop'] as const) {
+  it('keeps M02 trio aligned (no presentation offset except workshop R3 offset)', () => {
+    for (const id of ['house-1', 'store'] as const) {
       const t = resolvePresentationTransform(id);
-      if (id === 'workshop') {
-        expect(t.positionOffset).toEqual([0, 0, 1.2]);
-        expect(t.rotationDelta).toBe(0);
-      } else {
-        expect(t.positionOffset).toEqual([0, 0, 0]);
-        expect(t.rotationDelta).toBe(0);
-      }
+      expect(t.positionOffset).toEqual([0, 0, 0]);
+      expect(t.rotationDelta).toBe(0);
     }
+    const workshop = resolvePresentationTransform('workshop');
+    expect(workshop.positionOffset).toEqual([0.6, 0, 1.8]);
   });
 
   it('derives anchor extras on scaled facade without manual coordinates', () => {
@@ -69,7 +66,7 @@ describe('WF02 building presentation scale', () => {
     }
   });
 
-  it('applies workshop presentation offset to maximize store/workshop clearance', () => {
+  it('applies R3 workshop presentation offset to maximize store/workshop clearance', () => {
     const store = BUILDING_PREFABS.find((c) => c.buildingId === 'store')!;
     const workshop = BUILDING_PREFABS.find((c) => c.buildingId === 'workshop')!;
     const storeFoot = resolveRotatedFootprint(
@@ -79,7 +76,7 @@ describe('WF02 building presentation scale', () => {
     const workshopTransform = resolvePresentationTransform('workshop');
     const workshopFoot = resolveRotatedFootprint(
       resolveNormalizedLayout(workshop.assetUrl, workshop.targetWidth),
-      workshop.rotationY ?? 0,
+      (workshop.rotationY ?? 0) + workshopTransform.rotationDelta,
     );
     const storeCenter = { x: -11, z: 11 };
     const naiveGap =
@@ -89,7 +86,7 @@ describe('WF02 building presentation scale', () => {
       storeFoot.halfWidthZ -
       workshopFoot.halfWidthZ;
     expect(workshop.targetWidth).toBe(15.0);
-    expect(workshopTransform.positionOffset[2]).toBe(1.2);
+    expect(workshopTransform.positionOffset).toEqual([0.6, 0, 1.8]);
     expect(offsetGap).toBeGreaterThan(naiveGap);
   });
 });

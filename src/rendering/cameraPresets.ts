@@ -14,6 +14,7 @@ export type CameraView =
   | 'home-street'
   | 'store-street'
   | 'workshop-street'
+  | 'store-workshop'
   | 'river'
   | 'square';
 
@@ -31,9 +32,10 @@ export const CAMERA_PRESETS: Record<CameraView, CameraPreset> = {
   'home-street': computeFacilityStreetPreset('home-street'),
   'store-street': computeFacilityStreetPreset('store-street'),
   'workshop-street': computeFacilityStreetPreset('workshop-street'),
+  'store-workshop': { position: [-20, 8, 18], target: [-11, 2, 17] },
   // Bridge-centric cross-river subject — derived from authored geometry (R12).
   river: computeRiverBridgePreset(),
-  square: { position: [-14, 14, 18], target: [0, 2, 0] },
+  square: { position: [-22, 18, 24], target: [-4, 2, -8] },
 };
 
 /** Parse `?cam=store-street` for evidence capture (presentation only). */

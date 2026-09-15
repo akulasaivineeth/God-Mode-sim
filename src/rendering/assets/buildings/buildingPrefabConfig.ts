@@ -39,18 +39,14 @@ export const BUILDING_PREFABS: readonly BuildingPrefabConfig[] = [
     targetWidth: 11.2,
     rotationY: -Math.PI / 2,
     sign: { text: '11 Riverside Lane', width: 3.0, height: 0.55, fontSize: 36 },
-    extras: [
-      { kind: 'path-short' },
-      { kind: 'fence-left' },
-      { kind: 'fence-right' },
-    ],
+    extras: [{ kind: 'path-short' }],
   },
   {
     buildingId: 'house-2',
     assetUrl: KENNEY_ASSETS.homeTypeA,
     targetWidth: 11.0,
     rotationY: -Math.PI / 2,
-    extras: [{ kind: 'driveway-short' }, { kind: 'fence-left' }],
+    extras: [{ kind: 'driveway-short' }],
   },
   {
     buildingId: 'house-3',

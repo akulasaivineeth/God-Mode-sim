@@ -20,21 +20,23 @@ const WF01_OVERVIEW_URL =
   'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf01-builder-r5/01_wf01_overview.png';
 
 const SHOTS = [
-  { name: '01_wf02_overview', cam: 'overview', waitMs: 2400, diagnostics: true },
-  { name: '02_wf02_angled', cam: 'angled', waitMs: 2400, diagnostics: true },
-  { name: '03_wf02_civic', cam: 'square', waitMs: 2000 },
-  { name: '04_wf02_residential_lots', preset: { position: [58, 52, -38], target: [62, 0, -55] }, waitMs: 2000 },
-  { name: '05_wf02_commercial_work', cam: 'store-street', waitMs: 2200 },
-  { name: '06_wf02_farm_edge', preset: { position: [38, 38, 108], target: [48, 2, 86] }, waitMs: 2200 },
-  { name: '07_wf02_river_park', cam: 'river', waitMs: 2400 },
-  { name: '08_wf02_street_lived_in', cam: 'street', waitMs: 2200, diagnostics: true },
-  { name: '09_attachment_house1', preset: { position: [18, 6, -14], target: [11, 2, -8] }, waitMs: 1800 },
-  { name: '10_attachment_store', cam: 'store-street', waitMs: 2000 },
-  { name: '11_attachment_workshop', cam: 'workshop-street', waitMs: 2000 },
-  { name: '12_attachment_community', preset: { position: [-28, 12, -8], target: [-18, 3, -18] }, waitMs: 1800 },
-  { name: '13_attachment_farmhouse', preset: { position: [58, 10, 92], target: [48, 2, 86] }, waitMs: 1800 },
-  { name: '14_silhouette_residential', preset: { position: [42, 28, -22], target: [30, 1, -22] }, waitMs: 1800 },
-  { name: '15_organic_commercial', preset: { position: [-24, 14, 28], target: [-8, 2, 14] }, waitMs: 1800 },
+  { name: '01_wf02_overview_dawn', cam: 'overview', simMinute: 360, waitMs: 2400, diagnostics: true },
+  { name: '01b_wf02_overview_noon', cam: 'overview', simMinute: 720, waitMs: 2400, diagnostics: true },
+  { name: '02_wf02_angled', cam: 'angled', simMinute: 720, waitMs: 2400, diagnostics: true },
+  { name: '03_wf02_civic', cam: 'square', simMinute: 720, waitMs: 2200 },
+  { name: '04_wf02_residential_lots', preset: { position: [58, 52, -38], target: [62, 0, -55] }, simMinute: 720, waitMs: 2000 },
+  { name: '05_wf02_commercial_work', cam: 'store-street', simMinute: 720, waitMs: 2200 },
+  { name: '05b_wf02_store_workshop', cam: 'store-workshop', simMinute: 720, waitMs: 2200 },
+  { name: '06_wf02_farm_edge', preset: { position: [38, 38, 108], target: [48, 2, 86] }, simMinute: 720, waitMs: 2200 },
+  { name: '07_wf02_river_park', cam: 'river', simMinute: 720, waitMs: 2400 },
+  { name: '08_wf02_street_lived_in', cam: 'street', simMinute: 720, waitMs: 2200, diagnostics: true },
+  { name: '09_attachment_house1', preset: { position: [18, 6, -14], target: [11, 2, -8] }, simMinute: 720, waitMs: 1800 },
+  { name: '10_attachment_store', cam: 'store-street', simMinute: 720, waitMs: 2000 },
+  { name: '11_attachment_workshop', cam: 'workshop-street', simMinute: 720, waitMs: 2000 },
+  { name: '12_attachment_community', preset: { position: [-28, 12, -8], target: [-18, 3, -18] }, simMinute: 720, waitMs: 1800 },
+  { name: '13_attachment_farmhouse', preset: { position: [58, 10, 92], target: [48, 2, 86] }, simMinute: 720, waitMs: 1800 },
+  { name: '14_silhouette_residential', preset: { position: [42, 28, -22], target: [30, 1, -22] }, simMinute: 720, waitMs: 1800 },
+  { name: '15_organic_commercial', preset: { position: [-24, 14, 28], target: [-8, 2, 14] }, simMinute: 720, waitMs: 1800 },
 ];
 
 function hashFile(file) {
@@ -94,6 +96,10 @@ async function applyShotCamera(page, shot) {
 }
 
 async function captureShot(page, shot) {
+  if (shot.simMinute != null) {
+    await page.evaluate((minute) => window.__GODMODE_EVIDENCE__?.stepToSimMinute(minute), shot.simMinute);
+    await page.waitForTimeout(400);
+  }
   await applyShotCamera(page, shot);
   await page.waitForTimeout(shot.waitMs ?? 2000);
   await waitFrames(page, 10);
@@ -138,6 +144,7 @@ async function main() {
 
   const overviewDiagnostics = await page.evaluate(async () => {
     window.__GODMODE_EVIDENCE__?.applyPreset('overview');
+    window.__GODMODE_EVIDENCE__?.stepToSimMinute(360);
     await new Promise((r) => setTimeout(r, 2000));
     return window.__GODMODE_EVIDENCE__?.sampleRenderDiagnosticsAfterFrames?.(12);
   });
@@ -165,13 +172,14 @@ async function main() {
 img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px}</style></head><body>
 <h1>WF02 — WF01 BEFORE → WF02 AFTER → North Star</h1><div class="row">
 <div class="col"><div class="label">WF01 BEFORE</div><img src="00_before_wf01_overview.png"/></div>
-<div class="col"><div class="label">WF02 AFTER</div><img src="01_wf02_overview.png"/></div>
+<div class="col"><div class="label">WF02 R3 AFTER (06:00)</div><img src="01_wf02_overview_dawn.png"/></div>
 <div class="col"><div class="label">North Star</div><img src="00_north_star_reference.png"/></div>
 </div></body></html>`;
   await writeFile(path.join(OUT, 'compare_before_after_northstar.html'), compareHtml);
 
   const manifest = {
     workItem: 'WF02',
+    planRevision: 3,
     sha: gitSha(),
     overviewDiagnostics,
     streetDiagnostics,
@@ -187,6 +195,11 @@ img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px}</styl
       overviewTriangles: overviewDiagnostics?.triangles,
       streetTriangles: streetDiagnostics?.triangles,
     },
+    notes: [
+      'WF02 R3 composition and art-direction correction (presentation-only)',
+      'Simulation authority and facilityPoints unchanged from WF01',
+      'RGB diagnostics supplementary — not visual acceptance proxy',
+    ],
   };
   await writeFile(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2));
   await browser.close();

@@ -75,80 +75,51 @@ export function resolveVegetationUrl(placement: VegetationPlacement): string {
   return QUATERNIUS_ASSETS[placement.asset as keyof typeof QUATERNIUS_ASSETS];
 }
 
-/** Kenney/Quaternius prop clusters for district readability — WF02 street-life massing. */
+/** Kenney/Quaternius prop clusters — WF02 R3 district composition envelopes. */
 export function buildDistrictCompositionPlacements(): VegetationPlacement[] {
   const placements: VegetationPlacement[] = [];
 
-  // Civic cluster framing (2 trees — budget-conscious).
   placements.push(
-    { position: { x: -22, z: -12 }, asset: 'commonTree1', scale: 0.92, source: 'quaternius' },
-    { position: { x: -28, z: -44 }, asset: 'pine1', scale: 0.82, source: 'quaternius' },
-    { position: { x: -8, z: -8 }, asset: 'bushFlowers', scale: 1.0, source: 'quaternius' },
+    { position: { x: -22, z: -12 }, asset: 'commonTree1', scale: 0.95, source: 'quaternius' },
+    { position: { x: -28, z: -44 }, asset: 'pine1', scale: 0.88, source: 'quaternius' },
+    { position: { x: -8, z: -8 }, asset: 'bushFlowers', scale: 1.05, source: 'quaternius' },
   );
 
-  // Residential branch hedge line along z=-42 (4 bushes).
   for (let x = 24; x <= 60; x += 12) {
-    placements.push({ position: { x, z: -44 }, asset: 'bush', scale: 0.95, source: 'quaternius' });
+    placements.push({ position: { x, z: -44 }, asset: 'bush', scale: 0.98, source: 'quaternius' });
   }
 
-  // Future lot corner markers + low fence framing (presentation-only lot identity).
-  for (const plot of CANONICAL_TOWN.vacantPlots) {
-    placements.push({
-      position: { x: plot.center.x - plot.width * 0.42, z: plot.center.z + plot.depth * 0.38 },
-      asset: 'bush',
-      scale: 0.95,
-      rotY: ((plot.center.x + plot.center.z) % 5) * 0.4,
-      source: 'quaternius',
-    });
-    placements.push({
-      position: { x: plot.center.x + plot.width * 0.38, z: plot.center.z - plot.depth * 0.35 },
-      asset: 'fenceLow',
-      scale: 1.15,
-      rotY: Math.PI / 2,
-      source: 'kenney',
-    });
-  }
+  // Residential street trees — staggered pair (budget-conscious quaternius use).
+  const residentialTrees: VegetationPlacement[] = [
+    { position: { x: 16, z: -28.5 }, asset: 'commonTree1', scale: 0.9, rotY: 0.8, source: 'quaternius' },
+    { position: { x: 28, z: -31.2 }, asset: 'commonTree2', scale: 0.95, rotY: 1.6, source: 'quaternius' },
+  ];
+  placements.push(...residentialTrees);
 
-  // Commercial/work street-facing accents.
   placements.push(
-    { position: { x: -18, z: 16 }, asset: 'bushFlowers', scale: 1.05, source: 'quaternius' },
-    { position: { x: -6, z: 22 }, asset: 'bush', scale: 1.0, source: 'quaternius' },
-    { position: { x: 2, z: 18 }, asset: 'commonTree2', scale: 0.88, source: 'quaternius' },
+    { position: { x: -18, z: 16 }, asset: 'bushFlowers', scale: 1.08, source: 'quaternius' },
+    { position: { x: -6, z: 22 }, asset: 'bush', scale: 1.05, source: 'quaternius' },
+    { position: { x: 2, z: 18 }, asset: 'commonTree2', scale: 0.92, source: 'quaternius' },
+    { position: { x: -4, z: 26 }, asset: 'flowers', scale: 0.95, source: 'quaternius' },
   );
 
-  // Riverside Park river-facing path + tree arc (anchor fixed at 72,38).
-  for (const pos of [{ x: 80, z: 38 }, { x: 86, z: 38 }, { x: 74, z: 40 }]) {
-    placements.push({ position: pos, asset: 'pathShort', scale: 1.15, rotY: Math.PI / 2, source: 'kenney' });
-  }
   placements.push(
-    { position: { x: 76, z: 42 }, asset: 'commonTree1', scale: 0.92, source: 'quaternius' },
-    { position: { x: 82, z: 44 }, asset: 'bushFlowers', scale: 1.05, source: 'quaternius' },
-    { position: { x: 88, z: 36 }, asset: 'pine1', scale: 0.82, source: 'quaternius' },
-    { position: { x: 84, z: 34 }, asset: 'fern', scale: 0.95, source: 'quaternius' },
-    { position: { x: 78, z: 32 }, asset: 'pebble1', scale: 0.85, source: 'quaternius' },
+    { position: { x: 76, z: 42 }, asset: 'commonTree1', scale: 0.95, source: 'quaternius' },
+    { position: { x: 82, z: 44 }, asset: 'bushFlowers', scale: 1.08, source: 'quaternius' },
+    { position: { x: 88, z: 36 }, asset: 'pine1', scale: 0.88, source: 'quaternius' },
+    { position: { x: 84, z: 34 }, asset: 'fern', scale: 0.98, source: 'quaternius' },
+    { position: { x: 78, z: 32 }, asset: 'pebble1', scale: 0.88, source: 'quaternius' },
   );
 
-  // Orchard tree-small grid on farm-3 (10 instances) + row boundary bushes.
   const orchard = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3');
   if (orchard) {
-    for (let r = 0; r < 2; r += 1) {
-      for (let c = 0; c < 3; c += 1) {
-        placements.push({
-          position: { x: orchard.center.x + (c - 1) * 3.2, z: orchard.center.z + (r - 0.5) * 2.8 },
-          asset: 'treeSmall',
-          scale: 0.95 + (r + c) * 0.04,
-          rotY: (r * 3 + c) * 0.7,
-          source: 'kenney',
-        });
-      }
-    }
-    // WF02 +4 orchard accent trees at plot edges.
-    placements.push(
-      { position: { x: orchard.center.x - 4.5, z: orchard.center.z + 1.2 }, asset: 'treeSmall', scale: 1.0, rotY: 0.5, source: 'kenney' },
-      { position: { x: orchard.center.x + 4.5, z: orchard.center.z + 1.2 }, asset: 'treeSmall', scale: 1.05, rotY: 1.1, source: 'kenney' },
-      { position: { x: orchard.center.x - 4.5, z: orchard.center.z - 1.2 }, asset: 'treeSmall', scale: 0.98, rotY: 1.8, source: 'kenney' },
-      { position: { x: orchard.center.x + 4.5, z: orchard.center.z - 1.2 }, asset: 'treeSmall', scale: 1.02, rotY: 2.4, source: 'kenney' },
-    );
+    // Orchard read comes from InstancedFarmRows in TownAmenities — no duplicate treeSmall GLBs.
+    void orchard;
+  }
+
+  const farmhouse = CANONICAL_TOWN.buildings.find((b) => b.id === 'farmhouse');
+  if (farmhouse) {
+    void farmhouse;
   }
 
   return placements;
@@ -169,22 +140,15 @@ export const M02_CORRIDOR_VEGETATION: readonly VegetationPlacement[] = [
 export const RIVERBANK_VEGETATION: readonly VegetationPlacement[] = [
   { position: { x: 62, z: -12 }, asset: 'pebble1', scale: 0.8, source: 'quaternius' },
   { position: { x: 66, z: 18 }, asset: 'pebble2', scale: 0.9, source: 'quaternius' },
-  { position: { x: 70, z: -38 }, asset: 'fern', scale: 0.9, source: 'quaternius' },
   { position: { x: 82, z: -28 }, asset: 'pine1', scale: 1.05, source: 'quaternius' },
   { position: { x: 86, z: 22 }, asset: 'commonTree1', scale: 1.0, source: 'quaternius' },
-  { position: { x: 92, z: -8 }, asset: 'fern', scale: 0.85, source: 'quaternius' },
 ];
 
-/** Dense north/west/east forest frame — WF01 periphery. */
+/** Dense north/west forest frame — WF02 R3 perf trim (4 trees). */
 export function buildPeripheryForest(): VegetationPlacement[] {
   const placements: VegetationPlacement[] = [];
-  const northEdge = [
-    { x: -95, z: -102 }, { x: -35, z: -104 }, { x: 35, z: -104 },
-  ];
-  const westEdge = [
-    { x: -104, z: -70 }, { x: -106, z: 0 }, { x: -104, z: 65 },
-  ];
-  // East edge omitted — riverbank vegetation provides eastern frame (R4.1 perf trim).
+  const northEdge = [{ x: -95, z: -102 }, { x: 35, z: -104 }];
+  const westEdge = [{ x: -104, z: 0 }, { x: -104, z: 65 }];
   const variants: VegetationPlacement[] = [
     { position: { x: 0, z: 0 }, asset: 'pine1', source: 'quaternius' },
     { position: { x: 0, z: 0 }, asset: 'pine2', source: 'quaternius' },

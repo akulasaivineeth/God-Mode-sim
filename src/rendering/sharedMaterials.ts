@@ -6,8 +6,8 @@ import { MeshStandardMaterial } from 'three';
 
 export const MAT = {
   road: new MeshStandardMaterial({ color: '#34363c', roughness: 0.9 }),
-  sidewalk: new MeshStandardMaterial({ color: '#c4c8ce', roughness: 0.86 }),
-  path: new MeshStandardMaterial({ color: '#d4bc82', roughness: 0.88 }),
+  sidewalk: new MeshStandardMaterial({ color: '#d8dce2', roughness: 0.84 }),
+  path: new MeshStandardMaterial({ color: '#dcc890', roughness: 0.86 }),
   water: new MeshStandardMaterial({ color: '#4580a0', roughness: 0.16, metalness: 0.14 }),
   bank: new MeshStandardMaterial({ color: '#8ea070', roughness: 0.86 }),
   curb: new MeshStandardMaterial({ color: '#949aa2', roughness: 0.82 }),
@@ -15,7 +15,7 @@ export const MAT = {
   woodDark: new MeshStandardMaterial({ color: '#5a4030', roughness: 0.8 }),
   woodLight: new MeshStandardMaterial({ color: '#d8cbb8', roughness: 0.8 }),
   foliage: new MeshStandardMaterial({ color: '#3d6b38', roughness: 0.9 }),
-  foliageLight: new MeshStandardMaterial({ color: '#5a8a4a', roughness: 0.88 }),
+  foliageLight: new MeshStandardMaterial({ color: '#6a9a52', roughness: 0.86 }),
   stone: new MeshStandardMaterial({ color: '#9a9590', roughness: 0.75 }),
   stoneLight: new MeshStandardMaterial({ color: '#efe8dc', roughness: 0.78 }),
   metal: new MeshStandardMaterial({ color: '#6a6e74', metalness: 0.35, roughness: 0.55 }),
@@ -42,6 +42,6 @@ export const MAT = {
   }),
   hazard: new MeshStandardMaterial({ color: '#d4a030', roughness: 0.7 }),
   grave: new MeshStandardMaterial({ color: '#b7bcc2', roughness: 0.8 }),
-  farmRowA: new MeshStandardMaterial({ color: '#6a8a3a', roughness: 0.9 }),
-  farmRowB: new MeshStandardMaterial({ color: '#7a9a48', roughness: 0.9 }),
+  farmRowA: new MeshStandardMaterial({ color: '#7a9a42', roughness: 0.88 }),
+  farmRowB: new MeshStandardMaterial({ color: '#8aaa50', roughness: 0.88 }),
 };
