@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-09-16T09:19:19.525Z",
+  "planRevision": 11,
+  "scope": "PLAN_ONLY_NO_IMPORT",
+  "selectedFamily": "Kenney Modular Buildings 2.1",
+  "rejectedFamily": "KayKit City Builder Bits",
+  "selectionRationale": "Kenney Modular Buildings provides true wall/floor/roof/door/window modules for facade construction. KayKit City Builder Bits provides pre-assembled building_A–H prefabs — repeats R10 monolithic failure class.",
+  "candidates": [
+    {
+      "id": "kaykit-city-builder-bits",
+      "name": "KayKit City Builder Bits v1.0",
+      "sourceUrl": "https://kaylousberg.itch.io/city-builder-bits",
+      "license": "CC0 1.0 Universal",
+      "formats": [
+        "OBJ",
+        "FBX",
+        "GLTF"
+      ],
+      "modularityClass": "pre-assembled buildings + roads/props",
+      "wallFloorRoofModules": false,
+      "verdict": "reject"
+    },
+    {
+      "id": "kenney-modular-buildings",
+      "name": "Kenney Modular Buildings 2.1",
+      "sourceUrl": "https://kenney.nl/assets/modular-buildings",
+      "license": "CC0 1.0 Universal",
+      "formats": [
+        "OBJ",
+        "FBX",
+        "GLTF",
+        "GLB"
+      ],
+      "modularityClass": "wall/floor/roof/door/window construction kit",
+      "wallFloorRoofModules": true,
+      "estimatedModuleCount": "100+",
+      "verdict": "select"
+    }
+  ],
+  "prototypeStructures": [
+    {
+      "id": "civic-enclosure-edge",
+      "footprintM": "28×3.5",
+      "heightM": 4.5
+    },
+    {
+      "id": "commercial-frontage-3bay",
+      "footprintM": "34×7",
+      "heightM": "4.5–5.5"
+    },
+    {
+      "id": "residential-pair",
+      "footprintsM": "6×7 each",
+      "heightsM": "5.0 vs 7.0"
+    }
+  ],
+  "importBudget": {
+    "maxGlbFiles": 24,
+    "maxTriangleAdd": 15000,
+    "maxOverviewDcAdd": 12
+  },
+  "buildTimeAuditRequired": true,
+  "note": "Run full GLB measurement after APPROVED_TO_BUILD and curated import only."
+}

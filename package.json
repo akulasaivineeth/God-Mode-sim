@@ -22,6 +22,7 @@
     "capture:wf02-r9-neighborhood": "node scripts/wf02-r9-neighborhood-capture.mjs",
     "capture:wf02-r10-neighborhood": "node scripts/wf02-r10-neighborhood-capture.mjs",
     "audit:wf02-r10-vocabulary": "node scripts/wf02-r10-vocabulary-audit.mjs",
+    "audit:wf02-r11-candidate": "node scripts/wf02-r11-candidate-audit.mjs",
     "repack:wf02-atlas": "node scripts/wf02-r51-repack-atlas.mjs",
     "audit:wf02-r71-inventory": "node scripts/wf02-r71-kenney-inventory-audit.mjs",
     "audit:wf02-r71-visual-layout": "node scripts/wf02-r71-visual-layout-audit.mjs",
