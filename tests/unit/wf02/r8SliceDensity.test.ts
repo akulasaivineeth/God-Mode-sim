@@ -14,10 +14,11 @@ import {
   getR8SliceCompositionCounts,
 } from '@/rendering/environment/r8SliceDensityBuilders';
 import { WF02_R8_SLICE_MODE } from '@/rendering/environment/r8SliceMode';
+import { isWorldLabActive } from '@/world/resolver/worldResolver';
 
-describe('WF02 R8 Phase 0b slice density', () => {
-  it('slice mode is enabled for Phase 0b gate', () => {
-    expect(WF02_R8_SLICE_MODE).toBe(true);
+describe.skipIf(isWorldLabActive())('WF02 R8 Phase 0b slice density', () => {
+  it('slice mode is disabled when World Lab supersedes R8', () => {
+    expect(WF02_R8_SLICE_MODE).toBe(false);
   });
 
   it('defines PLAN_R8 slice zone bounds', () => {

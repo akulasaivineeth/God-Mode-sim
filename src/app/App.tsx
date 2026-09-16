@@ -154,6 +154,7 @@ export interface GodModeEvidenceApi {
 
 export interface GodModePlayerCameraApi {
   getState: () => ReturnType<typeof getPlayerCameraState>;
+  getOverviewPreset: () => (typeof CAMERA_PRESETS)['overview'];
   zoomIn: () => boolean;
   zoomOut: () => boolean;
   recenterOnCitizen: () => boolean;
@@ -215,6 +216,7 @@ export function App() {
   useEffect(() => {
     window.__GODMODE_PLAYER_CAMERA__ = {
       getState: () => getPlayerCameraState(),
+      getOverviewPreset: () => CAMERA_PRESETS.overview,
       zoomIn: () => dollyPlayerCamera(0.82),
       zoomOut: () => dollyPlayerCamera(1.22),
       recenterOnCitizen: () => {

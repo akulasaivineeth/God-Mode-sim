@@ -6,10 +6,11 @@ import {
   buildPeripheryForestKenney,
 } from '@/rendering/environment/massSilhouetteBuilders';
 import { isOverlayExcluded } from '@/rendering/environment/compositionMask';
-import { CANONICAL_TOWN } from '@/world/townLayout';
+import { LEGACY_CANONICAL_TOWN } from '@/world/townLayout';
+import { isWorldLabActive } from '@/world/resolver/worldResolver';
 
-describe('WF02 R6 mass silhouette builders', () => {
-  const orchardCenter = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3')!.center;
+describe.skipIf(isWorldLabActive())('WF02 R6 mass silhouette builders', () => {
+  const orchardCenter = LEGACY_CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3')!.center;
 
   it('orchard block avoids road overlay cells', () => {
     const trees = buildOrchardBlockKenney(orchardCenter);

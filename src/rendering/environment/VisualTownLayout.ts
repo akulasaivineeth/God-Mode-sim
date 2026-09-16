@@ -1,8 +1,10 @@
 /**
  * WF02 R7.1 Phase 1 — bounded presentation layout mapping.
- * Simulation centers in CANONICAL_TOWN / facilityPoints.ts remain authoritative.
+ * R9 World Lab absorbs placement into world definition — zero offsets when active.
  */
 import { CANONICAL_TOWN } from '@/world/townLayout';
+import { isWorldLabActive } from '@/world/resolver/worldResolver';
+import { resolveWorldDefinition } from '@/world/resolver/worldResolver';
 
 export interface VisualTransform {
   positionOffset: [number, number, number];
@@ -50,6 +52,9 @@ export function getVisualFacilityMapping(facilityId: string): VisualFacilityMapp
 }
 
 export function resolveVisualTransform(buildingId: string): VisualTransform {
+  if (isWorldLabActive()) {
+    return { positionOffset: [0, 0, 0], rotationDelta: 0 };
+  }
   const mapping = getVisualFacilityMapping(buildingId);
   const auth = getAuthPosition(buildingId);
   return {
@@ -70,13 +75,15 @@ export function visualOffsetM(facilityId: string): number {
   );
 }
 
-/** Hero core bounds for envelope scoping (R7.1 §6.2). */
-export const HERO_CORE_BOUNDS = {
-  minX: -55,
-  maxX: 55,
-  minZ: -55,
-  maxZ: 35,
-} as const;
+/** Hero core bounds for envelope scoping (R7.1 §6.2 / R9 World Lab bounds). */
+export const HERO_CORE_BOUNDS = isWorldLabActive()
+  ? resolveWorldDefinition().bounds
+  : ({
+      minX: -55,
+      maxX: 55,
+      minZ: -55,
+      maxZ: 35,
+    } as const);
 
 export function isInsideHeroCore(x: number, z: number): boolean {
   return (
@@ -87,8 +94,9 @@ export function isInsideHeroCore(x: number, z: number): boolean {
   );
 }
 
-/** Sim auth centers unchanged vs CANONICAL_TOWN. */
+/** Sim auth centers unchanged vs CANONICAL_TOWN (legacy mode only). */
 export function assertSimCentersFrozen(): void {
+  if (isWorldLabActive()) return;
   for (const mapping of VISUAL_FACILITY_MAPPINGS) {
     const b = CANONICAL_TOWN.buildings.find((entry) => entry.id === mapping.facilityId);
     if (!b) throw new Error(`Missing building ${mapping.facilityId}`);

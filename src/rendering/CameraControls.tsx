@@ -16,6 +16,7 @@ import {
   clampOrbitTarget,
   configureOrbitControls,
   registerPlayerCameraControls,
+  snapOrbitControlsToPreset,
 } from './cameraPlayerControl';
 import { registerEvidenceRendererContext } from './evidenceRendererRegistry';
 import { computePortraitCameraFromBounds } from './evidencePortrait';
@@ -64,10 +65,7 @@ export function CameraControls({ view, applyNonce }: CameraControlsProps) {
 
     const preset = state.cameraOverride ?? CAMERA_PRESETS[view];
     applyPlayerCameraLimits(controls, Boolean(state.cameraOverride));
-    camera.position.set(...preset.position);
-    controls.target.set(...preset.target);
-    clampOrbitTarget(controls.target);
-    controls.update();
+    snapOrbitControlsToPreset(controls, preset);
   }, [view, applyNonce, cameraOverrideNonce, camera, controls]);
 
   useFrame((r3f) => {

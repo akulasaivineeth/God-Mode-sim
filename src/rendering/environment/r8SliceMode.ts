@@ -1,5 +1,6 @@
 /**
- * WF02 R8 Phase 0b — representative slice gate (civic + commercial + residential only).
- * Full 240 m rollout disabled until ChatGPT approves post-slice propagation.
+ * WF02 R8 Phase 0b — representative slice gate (superseded by R9 World Lab).
  */
-export const WF02_R8_SLICE_MODE = true;
+import { WORLD_LAB_MODE } from '@/world/worldLabMode';
+
+export const WF02_R8_SLICE_MODE = !WORLD_LAB_MODE;

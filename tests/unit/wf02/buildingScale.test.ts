@@ -15,6 +15,9 @@ import {
   PRESENTATION_CITIZEN_HEIGHT,
   TARGET_CITIZEN_HEIGHT,
 } from '@/rendering/citizenModelScale';
+import { CANONICAL_TOWN } from '@/world/townLayout';
+import { isWorldLabActive } from '@/world/resolver/worldResolver';
+import { HERO_NEIGHBORHOOD_DEFINITION } from '@/world/worldLab/heroNeighborhood';
 
 const WF02_TARGET_WIDTHS: Record<string, number> = {
   'house-1': 11.2,
@@ -36,22 +39,25 @@ const WF02_TARGET_WIDTHS: Record<string, number> = {
 describe('WF02 building presentation scale', () => {
   it('applies approved per-category target widths', () => {
     for (const config of BUILDING_PREFABS) {
-      expect(config.targetWidth).toBe(WF02_TARGET_WIDTHS[config.buildingId]);
+      if (WF02_TARGET_WIDTHS[config.buildingId]) {
+        expect(config.targetWidth).toBe(WF02_TARGET_WIDTHS[config.buildingId]);
+      }
     }
   });
 
-  it('uses 14 distinct Kenney GLB silhouettes', () => {
-    const urls = new Set(BUILDING_PREFABS.map((c) => c.assetUrl));
-    expect(urls.size).toBe(14);
+  it('uses distinct Kenney GLB silhouettes for active buildings', () => {
+    const activeIds = new Set(CANONICAL_TOWN.buildings.map((b) => b.id));
+    const urls = new Set(
+      BUILDING_PREFABS.filter((c) => activeIds.has(c.buildingId)).map((c) => c.assetUrl),
+    );
+    expect(urls.size).toBe(activeIds.size);
   });
 
-  it('keeps M02 sim centers while applying R7.1 visual offsets', () => {
-    const store = resolvePresentationTransform('store');
-    expect(store.positionOffset).toEqual([1, 0, -5]);
-    const house1 = resolvePresentationTransform('house-1');
-    expect(house1.positionOffset).toEqual([3, 0, 2]);
-    const workshop = resolvePresentationTransform('workshop');
-    expect(workshop.positionOffset).toEqual([1, 0, -3]);
+  it('World Lab uses zero presentation offsets (placement in world definition)', () => {
+    if (!isWorldLabActive()) return;
+    expect(resolvePresentationTransform('store').positionOffset).toEqual([0, 0, 0]);
+    expect(resolvePresentationTransform('house-1').positionOffset).toEqual([0, 0, 0]);
+    expect(resolvePresentationTransform('workshop').positionOffset).toEqual([0, 0, 0]);
   });
 
   it('derives anchor extras on scaled facade without manual coordinates', () => {
@@ -65,11 +71,13 @@ describe('WF02 building presentation scale', () => {
     }
   });
 
-  it('R7.1 visual transforms preserve store/workshop presentation AABB gap', () => {
+  it('preserves store/workshop presentation AABB gap ≥ 0.10 m', () => {
     const store = BUILDING_PREFABS.find((c) => c.buildingId === 'store')!;
     const workshop = BUILDING_PREFABS.find((c) => c.buildingId === 'workshop')!;
     const storeTransform = resolvePresentationTransform('store');
     const workshopTransform = resolvePresentationTransform('workshop');
+    const storeBuilding = CANONICAL_TOWN.buildings.find((b) => b.id === 'store')!;
+    const workshopBuilding = CANONICAL_TOWN.buildings.find((b) => b.id === 'workshop')!;
     const storeFoot = resolveRotatedFootprint(
       resolveNormalizedLayout(store.assetUrl, store.targetWidth),
       (store.rotationY ?? 0) + storeTransform.rotationDelta,
@@ -78,16 +86,18 @@ describe('WF02 building presentation scale', () => {
       resolveNormalizedLayout(workshop.assetUrl, workshop.targetWidth),
       (workshop.rotationY ?? 0) + workshopTransform.rotationDelta,
     );
-    const storeCenter = { x: -11 + storeTransform.positionOffset[0], z: 11 + storeTransform.positionOffset[2] };
-    const workshopCenter = {
-      x: -11 + workshopTransform.positionOffset[0],
-      z: 23 + workshopTransform.positionOffset[2],
+    const storeCenter = {
+      x: storeBuilding.position.x + storeTransform.positionOffset[0],
+      z: storeBuilding.position.z + storeTransform.positionOffset[2],
     };
-    const gapZ =
-      workshopCenter.z - workshopFoot.halfWidthZ - (storeCenter.z + storeFoot.halfWidthZ);
-    expect(workshop.targetWidth).toBe(15.0);
-    expect(workshopTransform.positionOffset).toEqual([1, 0, -3]);
-    expect(gapZ).toBeGreaterThanOrEqual(0.1);
+    const workshopCenter = {
+      x: workshopBuilding.position.x + workshopTransform.positionOffset[0],
+      z: workshopBuilding.position.z + workshopTransform.positionOffset[2],
+    };
+    const gapX =
+      Math.abs(workshopCenter.x - storeCenter.x) -
+      (storeFoot.halfWidthX + workshopFoot.halfWidthX);
+    expect(gapX).toBeGreaterThanOrEqual(0.1);
   });
 });
 
@@ -99,11 +109,14 @@ describe('WF02 citizen presentation scale', () => {
 });
 
 describe('WF02 camera calibration', () => {
-  it('moves overview and angled ~17% closer with unchanged targets', () => {
-    expect(CAMERA_PRESETS.overview.position).toEqual([10, 93, 54]);
-    expect(CAMERA_PRESETS.overview.target).toEqual([30, 2, 4]);
-    expect(CAMERA_PRESETS.angled.position).toEqual([68, 53, 37]);
-    expect(CAMERA_PRESETS.angled.target).toEqual([28, 3, 2]);
+  it('uses neighborhood-scoped overview/angled when World Lab is active', () => {
+    if (!isWorldLabActive()) {
+      expect(CAMERA_PRESETS.overview.position).toEqual([10, 93, 54]);
+      expect(CAMERA_PRESETS.angled.position).toEqual([68, 53, 37]);
+      return;
+    }
+    expect(CAMERA_PRESETS.overview).toEqual(HERO_NEIGHBORHOOD_DEFINITION.cameras.overview);
+    expect(CAMERA_PRESETS.angled).toEqual(HERO_NEIGHBORHOOD_DEFINITION.cameras.angled);
   });
 });
 

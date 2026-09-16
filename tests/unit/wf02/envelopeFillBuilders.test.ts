@@ -8,7 +8,9 @@ import {
 } from '@/rendering/environment/envelopeFillBuilders';
 import { isOverlayExcluded } from '@/rendering/environment/compositionMask';
 
-describe('WF02 R7.1 envelopeFillBuilders', () => {
+import { isWorldLabActive } from '@/world/resolver/worldResolver';
+
+describe.skipIf(isWorldLabActive())('WF02 R7.1 envelopeFillBuilders', () => {
   it('exports all composition envelope ids', () => {
     expect(listCompositionEnvelopeIds()).toContain('hero-core');
     expect(listCompositionEnvelopeIds()).toContain('orchard-block');

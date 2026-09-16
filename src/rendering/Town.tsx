@@ -95,7 +95,7 @@ export function Town() {
       {town.vacantPlots.map((plot) => (
         <FlatArea key={plot.id} area={plot} y={0.03} />
       ))}
-      <FlatArea area={town.cemetery} y={0.03} />
+      {town.cemetery.width > 0 && <FlatArea area={town.cemetery} y={0.03} />}
 
       {town.paths.map((path) => (
         <FlatStrip
@@ -108,7 +108,7 @@ export function Town() {
         />
       ))}
 
-      <InstancedGraves />
+      {town.graves.length > 0 && <InstancedGraves />}
     </group>
   );
 }

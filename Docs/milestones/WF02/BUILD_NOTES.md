@@ -1,51 +1,74 @@
-# WF02 Build Notes
+# WF02 Build Notes — R9 Phase 0 + Phase 1
 
 ## Base
 
-- Plan revision 6 @ `71f9c679ead7f007c3456964555187373ab1d314` (approved)
-- Prior blocked: R5.1 @ `fa64055` (WF02-004 visual gate — 4th consecutive)
+- Plan revision **9** @ `8f4d8dd` (approved `PHASE_0_AND_PHASE_1_HERO_NEIGHBORHOOD_ONLY`)
+- Prior blocked: R4.1 @ `6dbd8b5` (WF02-003 — 3rd consecutive visual gate)
 
-## R6 architecture — Mass Silhouette System (MSS)
+## Phase 0 — semantic world definition
 
-1. **Phase A recovery** — removed `NatureMassLayer` Quaternius, `DistrictGroundTint`, `FrontageBands`; tier-gated `VegetationLayer` Quaternius off Overview/Angled
-2. **`massSilhouetteBuilders.ts` + `massSilhouettePlacements.ts`** — deterministic KCC + CVP tables with road/path/river exclusions
-3. **`CanopyMassing.tsx`** — tier-gated Kenney `treeSmall`/`treeLarge` instancing (1–2 DC)
-4. **`CanopyVolumeLayer.tsx`** — ≤2 DC low-poly garden/field volume primitives (`gardenMound`, `fieldBand`)
-5. **`compositionVisibility.ts`** — added `baselineVegetation` tier (zero Quaternius on Overview/Angled)
-6. **Warm atlas** — frozen from R5.1 (no further repack)
+1. **`src/world/types.ts`** — `WorldDefinition`, `SemanticFacilityId`, nav/entrance specs
+2. **`src/world/resolver/worldResolver.ts`** — active layout, entrances, cameras, nav graph
+3. **`src/world/townLayoutLegacy.ts`** — frozen legacy 240 m skeleton (`LEGACY_CANONICAL_TOWN`)
+4. **`src/world/legacy/legacyTownDefinition.ts`** — legacy wrapped as `WorldDefinition`
+5. **`src/world/worldLabMode.ts`** — `WORLD_LAB_MODE = true` (rollback flag)
+6. **`src/simulation/model/locations.ts`** + **`src/world/facilityPoints.ts`** — resolver-backed (single coordinate authority for M02 nav)
 
-## Mandatory hero silhouettes (non-empty)
+## Phase 1 — hero neighborhood prototype
 
-| Hero | Batch | Min count |
-|---|---|---:|
-| Orchard farm-3 | `ORCHARD_BLOCK_KCC` + `ORCHARD_FIELD_BAND_CVP` | 40 + 20 |
-| Park/river | `PARK_RIVER_ARC_KCC` + `PARK_PROMENADE_CVP` | 12 + 8 |
-| Periphery frame | `PERIPHERY_FOREST_FRAME_KCC` | 40 |
-| Civic colonnade | `CIVIC_COLONNADE_KCC` + `CIVIC_PLAZA_CVP` | 8 + 8 |
-| Residential gardens | `RESIDENTIAL_GARDEN_CVP` + `RESIDENTIAL_STREET_TREES_KCC` | 32 + 8 |
+1. **`src/world/worldLab/heroNeighborhood.ts`** — compact civic/residential/commercial/future-lot layout (~70×58 m)
+2. **`src/world/worldLab/roadTopologyWorldLab.ts`** — neighborhood junctions (no legacy bridge)
+3. **`src/rendering/environment/WorldLabCompositionLayer.tsx`** — plaza props, frame trees, hedges, commercial/residential life
+4. **`src/rendering/cameraPresets.ts`** — cameras derived from world definition (not legacy coordinates)
+5. **`src/rendering/facilityStreetCamera.ts`** — home/store/workshop street presets from resolver entrances
+6. **`src/rendering/environment/r8SliceMode.ts`** — disabled when World Lab active
 
-## Preserved
+## Preserved (simulation semantics)
 
-- `facilityPoints.ts`, simulation/**, LOCATIONS, M02 routes/entrances
-- R2 `targetWidth`, 2.32 m presentation citizen, frozen Overview/Angled cameras
+- Action → location mapping, worker authority, seeded determinism
+- Semantic IDs: home / store / work
+- 2.32 m presentation / 1.8 m simulation citizen split
+- Registered Kenney + Quaternius inventory only (no new asset family)
+- Legacy 240 m layout available via `WORLD_LAB_MODE = false`
 
-## Performance (measured live GL @ R6 build)
+## Coordinate assumptions removed vs remaining
+
+**Removed in World Lab mode**
+
+- 240 m `CANONICAL_TOWN` coordinate skeleton as a presentation invariant
+- Legacy Overview `[10,93,54]` / Angled `[68,53,37]` camera constants
+- Full-town 14-facility scatter at historical x/z positions
+- Legacy bridge + 240 m road spine as the active presentation topology
+- `VisualTownLayout` presentation offsets for M02 trio
+- Hardcoded legacy home-street camera preset
+- R8 slice density mode on the legacy envelope
+
+**Still remaining**
+
+- Semantic facility roles and M02 nav graph structure (nodes/edges, not legacy coordinates)
+- Resolver boundary: simulation reads coordinates through `worldResolver`, not ad-hoc literals
+- R2 `targetWidth` / prefab manifest scale plumbing
+- Legacy rollback path and parity tests against `LEGACY_CANONICAL_TOWN`
+
+## Performance (measured live GL @ handoff SHA)
 
 | Preset | Draw calls | Triangles | Gate |
 |---|---:|---:|---|
-| Overview 06:00 | **117** | **45,536** | ≤135 DC ✅ (≥5 reserve vs 140) |
-| Overview 12:00 | **120** | **45,872** | ≤135 DC ✅ |
-| Angled | **110** | **47,132** | info |
-| Street | **72–75** | **~80k** | ≤100 DC ✅ |
+| Overview 06:00 | **119** | **18,358** | ≤140 / <150k ✅ |
+| Overview 12:00 | **116** | **18,022** | ≤140 / <150k ✅ |
+| Angled | **108** | **17,676** | info |
+| Street | **85** | **61,575** | ≤100 DC ✅ |
 
-Low Overview tris vs R5.1 reflects Kenney-first instancing (42 tris/tree) replacing high-poly Quaternius scatter; visible mass increased while GPU cost dropped.
+Large headroom vs M2/8GB gates; M03 still requires separate citizen LOD/culling.
 
 ## Tests
 
-- `npm run test:all` — **169 unit + 7 e2e PASS** @ implementation SHA
+- `npm run test:all` — typecheck, lint, **175 unit + 7 e2e PASS**, build PASS @ handoff SHA
+- Resolver parity: `tests/unit/world/worldResolver.test.ts`
+- Determinism: `tests/integration/m02/determinism.test.ts`, `tests/integration/determinism.test.ts`
 
 ## Evidence
 
-- Tag pattern: `review-evidence-wf02-r6-<sha7>`
-- Compare: WF01 → R4.1 blocked → R5.1 blocked → R6 → north star
-- 0 asset/network errors
+- Tag pattern: `review-evidence-wf02-r9-<sha7>`
+- Shots: Overview dawn/noon, Angled, Street, civic/residential/commercial closeups, store/workshop, citizen scale streets, future lot, night, north-star compare strip
+- 0 asset/network errors (capture manifest)

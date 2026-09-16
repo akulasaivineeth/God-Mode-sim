@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PerspectiveCamera } from 'three';
-import { CANONICAL_TOWN, terrainHeightAt } from '@/world/townLayout';
+import { LEGACY_CANONICAL_TOWN, terrainHeightAt } from '@/world/townLayout';
 import { CAMERA_PRESETS } from '@/rendering/cameraPresets';
 import {
   assertWaterAboveCarvedTerrain,
@@ -14,7 +14,7 @@ import {
 import { bridgePlacementOnRiver, projectRiverCorridorScreenHalfWidth } from '@/rendering/environment/riverGeometry';
 
 describe('WF01 R5 river cross-section geometry', () => {
-  const { points } = CANONICAL_TOWN.river;
+  const { points } = LEGACY_CANONICAL_TOWN.river;
   const section = R5_RIVER_CROSS_SECTION;
 
   it('keeps bridge anchor on polyline at z=0', () => {

@@ -1,32 +1,40 @@
-# WF02 Data Flow
+# WF02 Data Flow — R9 World Lab
 
-## Presentation bounds authority
+## Authority chain
 
 ```
-modelLayoutManifest.json (offline GLB AABB)
+WorldDefinition (hero or legacy)
         ↓
-modelLayout.ts — resolveNormalizedLayout / resolveRotatedFootprint
+worldResolver.ts  ← WORLD_LAB_MODE flag
         ↓
-    ┌───────────────────┴────────────────────┐
-    ↓                                        ↓
-ModelAsset.tsx                    buildingPresentationAnchors.ts
-(uniform scale)                   (signs, awnings, paths, fences)
-        ↓                                        ↓
-              PrefabBuildings.tsx (group + presentation offset)
+┌───────────────────┬────────────────────────────┐
+│ simulation        │ rendering / presentation      │
+│ locations.ts      │ cameraPresets.ts              │
+│ facilityPoints.ts │ PrefabBuildings, RoadNetwork  │
+│ pathfinding       │ WorldLabCompositionLayer      │
+└───────────────────┴────────────────────────────┘
 ```
 
-## Citizen scale split
+Simulation semantics (actions, needs, decisions) are unchanged. Coordinates and cameras are **resolved**, not hardcoded from the legacy 240 m skeleton.
 
-| Layer | Height | Owner |
-|---|---:|---|
-| Simulation / pathing | 1.8 m | `TARGET_CITIZEN_HEIGHT` |
-| Visual mesh | 2.32 m | `PRESENTATION_CITIZEN_HEIGHT` in `CitizenVisual.tsx` |
+## Phase 0 resolver outputs
 
-Simulation coordinates and collision authority are unchanged.
+| API | Consumer |
+|---|---|
+| `resolveActiveLayout()` | Town mesh, roads, vegetation bounds |
+| `resolveEntrances()` | M02 routes, facility street cameras, citizen targets |
+| `resolveNavGraph()` | `locations.ts` shortest-path graph |
+| `resolveCameraPreset(view)` | `cameraPresets.ts`, evidence capture |
+| `isWorldLabActive()` | Composition tier gates, r8 slice disable, player camera bounds |
 
-## Material / lighting owners
+## Phase 1 presentation path
 
-- Ground/road/sidewalk/path colors: `sharedMaterials.ts`
-- Day/night intensities: `DayNightLighting.tsx`
-- Terrain carve / geography: `TownLandscape.tsx` (presentation only)
-- Authoritative geography: `townLayout.ts` (coordinates only — not edited)
+`OverviewCompositionLayer` → `WorldLabCompositionLayer` when World Lab active:
+
+- Civic plaza props + frame trees
+- Residential hedges + commercial street life
+- Empty farm/cemetery/grave modules (hero layout has none)
+
+## Rollback
+
+`WORLD_LAB_MODE = false` → resolver serves `LEGACY_WORLD_DEFINITION` → legacy cameras, 240 m layout, R4/R8 composition modules at prior coordinates.

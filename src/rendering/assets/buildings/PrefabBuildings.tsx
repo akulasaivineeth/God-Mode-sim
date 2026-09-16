@@ -9,6 +9,10 @@ import {
   resolveVisualTransform,
 } from './buildingPresentationAnchors';
 import { BUILDING_PREFABS, getBuildingPosition } from './buildingPrefabConfig';
+import { CANONICAL_TOWN } from '@/world/townLayout';
+
+const ACTIVE_BUILDING_IDS = new Set(CANONICAL_TOWN.buildings.map((b) => b.id));
+const ACTIVE_PREFABS = BUILDING_PREFABS.filter((config) => ACTIVE_BUILDING_IDS.has(config.buildingId));
 
 function PrefabBuilding({ config }: { config: (typeof BUILDING_PREFABS)[number] }) {
   const { x, z } = getBuildingPosition(config.buildingId);
@@ -51,7 +55,7 @@ function PrefabBuilding({ config }: { config: (typeof BUILDING_PREFABS)[number] 
 export function PrefabBuildings() {
   return (
     <group>
-      {BUILDING_PREFABS.map((config) => (
+      {ACTIVE_PREFABS.map((config) => (
         <PrefabBuilding key={config.buildingId} config={config} />
       ))}
     </group>

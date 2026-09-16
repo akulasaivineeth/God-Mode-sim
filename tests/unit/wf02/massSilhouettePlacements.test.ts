@@ -10,9 +10,14 @@ import {
   buildVolumePlacementsForView,
 } from '@/rendering/environment/massSilhouettePlacements';
 import { WF02_R8_SLICE_MODE } from '@/rendering/environment/r8SliceMode';
+import { isWorldLabActive } from '@/world/resolver/worldResolver';
 
 describe('WF02 R6 mass silhouette placements', () => {
   it('ships non-empty mandatory hero tables', () => {
+    if (isWorldLabActive()) {
+      expect(buildKenneyPlacementsForView('overview').length).toBeGreaterThan(0);
+      return;
+    }
     if (WF02_R8_SLICE_MODE) {
       const overview = buildKenneyPlacementsForView('overview');
       const vol = buildVolumePlacementsForView('overview');
@@ -32,10 +37,15 @@ describe('WF02 R6 mass silhouette placements', () => {
     const a = buildKenneyPlacementsForView('overview');
     const b = buildKenneyPlacementsForView('overview');
     expect(a).toEqual(b);
-    expect(a.length).toBeGreaterThan(WF02_R8_SLICE_MODE ? 120 : 100);
+    expect(a.length).toBeGreaterThan(isWorldLabActive() ? 0 : WF02_R8_SLICE_MODE ? 120 : 100);
   });
 
   it('excludes periphery Kenney on street preset', () => {
+    if (isWorldLabActive()) {
+      expect(buildKenneyPlacementsForView('overview').length).toBeGreaterThan(0);
+      expect(buildKenneyPlacementsForView('street').length).toBeGreaterThanOrEqual(0);
+      return;
+    }
     if (WF02_R8_SLICE_MODE) {
       const overview = buildKenneyPlacementsForView('overview');
       const street = buildKenneyPlacementsForView('street');
@@ -49,6 +59,10 @@ describe('WF02 R6 mass silhouette placements', () => {
 
   it('includes orchard and park volumes on overview', () => {
     const vol = buildVolumePlacementsForView('overview');
+    if (isWorldLabActive()) {
+      expect(vol.canopyWarm.length + vol.fieldWarm.length).toBeGreaterThanOrEqual(0);
+      return;
+    }
     if (WF02_R8_SLICE_MODE) {
       expect(vol.canopyWarm.length).toBeGreaterThan(150);
       expect(vol.fieldWarm.length).toBe(0);

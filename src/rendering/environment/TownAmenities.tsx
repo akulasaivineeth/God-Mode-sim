@@ -123,6 +123,7 @@ export function TownAmenities() {
   const park = CANONICAL_TOWN.park;
   const sqY = terrainHeightAt(sq.center.x, sq.center.z);
   const parkY = terrainHeightAt(park.center.x, park.center.z);
+  const hasFarm = CANONICAL_TOWN.farmPlots.length > 0;
 
   const benchPoints = useMemo(
     () => ringBenchPoints(sq.center.x, sqY, sq.center.z, 5.2),
@@ -139,16 +140,20 @@ export function TownAmenities() {
       <AllBenches points={benchPoints} />
       <LampInstances cx={sq.center.x} cy={sqY} cz={sq.center.z} />
 
-      <mesh position={[park.center.x, parkY + 0.05, park.center.z]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <ringGeometry args={[3.0, 8.5, 36]} />
-        <primitive object={MAT.path} attach="material" />
-      </mesh>
-      <mesh position={[park.center.x, parkY + 0.04, park.center.z]} receiveShadow>
-        <circleGeometry args={[9.0, 32]} />
-        <primitive object={MAT.foliageLight} attach="material" />
-      </mesh>
+      {park.width > 0 && (
+        <>
+          <mesh position={[park.center.x, parkY + 0.05, park.center.z]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+            <ringGeometry args={[3.0, 8.5, 36]} />
+            <primitive object={MAT.path} attach="material" />
+          </mesh>
+          <mesh position={[park.center.x, parkY + 0.04, park.center.z]} receiveShadow>
+            <circleGeometry args={[9.0, 32]} />
+            <primitive object={MAT.foliageLight} attach="material" />
+          </mesh>
+        </>
+      )}
 
-      <InstancedFarmRows />
+      {hasFarm && <InstancedFarmRows />}
     </group>
   );
 }

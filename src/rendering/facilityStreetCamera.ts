@@ -8,6 +8,7 @@
 import { getBuildingById, getFacilityPoint } from '@/world/facilityPoints';
 import { terrainHeightAt } from '@/world/townLayout';
 import { LOCATIONS } from '@/simulation/model/locations';
+import { isWorldLabActive } from '@/world/resolver/worldResolver';
 import type { CameraPreset } from './cameraPresets';
 
 export type FacilityStreetView = 'home-street' | 'store-street' | 'workshop-street';
@@ -72,13 +73,16 @@ const FACILITY_SIM_POINT: Partial<Record<FacilityStreetView, { x: number; z: num
 };
 
 export function computeFacilityStreetPreset(view: FacilityStreetView): CameraPreset {
-  if (view === 'home-street') {
+  if (view === 'home-street' && !isWorldLabActive()) {
     return HOME_STREET_PRESET;
   }
 
   const facilityId = FACILITY_FOR_VIEW[view];
   const point = getFacilityPoint(facilityId);
-  const simPoint = FACILITY_SIM_POINT[view];
+  const simPoint =
+    view === 'home-street'
+      ? LOCATIONS.home.point
+      : FACILITY_SIM_POINT[view];
   const targetX = simPoint?.x ?? point.presentationSpot.x;
   const targetZ = simPoint?.z ?? point.presentationSpot.z;
   const targetY = terrainHeightAt(targetX, targetZ) + 0.95;
