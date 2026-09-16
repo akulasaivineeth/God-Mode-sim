@@ -1,6 +1,6 @@
 # WF02 R7.1 Kenney Inventory Audit (Phase 0a)
 
-**Generated:** Phase 0 @ `local`  
+**Generated:** Phase 0 metadata @ evidence `107df225ee70d4358a06462e1dbc2dfe797b4f30`  
 **Scope:** On-disk `public/assets/glb/kenney/**` (excluding `_archive`) vs `EnvironmentAssetRegistry.ts`  
 **Purpose:** Asset-vocabulary decision for North-Star Composition Reset — no imports in Phase 0
 

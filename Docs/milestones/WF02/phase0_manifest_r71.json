@@ -225,41 +225,6 @@
       "maxM": 16
     }
   ],
-  "performanceLedger": {
-    "r6Baseline": {
-      "overviewDc": "117-120",
-      "overviewTris": "45536-45872"
-    },
-    "prototypeEstimate": {
-      "optionA_visualLayout": {
-        "dc": 0,
-        "tris": 0
-      },
-      "optionB_envelopeFills": {
-        "dc": "+6..+12",
-        "tris": "+18k..+35k"
-      },
-      "optionC_verticalLayer": {
-        "dc": "+1..+2",
-        "tris": "+4k..+10k"
-      },
-      "optionD_curatedProps": {
-        "dc": "+1..+2",
-        "tris": "+2k..+6k"
-      },
-      "target": {
-        "overviewDc": 125,
-        "overviewTris": 100000,
-        "hardCapDc": 135,
-        "hardCapTris": 118000
-      },
-      "m03Reserve": {
-        "dc": 5,
-        "tris": 8000,
-        "note": "LOD/culling required per M03_HEADROOM.md"
-      }
-    }
-  },
   "verticalLayerDecision": {
     "selected": true,
     "mechanism": "PresentationTerrainLayer embankment skirts + CVP retaining edges",
@@ -267,8 +232,44 @@
     "rollback": "Remove PresentationTerrainLayer from OverviewCompositionLayer; revert envelopeFillBuilders heights",
     "simTerrainUnchanged": true
   },
+  "review": "WF02-R71-PHASE0",
+  "phase0EvidenceSha": "107df225ee70d4358a06462e1dbc2dfe797b4f30",
+  "branch": "cursor/wf02-scale-calibration-754a",
+  "state": "PHASE_0_COMPLETE_STOP",
+  "networkErrors": 0,
   "assetImports": {
     "phase0": 0,
     "proposedPhase2": 5
-  }
+  },
+  "artifactManifest": [
+    {
+      "path": "Docs/milestones/WF02/compare_r6_prototype_northstar_r71.png",
+      "sha256": "8cf7e9ec7f8a76835a86d7a897d54ffe7aeab64b980b7492a35f482ff62e6e55"
+    },
+    {
+      "path": "Docs/milestones/WF02/composition_map_r71.svg",
+      "sha256": "115cc8cd8987cff5464bf7dfeda8d208e740471d7f512a5fab5c28027d4b2cde"
+    },
+    {
+      "path": "Docs/milestones/WF02/prototype_angled_r71.png",
+      "sha256": "533d8b9107d18a45929180b88366432f0d5875bc1a0680cffccfc79d599b7ee6"
+    },
+    {
+      "path": "Docs/milestones/WF02/prototype_overview_r71.png",
+      "sha256": "642cd91d9fdbcbbfa48229a2f0249f5e91744cbdb2e46d6cee87cbeaa3f104d0"
+    },
+    {
+      "path": "Docs/milestones/WF02/r6_failure_overlay_r71.svg",
+      "sha256": "b661ea100b381ec8a2f43bffa0c6a0aac4c2e193a58987d6caf062cfbb56880b"
+    },
+    {
+      "path": "Docs/milestones/WF02/visual_layout_audit_r71.json",
+      "sha256": "70dbdb987090c23c8bbf71b81f8dcb35b9f9a15cadf4ffb7e5f3b67c9ab1ccd5"
+    }
+  ],
+  "verify": {
+    "command": "git rev-parse HEAD",
+    "note": "[GOD-MODE:BUILDER] must cite the full 40-char output as authoritative PR head."
+  },
+  "generatedAt": "2026-09-16T00:10:43.664Z"
 }

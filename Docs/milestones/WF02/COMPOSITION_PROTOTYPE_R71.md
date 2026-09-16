@@ -3,6 +3,7 @@
 **State:** PHASE_0_COMPLETE — **STOP** for ChatGPT prototype decision  
 **Plan:** `PLAN_R7_1.md` (APPROVED_TO_BUILD scope: Phase 0 only)  
 **Base evidence:** R6 `@743a259` — `review-evidence-wf02-r6-743a259`  
+**Canonical PR head:** full 40-char `git rev-parse HEAD` on branch `cursor/wf02-scale-calibration-754a` (cite in [GOD-MODE:BUILDER])  
 **Cameras frozen:** Overview `[10,93,54]→[30,2,4]`, Angled `[68,53,37]→[28,3,2]`, 1440×900, FOV 45°
 
 ---

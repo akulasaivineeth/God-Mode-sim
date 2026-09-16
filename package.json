@@ -22,7 +22,8 @@
     "audit:wf02-r71-inventory": "node scripts/wf02-r71-kenney-inventory-audit.mjs",
     "audit:wf02-r71-visual-layout": "node scripts/wf02-r71-visual-layout-audit.mjs",
     "composite:wf02-r71-prototype": "node scripts/wf02-r71-prototype-composite.mjs",
-    "phase0:wf02-r71": "npm run audit:wf02-r71-inventory && npm run audit:wf02-r71-visual-layout && npm run composite:wf02-r71-prototype",
+    "phase0:wf02-r71": "npm run audit:wf02-r71-inventory && npm run audit:wf02-r71-visual-layout && npm run composite:wf02-r71-prototype && node scripts/wf02-r71-phase0-manifest.mjs",
+    "phase0:wf02-r71-manifest": "node scripts/wf02-r71-phase0-manifest.mjs",
     "generate:model-layout-manifest": "node scripts/generate-model-layout-manifest.mjs",
     "measure:render-budget": "node scripts/measure-render-budget.mjs",
     "export-review-bundle": "vite-node scripts/export-review-bundle.ts"
