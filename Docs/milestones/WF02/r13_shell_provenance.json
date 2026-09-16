@@ -1,0 +1,123 @@
+{
+  "generatedAt": "2026-09-16T21:26:13.269Z",
+  "planRevision": 13,
+  "license": "CC0 1.0 Universal (Kenney kitbash derivatives)",
+  "shellCount": 4,
+  "totalShellTriangles": 17498,
+  "shells": {
+    "civic-enclosure-shell": {
+      "license": "CC0 1.0 Universal (Kenney derivative)",
+      "sourceUrl": "https://kenney.nl/assets",
+      "sourceMeshes": [
+        "/assets/glb/kenney/commercial/community-hall.glb",
+        "/assets/glb/kenney/commercial/school.glb",
+        "/assets/glb/kenney/commercial/clinic.glb",
+        "/assets/glb/kenney/commercial/detail-parasol-a.glb",
+        "/assets/glb/kenney/suburban/path-stones-short.glb"
+      ],
+      "measuredBounds": {
+        "min": [
+          -4.259807616472244,
+          0,
+          -1.905523908138275
+        ],
+        "max": [
+          6.54600006043911,
+          5.644599962234498,
+          1.8000000044703484
+        ],
+        "size": [
+          10.805807676911353,
+          5.644599962234498,
+          3.7055239126086237
+        ],
+        "triangles": 4241
+      }
+    },
+    "commercial-frontage-shell": {
+      "license": "CC0 1.0 Universal (Kenney derivative)",
+      "sourceUrl": "https://kenney.nl/assets",
+      "sourceMeshes": [
+        "/assets/glb/kenney/commercial/store-general.glb",
+        "/assets/glb/kenney/industrial/workshop-industrial.glb",
+        "/assets/glb/kenney/commercial/cafe-bistro.glb",
+        "/assets/glb/kenney/commercial/detail-awning.glb",
+        "/assets/glb/kenney/industrial/warehouse.glb"
+      ],
+      "measuredBounds": {
+        "min": [
+          -11.567000022530555,
+          -7.826979199399165e-34,
+          -1.0588999927043914
+        ],
+        "max": [
+          11.6062500923872,
+          3.0820000171661377,
+          1.6222586989402772
+        ],
+        "size": [
+          23.173250114917757,
+          3.0820000171661377,
+          2.6811586916446686
+        ],
+        "triangles": 7132
+      }
+    },
+    "residential-cottage-shell": {
+      "license": "CC0 1.0 Universal (Kenney derivative)",
+      "sourceUrl": "https://kenney.nl/assets",
+      "sourceMeshes": [
+        "/assets/glb/kenney/suburban/home-cottage.glb",
+        "/assets/glb/kenney/suburban/path-stones-short.glb",
+        "/assets/glb/kenney/suburban/planter.glb",
+        "/assets/glb/kenney/suburban/path-short.glb"
+      ],
+      "measuredBounds": {
+        "min": [
+          -1.4400000035762786,
+          0,
+          -0.655499991774559
+        ],
+        "max": [
+          1.0511000394821166,
+          1.2512500524520875,
+          1.6100000016391278
+        ],
+        "size": [
+          2.4911000430583954,
+          1.2512500524520875,
+          2.2654999934136866
+        ],
+        "triangles": 1988
+      }
+    },
+    "residential-gable-shell": {
+      "license": "CC0 1.0 Universal (Kenney derivative)",
+      "sourceUrl": "https://kenney.nl/assets",
+      "sourceMeshes": [
+        "/assets/glb/kenney/suburban/home-type-a.glb",
+        "/assets/glb/kenney/suburban/home-type-c.glb",
+        "/assets/glb/kenney/suburban/apartment-block.glb",
+        "/assets/glb/kenney/suburban/path-stones-messy.glb"
+      ],
+      "measuredBounds": {
+        "min": [
+          -2.9549999833106995,
+          0,
+          -0.6425861269235611
+        ],
+        "max": [
+          1.0075091600418091,
+          2.7402491569519043,
+          1.4348777905106544
+        ],
+        "size": [
+          3.9625091433525084,
+          2.7402491569519043,
+          2.0774639174342155
+        ],
+        "triangles": 4137
+      }
+    }
+  }
+}

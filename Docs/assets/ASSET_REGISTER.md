@@ -35,6 +35,19 @@ Source pack: [Kenney Modular Buildings 2.1](https://kenney.nl/assets/modular-bui
 
 Full curated list (**30 modules**): see `Docs/milestones/WF02/r12_modular_audit.json`. Rollback: `WORLD_LAB_MODULAR_PROTOTYPE = false` in `src/world/worldLabModularMode.ts`.
 
+## WF02 R13 Prototype Shells (offline kitbash)
+
+Source: CC0 Kenney City Kit + Suburban + Industrial prefabs merged offline — **not** runtime modular cell assembly. Import: `npm run import:wf02-r13-shells`. Provenance: `Docs/milestones/WF02/r13_shell_provenance.json`.
+
+| Path | Role | License |
+|---|---|---|
+| `public/assets/glb/wf02/prototype-shells/wf02-civic-enclosure-shell.glb` | S1 civic landmark shell | CC0 1.0 derivative |
+| `public/assets/glb/wf02/prototype-shells/wf02-commercial-frontage-shell.glb` | S2 3-bay storefront shell | CC0 1.0 derivative |
+| `public/assets/glb/wf02/prototype-shells/wf02-residential-cottage-shell.glb` | S3 M02 home cottage shell | CC0 1.0 derivative |
+| `public/assets/glb/wf02/prototype-shells/wf02-residential-gable-shell.glb` | S4 taller gable home shell | CC0 1.0 derivative |
+
+Rollback: `WORLD_LAB_PROTOTYPE_SHELL = false` → R12 modular (`WORLD_LAB_MODULAR_PROTOTYPE = true`) or both false → R10 prefabs.
+
 ## WF01 curated imports — full provenance
 
 | Local renamed path | Original Kenney identifier | Pack | Source URL | License | Download | Modifications |

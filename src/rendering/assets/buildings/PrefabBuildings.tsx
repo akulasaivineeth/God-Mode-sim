@@ -9,6 +9,7 @@ import {
   resolveVisualTransform,
 } from './buildingPresentationAnchors';
 import { isBuildingSuppressedByModular } from '@/rendering/modular/modularMode';
+import { isBuildingSuppressedByShell } from '@/rendering/prototypeShell/prototypeShellMode';
 import { BUILDING_PREFABS, getBuildingPosition } from './buildingPrefabConfig';
 import { CANONICAL_TOWN } from '@/world/townLayout';
 
@@ -16,6 +17,7 @@ const ACTIVE_BUILDING_IDS = new Set(CANONICAL_TOWN.buildings.map((b) => b.id));
 const ACTIVE_PREFABS = BUILDING_PREFABS.filter((config) => ACTIVE_BUILDING_IDS.has(config.buildingId));
 
 function PrefabBuilding({ config }: { config: (typeof BUILDING_PREFABS)[number] }) {
+  if (isBuildingSuppressedByShell(config.buildingId)) return null;
   if (isBuildingSuppressedByModular(config.buildingId)) return null;
 
   const { x, z } = getBuildingPosition(config.buildingId);

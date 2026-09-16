@@ -1,3 +1,4 @@
+import { isPrototypeShellActive } from '@/rendering/prototypeShell/prototypeShellMode';
 import { isWorldLabActive } from '@/world/resolver/worldResolver';
 import { WORLD_LAB_MODULAR_PROTOTYPE } from '@/world/worldLabModularMode';
 
@@ -10,6 +11,7 @@ const MODULAR_SUPPRESSED_BUILDINGS = new Set([
 ]);
 
 export function isModularPrototypeActive(): boolean {
+  if (isPrototypeShellActive()) return false;
   return isWorldLabActive() && WORLD_LAB_MODULAR_PROTOTYPE;
 }
 

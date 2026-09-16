@@ -39,8 +39,16 @@ function rotateXZ(x: number, z: number, rotationY: number): [number, number] {
 import { isModularPrototypeActive } from '../modular/modularMode';
 import { findAssemblyForBuilding } from '../modular/modularAssemblies';
 import { resolveModularAssemblyAabb } from '../modular/modularPresentationBounds';
+import { isPrototypeShellActive } from '../prototypeShell/prototypeShellMode';
+import { findShellForBuilding } from '../prototypeShell/prototypeShellRegistry';
+import { resolvePrototypeShellAabb } from '../prototypeShell/prototypeShellBounds';
 
 export function resolvePresentationWorldAabb(buildingId: string): PresentationWorldAabb {
+  if (isPrototypeShellActive()) {
+    const shell = findShellForBuilding(buildingId);
+    if (shell) return resolvePrototypeShellAabb(shell);
+  }
+
   if (isModularPrototypeActive()) {
     const assembly = findAssemblyForBuilding(buildingId);
     if (assembly) return resolveModularAssemblyAabb(assembly);

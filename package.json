@@ -26,6 +26,8 @@
     "import:wf02-r11-modular": "node scripts/wf02-r11-modular-import.mjs",
     "audit:wf02-r11-modular": "node scripts/wf02-r11-modular-import.mjs",
     "audit:wf02-r13-architecture-source": "node scripts/wf02-r13-architecture-source-audit.mjs",
+    "import:wf02-r13-shells": "node scripts/wf02-r13-shell-import.mjs",
+    "capture:wf02-r13-prototype": "node scripts/wf02-r13-prototype-capture.mjs",
     "import:wf02-r12-modular": "node scripts/wf02-r12-modular-import.mjs",
     "audit:wf02-r12-modular": "node scripts/wf02-r12-modular-import.mjs",
     "capture:wf02-r11-prototype": "node scripts/wf02-r11-prototype-capture.mjs",

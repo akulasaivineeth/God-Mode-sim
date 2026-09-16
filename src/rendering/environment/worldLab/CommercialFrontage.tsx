@@ -4,6 +4,7 @@
 import { Suspense, useMemo } from 'react';
 import { terrainHeightAt } from '@/world/townLayout';
 import { isModularPrototypeActive } from '@/rendering/modular/modularMode';
+import { isPrototypeShellActive } from '@/rendering/prototypeShell/prototypeShellMode';
 import { buildCommercialFrontageSpec } from '@/world/worldLab/districtCompositionSpec';
 import { KENNEY_ASSETS } from '../../assets/EnvironmentAssetRegistry';
 import {
@@ -22,6 +23,7 @@ const SCATTER = {
 } as const;
 
 export function CommercialFrontage() {
+  const shellActive = isPrototypeShellActive();
   const modularActive = isModularPrototypeActive();
   const spec = useMemo(() => buildCommercialFrontageSpec(), []);
   const gltfPlacements = useMemo<GltfInstancePlacement[]>(
@@ -57,7 +59,7 @@ export function CommercialFrontage() {
     return groups;
   }, [spec.scatter]);
 
-  if (modularActive) return null;
+  if (shellActive || modularActive) return null;
 
   return (
     <group name="world-lab-commercial-frontage">

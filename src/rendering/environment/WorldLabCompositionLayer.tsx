@@ -10,6 +10,7 @@ import { ResidentialGardens } from './worldLab/ResidentialGardens';
 import { VegetationFrame } from './worldLab/VegetationFrame';
 import { WorldLabGroundTint } from './worldLab/WorldLabGroundTint';
 import { ModularAssemblyLayer } from '@/rendering/modular/ModularAssemblyLayer';
+import { PrototypeShellLayer } from '@/rendering/prototypeShell/PrototypeShellLayer';
 
 export function WorldLabCompositionLayer() {
   if (!isWorldLabActive()) return null;
@@ -18,6 +19,7 @@ export function WorldLabCompositionLayer() {
     <group name="world-lab-composition-r10">
       <WorldLabGroundTint />
       <Suspense fallback={null}>
+        <PrototypeShellLayer />
         <ModularAssemblyLayer />
         <CivicEnclosure />
         <CommercialFrontage />
