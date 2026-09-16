@@ -5,6 +5,7 @@
  *        npm run capture:wf02-evidence
  */
 import { chromium } from '@playwright/test';
+import sharp from 'sharp';
 import { copyFile, mkdir, writeFile, unlink } from 'node:fs/promises';
 import { readFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -105,6 +106,67 @@ async function applyShotCamera(page, shot) {
   }
 }
 
+async function buildCompareStrip(panels, outFile) {
+  const resized = [];
+  for (const panel of panels) {
+    const buf = await sharp(panel.file)
+      .resize(480, 300, { fit: 'cover' })
+      .extend({ top: 28, bottom: 0, left: 0, right: 0, background: { r: 20, g: 24, b: 28 } })
+      .composite([
+        {
+          input: Buffer.from(
+            `<svg width="480" height="28"><text x="8" y="20" fill="white" font-size="14" font-family="sans-serif">${panel.label}</text></svg>`,
+          ),
+          top: 0,
+          left: 0,
+        },
+      ])
+      .png()
+      .toBuffer();
+    resized.push(buf);
+  }
+  const width = 480 * panels.length;
+  const strip = await sharp({
+    create: { width, height: 328, channels: 4, background: { r: 16, g: 18, b: 22 } },
+  })
+    .composite(
+      resized.map((input, index) => ({
+        input,
+        left: 480 * index,
+        top: 0,
+      })),
+    )
+    .png()
+    .toBuffer();
+  await writeFile(outFile, strip);
+}
+
+async function publishRelease(releaseTag, manifest, files) {
+  try {
+    execSync(`gh release view ${releaseTag} --repo ${REPO}`, { stdio: 'ignore' });
+    execSync(`gh release delete ${releaseTag} --repo ${REPO} --yes`, { stdio: 'inherit' });
+  } catch {
+    /* first publish */
+  }
+  const notes = [
+    'WF02 R7.1 Phase 1 — VisualTownLayout + hero-core envelope composition (real engine pixels)',
+    '',
+    `Commit: ${manifest.sha}`,
+    `Overview: ${manifest.overviewDiagnostics?.drawCalls} draw calls / ${manifest.overviewDiagnostics?.triangles} triangles`,
+    `Angled: ${manifest.angledDiagnostics?.drawCalls} draw calls / ${manifest.angledDiagnostics?.triangles} triangles`,
+    `Street: ${manifest.streetDiagnostics?.drawCalls} draw calls / ${manifest.streetDiagnostics?.triangles} triangles`,
+    `Asset errors: ${manifest.networkAssetErrors.length} network / ${manifest.consoleErrors.length} console`,
+    '',
+    'Primary compare: R6 blocked BEFORE → R7.1 Phase 1 AFTER → north star (Overview + Angled).',
+  ].join('\n');
+  const fileArgs = files.map((f) => `${path.join(OUT, f)}#${f}`).join(' ');
+  execSync(
+    `gh release create ${releaseTag} --repo ${REPO} --title "WF02 R7.1 Phase 1 builder evidence" --notes "${notes.replace(/"/g, '\\"')}" ${fileArgs}`,
+    { stdio: 'inherit' },
+  );
+  return `https://github.com/${REPO}/releases/tag/${releaseTag}`;
+}
+
 async function captureShot(page, shot) {
   if (shot.simMinute != null) {
     await page.evaluate((minute) => window.__GODMODE_EVIDENCE__?.stepToSimMinute(minute), shot.simMinute);
@@ -181,6 +243,8 @@ async function main() {
 
   const wf01File = path.join(OUT, '00_before_wf01_overview.png');
   execSync(`curl -fsSL "${WF01_OVERVIEW_URL}" -o "${wf01File}"`, { stdio: 'inherit' });
+  const r6Blocked = path.join(OUT, '00_prior_r6_blocked_overview_dawn.png');
+  execSync(`curl -fsSL "${R6_BLOCKED_URL}" -o "${r6Blocked}"`, { stdio: 'inherit' });
   const r51Blocked = path.join(OUT, '00_prior_r51_blocked_overview_dawn.png');
   try {
     execSync(`curl -fsSL "${R51_BLOCKED_URL}" -o "${r51Blocked}"`, { stdio: 'pipe' });
@@ -208,24 +272,48 @@ async function main() {
   const northStarDest = path.join(OUT, '00_north_star_reference.png');
   if (existsSync(NORTH_STAR)) await copyFile(NORTH_STAR, northStarDest);
 
-  const compareHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>WF02 R6 Visual Gate</title>
+  const primaryCompareHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>WF02 R7.1 Phase 1 Primary Compare</title>
+<style>body{font-family:system-ui;background:#1a1a1a;color:#eee;padding:16px}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.col{background:#2a2a2a;padding:8px;border-radius:8px}
+img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px;font-size:12px}</style></head><body>
+<h1>WF02 R7.1 Phase 1 — R6 BEFORE → R7.1 AFTER → North Star (frozen cameras)</h1><div class="row">
+<div class="col"><div class="label">R6 blocked BEFORE (743a259)</div><img src="00_prior_r6_blocked_overview_dawn.png"/></div>
+<div class="col"><div class="label">R7.1 AFTER Overview dawn</div><img src="01_wf02_overview_dawn.png"/></div>
+<div class="col"><div class="label">R7.1 AFTER Overview noon</div><img src="01b_wf02_overview_noon.png"/></div>
+<div class="col"><div class="label">R7.1 AFTER Angled</div><img src="02_wf02_angled.png"/></div>
+<div class="col"><div class="label">North Star</div><img src="00_north_star_reference.png"/></div>
+</div></body></html>`;
+  await writeFile(path.join(OUT, 'compare_r6_r71_northstar.html'), primaryCompareHtml);
+
+  await buildCompareStrip(
+    [
+      { file: r6Blocked, label: 'R6 blocked BEFORE @743a259' },
+      { file: path.join(OUT, '01_wf02_overview_dawn.png'), label: 'R7.1 AFTER Overview dawn' },
+      { file: path.join(OUT, '02_wf02_angled.png'), label: 'R7.1 AFTER Angled' },
+      { file: northStarDest, label: 'North star' },
+    ],
+    path.join(OUT, 'compare_r6_r71_northstar.png'),
+  );
+
+  const lineageCompareHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>WF02 Lineage Compare</title>
 <style>body{font-family:system-ui;background:#1a1a1a;color:#eee;padding:16px}
 .row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.col{background:#2a2a2a;padding:8px;border-radius:8px}
 img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px;font-size:12px}</style></head><body>
-<h1>WF02 R6 — WF01 → R4.1 → R5.1 blocked → R6 CURRENT → North Star (Overview dawn)</h1><div class="row">
+<h1>WF02 lineage — WF01 → blocked attempts → R7.1 Phase 1 (Overview dawn)</h1><div class="row">
 <div class="col"><div class="label">WF01 BEFORE</div><img src="00_before_wf01_overview.png"/></div>
 <div class="col"><div class="label">R4.1 blocked</div><img src="00_prior_r41_blocked_overview_dawn.png"/></div>
 <div class="col"><div class="label">R5.1 blocked</div><img src="00_prior_r51_blocked_overview_dawn.png"/></div>
-<div class="col"><div class="label">R6 CURRENT dawn</div><img src="01_wf02_overview_dawn.png"/></div>
-<div class="col"><div class="label">R6 noon</div><img src="01b_wf02_overview_noon.png"/></div>
+<div class="col"><div class="label">R6 blocked</div><img src="00_prior_r6_blocked_overview_dawn.png"/></div>
+<div class="col"><div class="label">R7.1 Phase 1 dawn</div><img src="01_wf02_overview_dawn.png"/></div>
 <div class="col"><div class="label">North Star</div><img src="00_north_star_reference.png"/></div>
 </div></body></html>`;
-  await writeFile(path.join(OUT, 'compare_before_after_northstar.html'), compareHtml);
+  await writeFile(path.join(OUT, 'compare_before_after_northstar.html'), lineageCompareHtml);
 
   const sha = gitSha();
   const manifest = {
     workItem: 'WF02',
-    planRevision: '6',
+    planRevision: '7.1',
+    phase: 'PHASE_1',
     sha,
     releaseTag: `${RELEASE_TAG_PREFIX}-${sha.slice(0, 7)}`,
     overviewDiagnostics,
@@ -236,23 +324,58 @@ img{width:100%;border-radius:4px}.label{font-weight:600;margin-bottom:6px;font-s
     consoleErrors: watchers.consoleErrors.filter((l) => /gltf|glb|asset|404/i.test(l)),
     shots: results.map(({ name, hash, diagnostics }) => ({ name, hash, diagnostics })),
     performanceGate: {
-      overviewDrawCallsMax: 140,
+      overviewDrawCallsTarget: 125,
+      overviewDrawCallsHardMax: 135,
+      overviewTrianglesTarget: 100_000,
+      overviewTrianglesHardMax: 118_000,
       streetDrawCallsMax: 100,
       overviewDrawCalls: overviewDiagnostics?.drawCalls,
       streetDrawCalls: streetDiagnostics?.drawCalls,
       overviewTriangles: overviewDiagnostics?.triangles,
       streetTriangles: streetDiagnostics?.triangles,
+      angledDrawCalls: angledDiagnostics?.drawCalls,
+      angledTriangles: angledDiagnostics?.triangles,
     },
     notes: [
-      'WF02 R6 Mass Silhouette System — Kenney Canopy Clusters + Canopy Volume Primitives (presentation-only)',
-      'Overview/Angled mount zero Quaternius; warm atlas frozen from R5.1',
+      'WF02 R7.1 Phase 1 — VisualTownLayout + hero-core envelope fills + presentation vertical layer',
+      'Real engine pixels only — composited Phase 0 overlays are not visual PASS',
       'Authoritative Overview: 01_wf02_overview_dawn.png / 01b_wf02_overview_noon.png only',
-      'Compare strip: WF01 → R4.1 blocked → R5.1 blocked → R6 → north star',
+      'Primary compare: compare_r6_r71_northstar.png (R6 blocked → R7.1 Overview/Angled → north star)',
       'Simulation authority and facilityPoints unchanged from WF01',
     ],
   };
   await writeFile(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2));
-  console.log(`Release tag (publish before READY): ${manifest.releaseTag}`);
+
+  const releaseFiles = [
+    'manifest.json',
+    'compare_r6_r71_northstar.png',
+    'compare_r6_r71_northstar.html',
+    'compare_before_after_northstar.html',
+    '00_prior_r6_blocked_overview_dawn.png',
+    '00_north_star_reference.png',
+    '01_wf02_overview_dawn.png',
+    '01b_wf02_overview_noon.png',
+    '02_wf02_angled.png',
+    '03_wf02_civic.png',
+    '04_wf02_residential_lots.png',
+    '05_wf02_commercial_work.png',
+    '05b_wf02_store_workshop.png',
+    '06_wf02_farm_edge.png',
+    '07_wf02_river_park.png',
+    '08_wf02_street_lived_in.png',
+    '09_attachment_house1.png',
+    '10_attachment_store.png',
+    '11_attachment_workshop.png',
+    '12_attachment_community.png',
+    '13_attachment_farmhouse.png',
+    '14_silhouette_residential.png',
+    '15_organic_commercial.png',
+    '16_wf02_night.png',
+  ];
+  const releaseUrl = await publishRelease(manifest.releaseTag, manifest, releaseFiles);
+  manifest.releaseUrl = releaseUrl;
+  await writeFile(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2));
+
   await browser.close();
   console.log(JSON.stringify(manifest, null, 2));
 }
