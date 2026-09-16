@@ -289,8 +289,8 @@
   },
   "allWithinMaxOffset": true,
   "phase1": {
-    "generatedAt": "2026-09-16T01:03:55.235Z",
-    "headSha": "a13a5818d8474998ba0b7a4d34914b2cc7d6538c",
+    "generatedAt": "2026-09-16T01:20:19.467Z",
+    "headSha": "6dcd830c5861eec56fe8e2eeb10bf9f6720e0f7a",
     "envelopeFillMinimums": {
       "orchardBlockKccMin": 40,
       "civicPlazaCvpMin": 20
