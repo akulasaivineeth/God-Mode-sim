@@ -45,14 +45,13 @@ describe('WF02 building presentation scale', () => {
     expect(urls.size).toBe(14);
   });
 
-  it('keeps M02 trio aligned (no presentation offset except workshop R3 offset)', () => {
-    for (const id of ['house-1', 'store'] as const) {
-      const t = resolvePresentationTransform(id);
-      expect(t.positionOffset).toEqual([0, 0, 0]);
-      expect(t.rotationDelta).toBe(0);
-    }
+  it('keeps M02 sim centers while applying R7.1 visual offsets', () => {
+    const store = resolvePresentationTransform('store');
+    expect(store.positionOffset).toEqual([1, 0, -5]);
+    const house1 = resolvePresentationTransform('house-1');
+    expect(house1.positionOffset).toEqual([3, 0, 2]);
     const workshop = resolvePresentationTransform('workshop');
-    expect(workshop.positionOffset).toEqual([0.6, 0, 1.8]);
+    expect(workshop.positionOffset).toEqual([1, 0, -3]);
   });
 
   it('derives anchor extras on scaled facade without manual coordinates', () => {
@@ -66,28 +65,29 @@ describe('WF02 building presentation scale', () => {
     }
   });
 
-  it('applies R3 workshop presentation offset to maximize store/workshop clearance', () => {
+  it('R7.1 visual transforms preserve store/workshop presentation AABB gap', () => {
     const store = BUILDING_PREFABS.find((c) => c.buildingId === 'store')!;
     const workshop = BUILDING_PREFABS.find((c) => c.buildingId === 'workshop')!;
+    const storeTransform = resolvePresentationTransform('store');
+    const workshopTransform = resolvePresentationTransform('workshop');
     const storeFoot = resolveRotatedFootprint(
       resolveNormalizedLayout(store.assetUrl, store.targetWidth),
-      store.rotationY ?? 0,
+      (store.rotationY ?? 0) + storeTransform.rotationDelta,
     );
-    const workshopTransform = resolvePresentationTransform('workshop');
     const workshopFoot = resolveRotatedFootprint(
       resolveNormalizedLayout(workshop.assetUrl, workshop.targetWidth),
       (workshop.rotationY ?? 0) + workshopTransform.rotationDelta,
     );
-    const storeCenter = { x: -11, z: 11 };
-    const naiveGap =
-      Math.abs(23 - storeCenter.z) - storeFoot.halfWidthZ - workshopFoot.halfWidthZ;
-    const offsetGap =
-      Math.abs(23 + workshopTransform.positionOffset[2] - storeCenter.z) -
-      storeFoot.halfWidthZ -
-      workshopFoot.halfWidthZ;
+    const storeCenter = { x: -11 + storeTransform.positionOffset[0], z: 11 + storeTransform.positionOffset[2] };
+    const workshopCenter = {
+      x: -11 + workshopTransform.positionOffset[0],
+      z: 23 + workshopTransform.positionOffset[2],
+    };
+    const gapZ =
+      workshopCenter.z - workshopFoot.halfWidthZ - (storeCenter.z + storeFoot.halfWidthZ);
     expect(workshop.targetWidth).toBe(15.0);
-    expect(workshopTransform.positionOffset).toEqual([0.6, 0, 1.8]);
-    expect(offsetGap).toBeGreaterThan(naiveGap);
+    expect(workshopTransform.positionOffset).toEqual([1, 0, -3]);
+    expect(gapZ).toBeGreaterThanOrEqual(0.1);
   });
 });
 

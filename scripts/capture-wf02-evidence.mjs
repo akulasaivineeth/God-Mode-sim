@@ -14,7 +14,9 @@ import { execSync } from 'node:child_process';
 const OUT = '/opt/cursor/artifacts/wf02_evidence';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
 const NORTH_STAR = 'Docs/art-direction/references/god-mode-town-north-star.png';
-const RELEASE_TAG_PREFIX = 'review-evidence-wf02-r6';
+const RELEASE_TAG_PREFIX = 'review-evidence-wf02-r71';
+const R6_BLOCKED_URL =
+  'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf02-r6-743a259/01_wf02_overview_dawn.png';
 const R41_BLOCKED_URL =
   'https://github.com/akulasaivineeth/God-Mode-sim/releases/download/review-evidence-wf02-r41-6dbd8b5/01_wf02_overview_dawn.png';
 const R51_BLOCKED_URL =

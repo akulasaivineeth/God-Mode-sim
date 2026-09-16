@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BUILDING_PREFABS } from '@/rendering/assets/buildings/buildingPrefabConfig';
-import { resolvePresentationTransform } from '@/rendering/assets/buildings/buildingPresentationAnchors';
+import { resolveVisualTransform } from '@/rendering/assets/buildings/buildingPresentationAnchors';
 import {
   resolveNormalizedLayout,
   resolveRotatedFootprint,
@@ -22,7 +22,7 @@ import { CANONICAL_TOWN } from '@/world/townLayout';
 function presentationAabb(buildingId: string) {
   const config = BUILDING_PREFABS.find((c) => c.buildingId === buildingId)!;
   const b = CANONICAL_TOWN.buildings.find((x) => x.id === buildingId)!;
-  const t = resolvePresentationTransform(buildingId);
+  const t = resolveVisualTransform(buildingId);
   const foot = resolveRotatedFootprint(
     resolveNormalizedLayout(config.assetUrl, config.targetWidth),
     (config.rotationY ?? 0) + t.rotationDelta,
@@ -77,11 +77,11 @@ describe('WF02 R6 overview composition', () => {
     expect(isBaselineVegetationVisible('overview')).toBe(false);
   });
 
-  it('keeps store/workshop presentation AABB gap non-negative', () => {
+  it('keeps store/workshop presentation AABB gap ≥ 0.10 m', () => {
     const store = presentationAabb('store');
     const workshop = presentationAabb('workshop');
     const gapZ = workshop.minZ - store.maxZ;
-    expect(gapZ).toBeGreaterThanOrEqual(0);
+    expect(gapZ).toBeGreaterThanOrEqual(0.1);
   });
 
   it('overview Kenney placements use at most two tree URLs', () => {

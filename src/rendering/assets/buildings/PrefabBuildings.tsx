@@ -6,13 +6,13 @@ import { ModelAsset } from '../ModelAsset';
 import { WorldSign } from '../WorldSign';
 import {
   resolveBuildingAnchors,
-  resolvePresentationTransform,
+  resolveVisualTransform,
 } from './buildingPresentationAnchors';
 import { BUILDING_PREFABS, getBuildingPosition } from './buildingPrefabConfig';
 
 function PrefabBuilding({ config }: { config: (typeof BUILDING_PREFABS)[number] }) {
   const { x, z } = getBuildingPosition(config.buildingId);
-  const presentation = resolvePresentationTransform(config.buildingId);
+  const presentation = resolveVisualTransform(config.buildingId);
   const y = terrainHeightAt(x + presentation.positionOffset[0], z + presentation.positionOffset[2]);
   const rotY = (config.rotationY ?? 0) + presentation.rotationDelta;
   const anchors = resolveBuildingAnchors(config);

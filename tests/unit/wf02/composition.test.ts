@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CAMERA_PRESETS } from '@/rendering/cameraPresets';
 import { resolvePresentationTransform } from '@/rendering/assets/buildings/buildingPresentationAnchors';
-import { CANONICAL_TOWN } from '@/world/townLayout';
 import { KENNEY_ASSETS } from '@/rendering/assets/EnvironmentAssetRegistry';
 import {
   ORCHARD_BLOCK_KCC,
@@ -20,27 +19,27 @@ describe('WF02 R3/R4.1/R6 composition envelopes', () => {
     expect(CAMERA_PRESETS['store-workshop'].target).toEqual([-11, 2, 17]);
   });
 
-  it('applies R3 workshop presentation offset and rotation', () => {
+  it('applies R7.1 workshop visual mapping from VisualTownLayout', () => {
     const t = resolvePresentationTransform('workshop');
-    expect(t.positionOffset).toEqual([0.6, 0, 1.8]);
+    expect(t.positionOffset).toEqual([1, 0, -3]);
     expect(t.rotationDelta).toBeCloseTo(-0.03, 3);
   });
 
-  it('R6 places dense Kenney orchard block via massSilhouettePlacements', () => {
-    const orchard = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3');
-    expect(orchard).toBeDefined();
+  it('R7.1 places dense Kenney orchard block inside hero envelope', () => {
     const orchardTrees = ORCHARD_BLOCK_KCC.filter(
       (t) =>
         t.url === KENNEY_ASSETS.treeSmall &&
-        Math.abs(t.x - orchard!.center.x) < 10 &&
-        Math.abs(t.z - orchard!.center.z) < 10,
+        t.x >= 52 &&
+        t.x <= 88 &&
+        t.z >= 58 &&
+        t.z <= 78,
     );
-    expect(orchardTrees.length).toBeGreaterThanOrEqual(30);
+    expect(orchardTrees.length).toBeGreaterThanOrEqual(40);
   });
 
-  it('R6 provides orchard perimeter treeLarge frame near farmhouse district', () => {
-    const perimeterLarge = ORCHARD_BLOCK_KCC.filter((t) => t.url === KENNEY_ASSETS.treeLarge);
-    expect(perimeterLarge.length).toBeGreaterThanOrEqual(8);
+  it('R7.1 orchard block is solid treeSmall grid (no sparse perimeter-only frame)', () => {
+    expect(ORCHARD_BLOCK_KCC.every((t) => t.url === KENNEY_ASSETS.treeSmall)).toBe(true);
+    expect(ORCHARD_BLOCK_KCC.length).toBeGreaterThanOrEqual(40);
   });
 
   it('adds residential Kenney street trees via MSS district tier', () => {

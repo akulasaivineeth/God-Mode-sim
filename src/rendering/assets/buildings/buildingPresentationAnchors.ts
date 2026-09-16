@@ -13,6 +13,7 @@ import {
   type FacadeDirection,
 } from '../modelLayout';
 import type { BuildingPrefabConfig } from './buildingPrefabConfig';
+import { resolveVisualTransform as resolveVisualTransformFromLayout } from '../../environment/VisualTownLayout';
 
 export type AnchorExtraKind =
   | 'awning'
@@ -59,27 +60,13 @@ const EXTRA_ASSET: Record<AnchorExtraKind, string> = {
   'parasol-right': KENNEY_ASSETS.cafeParasol,
 };
 
-/** Bounded presentation-only transforms — M02 trio + civic anchors stay aligned. */
+/** Bounded presentation-only transforms — R7.1 VisualTownLayout authority. */
 export function resolvePresentationTransform(buildingId: string): PresentationTransform {
-  switch (buildingId) {
-    case 'house-2':
-      return { positionOffset: [0.35, 0, -0.25], rotationDelta: 0.06 };
-    case 'house-4':
-      return { positionOffset: [-0.2, 0, 0.3], rotationDelta: -0.04 };
-    case 'cafe':
-      return { positionOffset: [0.4, 0, -0.15], rotationDelta: 0.05 };
-    case 'clinic':
-      return { positionOffset: [-0.3, 0, 0.2], rotationDelta: -0.03 };
-    case 'apartment':
-      return { positionOffset: [0.25, 0, 0.35], rotationDelta: 0.04 };
-    case 'utility':
-      return { positionOffset: [-0.35, 0, -0.2], rotationDelta: -0.05 };
-    case 'workshop':
-      // Presentation-only offset — breaks store collinearity; sim center unchanged.
-      return { positionOffset: [0.6, 0, 1.8], rotationDelta: -0.03 };
-    default:
-      return { positionOffset: [0, 0, 0], rotationDelta: 0 };
-  }
+  return resolveVisualTransformFromLayout(buildingId);
+}
+
+export function resolveVisualTransform(buildingId: string): PresentationTransform {
+  return resolveVisualTransformFromLayout(buildingId);
 }
 
 function lateralOffset(facade: FacadeDirection, distance: number, side: 'left' | 'right'): [number, number, number] {
@@ -200,7 +187,7 @@ function resolveExtra(
 }
 
 export function resolveBuildingAnchors(config: BuildingPrefabConfig): BuildingPresentationAnchors {
-  const presentation = resolvePresentationTransform(config.buildingId);
+  const presentation = resolveVisualTransformFromLayout(config.buildingId);
   const rotY = (config.rotationY ?? 0) + presentation.rotationDelta;
   const layout = resolveNormalizedLayout(config.assetUrl, config.targetWidth);
   const footprint = resolveRotatedFootprint(layout, rotY);

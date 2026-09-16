@@ -1,5 +1,5 @@
 /**
- * WF02 R6 deterministic mass silhouette tables — KCC + CVP batch exports.
+ * WF02 R7.1 deterministic mass silhouette tables — hero-core envelope fills + KCC/CVP.
  */
 import type { CameraView } from '../cameraPresets';
 import { CANONICAL_TOWN } from '@/world/townLayout';
@@ -7,58 +7,54 @@ import { isCompositionTierVisible } from './compositionVisibility';
 import type { MassingGltfPlacement } from './districtMassing';
 import type { VolumeScatterPoint } from './massSilhouetteBuilders';
 import {
-  buildCivicVolumePlacements,
-  buildFieldBandRows,
-  buildFutureLotGardenVolumes,
-  buildOrchardBlockKenney,
-  buildParkPromenadeVolumes,
   buildParkRiverArcKenney,
   buildPeripheryForestKenney,
-  buildResidentialGardenVolumes,
+  buildFutureLotGardenVolumes,
   buildResidentialStreetTrees,
-  buildRingKenneyPlacements,
 } from './massSilhouetteBuilders';
-import { KENNEY_ASSETS } from '../assets/EnvironmentAssetRegistry';
+import {
+  buildCivicHeroEnvelopeFills,
+  buildCommercialFrontageCvp,
+  buildEmbankmentEdgeCvp,
+  buildFieldBandEnvelopeCvp,
+  buildOrchardBlockEnvelopeKcc,
+  buildParkUFrameCvp,
+  buildResidentialClusterCvp,
+} from './envelopeFillBuilders';
 
-const orchardCenter = CANONICAL_TOWN.farmPlots.find((p) => p.id === 'farm-3')!.center;
-const squareCenter = CANONICAL_TOWN.square.center;
+const orchardVisualCenter = { x: 70, z: 68 };
 
-/** Kenney orchard hero block — interior grid + perimeter frame. */
-export const ORCHARD_BLOCK_KCC: readonly MassingGltfPlacement[] = buildOrchardBlockKenney(orchardCenter);
+/** R7.1 solid orchard block inside hero envelope. */
+export const ORCHARD_BLOCK_KCC: readonly MassingGltfPlacement[] = buildOrchardBlockEnvelopeKcc();
 
-/** Kenney park/river arc canopy. */
+/** Kenney park/river arc canopy (supplement to U-frame CVP). */
 export const PARK_RIVER_ARC_KCC: readonly MassingGltfPlacement[] = buildParkRiverArcKenney();
 
 /** Kenney north/west periphery forest wall. */
 export const PERIPHERY_FOREST_FRAME_KCC: readonly MassingGltfPlacement[] = buildPeripheryForestKenney();
 
-/** Civic plaza tree ring. */
-export const CIVIC_COLONNADE_KCC: readonly MassingGltfPlacement[] = buildRingKenneyPlacements(
-  squareCenter,
-  9.5,
-  12,
-  KENNEY_ASSETS.treeLarge,
-  1.12,
-);
+const civicHero = buildCivicHeroEnvelopeFills();
 
-/** Residential dual street-tree lines. */
-export const RESIDENTIAL_STREET_TREES_KCC: readonly MassingGltfPlacement[] =
-  buildResidentialStreetTrees();
+/** Civic plaza warm pad + colonnade ring. */
+export const CIVIC_COLONNADE_KCC: readonly MassingGltfPlacement[] = civicHero.colonnadeKcc;
 
 /** Orchard south field-band CVP rows. */
-export const ORCHARD_FIELD_BAND_CVP: readonly VolumeScatterPoint[] = buildFieldBandRows(
-  orchardCenter,
-  3,
-  10,
-  2.8,
-  12,
-);
+export const ORCHARD_FIELD_BAND_CVP: readonly VolumeScatterPoint[] = buildFieldBandEnvelopeCvp();
 
-/** Park promenade lawn mass arc. */
-export const PARK_PROMENADE_CVP: readonly VolumeScatterPoint[] = buildParkPromenadeVolumes();
+/** Park U-frame promenade mass. */
+export const PARK_PROMENADE_CVP: readonly VolumeScatterPoint[] = [
+  ...buildParkUFrameCvp(),
+];
 
-export const CIVIC_PLAZA_CVP: readonly VolumeScatterPoint[] = buildCivicVolumePlacements();
-export const RESIDENTIAL_GARDEN_CVP: readonly VolumeScatterPoint[] = buildResidentialGardenVolumes();
+export const CIVIC_PLAZA_CVP: readonly VolumeScatterPoint[] = [
+  ...civicHero.plazaCvp,
+  ...buildEmbankmentEdgeCvp(),
+];
+
+export const COMMERCIAL_FRONTAGE_CVP: readonly VolumeScatterPoint[] = buildCommercialFrontageCvp();
+
+export const RESIDENTIAL_GARDEN_CVP: readonly VolumeScatterPoint[] = buildResidentialClusterCvp();
+
 export const FUTURE_LOT_GARDEN_CVP: readonly VolumeScatterPoint[] = buildFutureLotGardenVolumes();
 
 /** @deprecated R5.1 Quaternius tier removed in R6 */
@@ -72,6 +68,9 @@ export const PARK_RIVER_ARC = PARK_RIVER_ARC_KCC;
 
 /** Legacy export name — Kenney periphery wall. */
 export const PERIPHERY_FOREST_FRAME = PERIPHERY_FOREST_FRAME_KCC;
+
+/** Residential dual street-tree lines along cluster edge. */
+export const RESIDENTIAL_STREET_TREES_KCC: readonly MassingGltfPlacement[] = buildResidentialStreetTrees();
 
 export function buildKenneyPlacementsForView(cameraView: CameraView): MassingGltfPlacement[] {
   const all: MassingGltfPlacement[] = [];
@@ -101,7 +100,12 @@ export function buildVolumePlacementsForView(cameraView: CameraView): {
   const fieldWarm: VolumeScatterPoint[] = [];
 
   if (isCompositionTierVisible('core', cameraView)) {
-    canopyWarm.push(...CIVIC_PLAZA_CVP, ...RESIDENTIAL_GARDEN_CVP, ...FUTURE_LOT_GARDEN_CVP);
+    canopyWarm.push(
+      ...CIVIC_PLAZA_CVP,
+      ...COMMERCIAL_FRONTAGE_CVP,
+      ...RESIDENTIAL_GARDEN_CVP,
+      ...FUTURE_LOT_GARDEN_CVP,
+    );
   }
   if (isCompositionTierVisible('orchard', cameraView)) {
     fieldWarm.push(...ORCHARD_FIELD_BAND_CVP);
@@ -111,4 +115,14 @@ export function buildVolumePlacementsForView(cameraView: CameraView): {
   }
 
   return { canopyWarm, fieldWarm };
+}
+
+/** Orchard visual anchor for tests/diagnostics. */
+export function getOrchardVisualCenter() {
+  return orchardVisualCenter;
+}
+
+/** Square center retained for civic reference tests. */
+export function getSquareCenter() {
+  return CANONICAL_TOWN.square.center;
 }
