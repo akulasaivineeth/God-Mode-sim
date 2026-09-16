@@ -25,4 +25,13 @@ describe('ARCH-003 no Math.random in simulation', () => {
       expect(content.includes('Math.random')).toBe(false);
     }
   });
+
+  it('ARCH01 Spike T sources do not call Math.random', () => {
+    const spikeRoot = 'src/spikes/arch01-t';
+    const files = listTsFiles(spikeRoot);
+    for (const file of files) {
+      const content = readFileSync(file, 'utf8');
+      expect(content.includes('Math.random')).toBe(false);
+    }
+  });
 });
