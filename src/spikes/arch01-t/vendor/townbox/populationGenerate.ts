@@ -7,7 +7,7 @@ import { sampleMaxChildren } from './fertility.js';
 import { isAliveAt } from './kinship.js';
 import type { NameService } from './nameService.js';
 import populationConfig from './config/population.json';
-import { SeededRandom } from './seededRandom.js';
+import type { SpikeRng } from '../../adapters/rngAdapter.js';
 import type { GenPerson, PersonId, PersonTable, PopulationParams, PopulationState } from './types/genealogy.js';
 import { Genders, type Gender } from './types/social.js';
 
@@ -21,11 +21,10 @@ interface Couple {
 }
 
 export function generatePopulation(
-  seed: number,
+  rng: SpikeRng,
   params: PopulationParams,
-  createNames: (rng: SeededRandom) => NameService = (rng) => createNameService(rng),
+  createNames: (rng: SpikeRng) => NameService = (rng) => createNameService(rng),
 ): PopulationState {
-  const rng = new SeededRandom(seed);
   const names = createNames(rng);
 
   const people: PersonTable = {};
@@ -222,7 +221,7 @@ export function generatePopulation(
   }
 
   return {
-    worldSeed: seed,
+    worldSeed: rng.getState(),
     people,
     drawSeed: rng.getState(),
     placedIds: [],

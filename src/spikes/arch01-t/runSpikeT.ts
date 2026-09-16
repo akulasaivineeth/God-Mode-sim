@@ -1,4 +1,5 @@
-import { populationSeedFromWorld, worldSeedNumeric } from './adapters/seedAdapter.js';
+import { createPopulationRng, worldSeedNumeric } from './adapters/seedAdapter.js';
+import { restoreSpikeRng } from './adapters/rngAdapter.js';
 import {
   facilityIdForDrawSlot,
   householdIdForDrawSlot,
@@ -12,7 +13,6 @@ import { SpikeEventLog } from './schema/spikeEvents.js';
 import { DEFAULT_DRAW_PARAMS, selectHousehold } from './vendor/townbox/householdDraw.js';
 import { DEFAULT_POPULATION_PARAMS, generatePopulation } from './vendor/townbox/populationGenerate.js';
 import type { GenPerson, PopulationState } from './vendor/townbox/types/genealogy.js';
-import { SeededRandom } from './vendor/townbox/seededRandom.js';
 
 export const SPIKE_T_CANONICAL_SEED = 'GODMODE_SPIKE_T_CANONICAL_2026';
 export const SPIKE_HOUSE_CAPACITY = 4;
@@ -52,8 +52,8 @@ function buildObjectiveTables(state: PopulationState): Record<string, ObjectiveP
 
 export function runSpikeT(worldSeed: string = SPIKE_T_CANONICAL_SEED): SpikeTResult {
   const params = { ...DEFAULT_POPULATION_PARAMS, ticksPerYear: TICKS_PER_YEAR };
-  const populationSeed = populationSeedFromWorld(worldSeed);
-  const state = generatePopulation(populationSeed, params);
+  const populationRng = createPopulationRng(worldSeed);
+  const state = generatePopulation(populationRng, params);
   state.worldSeed = worldSeedNumeric(worldSeed);
 
   const eventLog = new SpikeEventLog();
@@ -69,7 +69,7 @@ export function runSpikeT(worldSeed: string = SPIKE_T_CANONICAL_SEED): SpikeTRes
   );
 
   const households: ObjectiveHousehold[] = [];
-  const drawRng = new SeededRandom(state.drawSeed);
+  const drawRng = restoreSpikeRng(state.drawSeed);
 
   for (let drawIndex = 0; drawIndex < SPIKE_HOUSE_COUNT; drawIndex++) {
     const peopleBefore = Object.keys(state.people).length;

@@ -15,7 +15,7 @@ import {
   unclesAuntsOf,
 } from './kinship.js';
 import type { NameService } from './nameService.js';
-import { SeededRandom } from './seededRandom.js';
+import type { SpikeRng } from '../../adapters/rngAdapter.js';
 import type { GenPerson, PersonId, PopulationState } from './types/genealogy.js';
 import { HouseholdArrangements, type DrawParams, type HouseholdArrangement } from './types/household.js';
 import { Genders, type Gender } from './types/social.js';
@@ -30,12 +30,12 @@ export interface HouseholdSelection {
 
 export function selectHousehold(
   state: PopulationState,
-  rng: SeededRandom,
+  rng: SpikeRng,
   currentTick: number,
   capacity: number,
   ticksPerYear: number,
   params: DrawParams = DEFAULT_DRAW_PARAMS,
-  createNames: (rng: SeededRandom, salt: number) => NameService = defaultNameFactory,
+  createNames: (rng: SpikeRng, salt: number) => NameService = defaultNameFactory,
 ): HouseholdSelection {
   const pool = state.people;
   const placed = new Set(state.placedIds);
@@ -169,7 +169,7 @@ export function selectHousehold(
   return immigrantHousehold(state, rng, currentTick, cap, ticksPerYear, createNames);
 }
 
-function defaultNameFactory(rng: SeededRandom, salt: number): NameService {
+function defaultNameFactory(rng: SpikeRng, salt: number): NameService {
   return createFamilyNameService(rng, salt);
 }
 
@@ -182,11 +182,11 @@ function commitPlacement(state: PopulationState, placed: Set<PersonId>, members:
 
 function immigrantHousehold(
   state: PopulationState,
-  rng: SeededRandom,
+  rng: SpikeRng,
   currentTick: number,
   capacity: number,
   ticksPerYear: number,
-  createNames: (rng: SeededRandom, salt: number) => NameService,
+  createNames: (rng: SpikeRng, salt: number) => NameService,
 ): HouseholdSelection {
   const names = createNames(rng, rng.nextInt(1, 0x7fffffff));
   const familyName = names.familyName();
@@ -251,7 +251,7 @@ function immigrantHousehold(
   };
 }
 
-function pickArrangement(rng: SeededRandom, weights: Partial<Record<HouseholdArrangement, number>>): HouseholdArrangement {
+function pickArrangement(rng: SpikeRng, weights: Partial<Record<HouseholdArrangement, number>>): HouseholdArrangement {
   const entries = Object.entries(weights) as [HouseholdArrangement, number][];
   const total = entries.reduce((sum, [, weight]) => sum + weight, 0);
   let roll = rng.next() * total;
@@ -264,7 +264,7 @@ function pickArrangement(rng: SeededRandom, weights: Partial<Record<HouseholdArr
   return HouseholdArrangements.Nuclear;
 }
 
-function shuffle<T>(items: T[], rng: SeededRandom): T[] {
+function shuffle<T>(items: T[], rng: SpikeRng): T[] {
   const copy = [...items];
   for (let i = copy.length - 1; i > 0; i--) {
     const j = rng.nextInt(0, i);

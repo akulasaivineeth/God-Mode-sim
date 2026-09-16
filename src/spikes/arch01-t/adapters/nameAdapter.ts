@@ -1,5 +1,5 @@
 import type { NameService } from '../vendor/townbox/nameService.js';
-import { SeededRandom } from '../vendor/townbox/seededRandom.js';
+import { forkSpikeRng, type SpikeRng } from './rngAdapter.js';
 import { Genders, type Gender } from '../vendor/townbox/types/social.js';
 
 const MALE_GIVEN = [
@@ -18,8 +18,8 @@ const FAMILY = [
   'Redmond', 'Sterling', 'Thornton', 'Underwood', 'Vance', 'Whitmore', 'York', 'Zimmerman',
 ];
 
-export function createNameService(rng: SeededRandom, salt = 0): NameService {
-  const stream = salt ? rng.fork(salt) : rng;
+export function createNameService(rng: SpikeRng, salt = 0): NameService {
+  const stream = salt ? forkSpikeRng(rng, salt) : rng;
 
   return {
     firstName(gender: Gender): string {
@@ -32,13 +32,13 @@ export function createNameService(rng: SeededRandom, salt = 0): NameService {
   };
 }
 
-export function createFamilyNameService(rng: SeededRandom, salt: number): NameService {
-  const stream = rng.fork(salt);
+export function createFamilyNameService(rng: SpikeRng, salt: number): NameService {
+  const stream = forkSpikeRng(rng, salt);
   const familyName = FAMILY[stream.nextInt(0, FAMILY.length - 1)]!;
   return {
     firstName(gender: Gender): string {
       const pool = gender === Genders.Male ? MALE_GIVEN : FEMALE_GIVEN;
-      const nameStream = stream.fork(gender === Genders.Male ? 1 : 2);
+      const nameStream = forkSpikeRng(stream, gender === Genders.Male ? 1 : 2);
       return pool[nameStream.nextInt(0, pool.length - 1)]!;
     },
     familyName(): string {

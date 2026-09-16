@@ -39,7 +39,7 @@ SOFTWARE.
 | `vendor/townbox/types/genealogy.ts` | `src/types/Genealogy.ts` (subset) |
 | `vendor/townbox/types/household.ts` | `src/types/Household.ts` (subset) |
 | `vendor/townbox/types/social.ts` | `src/types/Social.ts` (enums only) |
-| `vendor/townbox/seededRandom.ts` | `src/util/random.ts` |
+| `vendor/townbox/seededRandom.ts` | `src/util/random.ts` (**reference only** — executable paths use `adapters/rngAdapter.ts` → GOD MODE `Mulberry32Prng`) |
 | `vendor/townbox/config/householdDraw.json` | `src/json/householdDraw.json` |
 | `vendor/townbox/config/population.json` | `src/json/population.json` (`ticksPerYear` 525600; `founderCouples`/`maxPopulation` reduced for spike CI determinism) |
 

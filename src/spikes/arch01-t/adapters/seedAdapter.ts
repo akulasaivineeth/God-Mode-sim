@@ -1,17 +1,8 @@
-import { hashStringToSeed, SeededRandom } from '../vendor/townbox/seededRandom.js';
+import { Mulberry32Prng } from '@/simulation/core/prng';
+import { createPopulationRng } from './rngAdapter.js';
 
-export const POPULATION_STREAM_SALT = 0x5050_0001;
-export const DRAW_STREAM_BASE_SALT = 0x5050_0002;
-
-export function populationSeedFromWorld(worldSeed: string): number {
-  return new SeededRandom(hashStringToSeed(worldSeed)).fork(POPULATION_STREAM_SALT).getState();
-}
-
-export function drawSeedFromPopulationStream(worldSeed: string, drawIndex: number): number {
-  const populationStream = new SeededRandom(hashStringToSeed(worldSeed)).fork(POPULATION_STREAM_SALT);
-  return populationStream.fork(drawIndex + DRAW_STREAM_BASE_SALT).getState();
-}
+export { createPopulationRng };
 
 export function worldSeedNumeric(worldSeed: string): number {
-  return hashStringToSeed(worldSeed) >>> 0;
+  return new Mulberry32Prng(worldSeed).snapshot().state;
 }

@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const SPIKE_ROOT = 'src/spikes/arch01-t';
+const TOWNBOX_SEEDED_RANDOM_REFERENCE = join(SPIKE_ROOT, 'vendor/townbox/seededRandom.ts');
 const PROTECTED_PREFIXES = [
   'src/simulation/',
   'src/rendering/',
@@ -55,6 +56,21 @@ describe('ARCH01 Spike T production wall (P3/P4/P7/P8)', () => {
     }
   });
 
+  it('executable spike paths do not import or construct TownBox SeededRandom', () => {
+    const files = listTsFiles(SPIKE_ROOT).filter((file) => file !== TOWNBOX_SEEDED_RANDOM_REFERENCE);
+    for (const file of files) {
+      const content = readFileSync(file, 'utf8');
+      expect(content).not.toMatch(/from ['"].*seededRandom/);
+      expect(content).not.toMatch(/\bnew\s+SeededRandom\s*\(/);
+    }
+  });
+
+  it('spike RNG adapter is backed by GOD MODE Mulberry32Prng', () => {
+    const content = readFileSync(join(SPIKE_ROOT, 'adapters/rngAdapter.ts'), 'utf8');
+    expect(content).toContain("from '@/simulation/core/prng'");
+    expect(content).toContain('Mulberry32Prng');
+  });
+
   it('spike tree has no unseeded randomness or wall clock', () => {
     const files = listTsFiles(SPIKE_ROOT);
     for (const file of files) {
@@ -65,8 +81,8 @@ describe('ARCH01 Spike T production wall (P3/P4/P7/P8)', () => {
     }
   });
 
-  it('protected production paths have zero diff from main', () => {
-    const diff = execSync('git diff --name-only HEAD', { encoding: 'utf8' }).trim();
+  it('protected production paths have zero diff from origin/main', () => {
+    const diff = execSync('git diff --name-only origin/main...HEAD', { encoding: 'utf8' }).trim();
     const changed = diff ? diff.split('\n') : [];
     for (const file of changed) {
       for (const prefix of PROTECTED_PREFIXES) {

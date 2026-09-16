@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Adapted from TownBox (https://github.com/Maudfer/townBox) @ 84c1ba4 — see src/spikes/arch01-t/THIRD_PARTY_NOTICES.md
+//
+// REFERENCE ONLY — not imported by executable spike paths.
+// Spike RNG authority is GOD MODE Mulberry32Prng via adapters/rngAdapter.ts.
 
 const UINT32 = 0x100000000;
 const imul = Math.imul;

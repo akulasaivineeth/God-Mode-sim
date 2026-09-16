@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'vitest';
+import { createSpikeRng, restoreSpikeRng } from '../../src/spikes/arch01-t/adapters/rngAdapter.js';
 import { DEFAULT_DRAW_PARAMS, selectHousehold } from '../../src/spikes/arch01-t/vendor/townbox/householdDraw.js';
 import { generatePopulation } from '../../src/spikes/arch01-t/vendor/townbox/populationGenerate.js';
 import type { GenPerson, PersonTable, PopulationParams, PopulationState } from '../../src/spikes/arch01-t/vendor/townbox/types/genealogy.js';
 import { HouseholdArrangements, type DrawParams } from '../../src/spikes/arch01-t/vendor/townbox/types/household.js';
 import { Genders, type Gender } from '../../src/spikes/arch01-t/vendor/townbox/types/social.js';
 import { isAliveAt, relationshipLabel } from '../../src/spikes/arch01-t/vendor/townbox/kinship.js';
-import { SeededRandom } from '../../src/spikes/arch01-t/vendor/townbox/seededRandom.js';
 
 const TICKS_PER_YEAR = 360;
 const NOW = 0;
@@ -56,7 +56,7 @@ describe('ARCH01 Spike T household draw (ported TownBox)', () => {
     const bigSib = person('bigSib', Genders.Female, 27, { fatherId: 'dad', motherId: 'mom' });
     const state = makeState([dad, mom, orphan, bigSib]);
 
-    const selection = selectHousehold(state, new SeededRandom(5), NOW, CAPACITY, TICKS_PER_YEAR, weights(HouseholdArrangements.Guardianship));
+    const selection = selectHousehold(state, createSpikeRng('test-guardianship:5'), NOW, CAPACITY, TICKS_PER_YEAR, weights(HouseholdArrangements.Guardianship));
 
     expect(selection.arrangement).toBe(HouseholdArrangements.Guardianship);
     expect(selection.memberIds.sort()).toEqual(['bigSib', 'orphan']);
@@ -65,7 +65,7 @@ describe('ARCH01 Spike T household draw (ported TownBox)', () => {
   test('roommates: unrelated adults co-reside', () => {
     const people = [person('a', Genders.Male, 25), person('b', Genders.Female, 31), person('c', Genders.Male, 28), person('d', Genders.Female, 40)];
     const state = makeState(people);
-    const selection = selectHousehold(state, new SeededRandom(3), NOW, CAPACITY, TICKS_PER_YEAR, weights(HouseholdArrangements.Roommates));
+    const selection = selectHousehold(state, createSpikeRng('test-roommates:3'), NOW, CAPACITY, TICKS_PER_YEAR, weights(HouseholdArrangements.Roommates));
 
     expect(selection.arrangement).toBe(HouseholdArrangements.Roommates);
     expect(selection.memberIds.length).toBeGreaterThanOrEqual(2);
@@ -80,7 +80,7 @@ describe('ARCH01 Spike T household draw (ported TownBox)', () => {
 
   test('immigrant fallback when pool is empty', () => {
     const state = makeState([]);
-    const selection = selectHousehold(state, new SeededRandom(9), NOW, CAPACITY, TICKS_PER_YEAR);
+    const selection = selectHousehold(state, createSpikeRng('test-immigrant:9'), NOW, CAPACITY, TICKS_PER_YEAR);
 
     expect(selection.memberIds.length).toBeGreaterThanOrEqual(1);
     for (const id of selection.memberIds) {
@@ -105,12 +105,13 @@ describe('ARCH01 Spike T household draw (ported TownBox)', () => {
       lifespanSpreadYears: 16,
       maxPopulation: 5000,
     };
-    const state = generatePopulation(98765, params);
-    const rng = new SeededRandom(state.drawSeed);
+    const populationRng = createSpikeRng('test-integration:98765');
+    const state = generatePopulation(populationRng, params);
+    const drawRng = restoreSpikeRng(state.drawSeed);
 
     const seen = new Set<string>();
     for (let i = 0; i < 40; i++) {
-      const selection = selectHousehold(state, rng, NOW, CAPACITY, TICKS_PER_YEAR, DEFAULT_DRAW_PARAMS);
+      const selection = selectHousehold(state, drawRng, NOW, CAPACITY, TICKS_PER_YEAR, DEFAULT_DRAW_PARAMS);
       for (const id of selection.memberIds) {
         expect(seen.has(id)).toBe(false);
         seen.add(id);

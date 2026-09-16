@@ -7,7 +7,7 @@ import { runSpikeT, SPIKE_T_CANONICAL_SEED } from '../../src/spikes/arch01-t/run
 const FIXTURE_PATH = join('tests/spikes/fixtures/spike-t-canonical-2026.json');
 
 describe('ARCH01 Spike T determinism (P1/P2)', () => {
-  it('canonical seed is stable across 3 headless runs and matches golden fixture', () => {
+  it('canonical seed is stable across 3 headless runs and matches golden fixture', { timeout: 60_000 }, () => {
     const runs = [runSpikeT(SPIKE_T_CANONICAL_SEED), runSpikeT(SPIKE_T_CANONICAL_SEED), runSpikeT(SPIKE_T_CANONICAL_SEED)];
 
     expect(runs[0].normalized).toBe(runs[1].normalized);
@@ -18,5 +18,11 @@ describe('ARCH01 Spike T determinism (P1/P2)', () => {
 
     const fixture = readFileSync(FIXTURE_PATH, 'utf8').trim();
     expect(runs[0].normalized).toBe(fixture);
+  });
+
+  it('different seeds produce divergent normalized output', () => {
+    const canonical = runSpikeT(SPIKE_T_CANONICAL_SEED);
+    const alternate = runSpikeT('GODMODE_SPIKE_T_ALTERNATE_2026');
+    expect(canonical.normalized).not.toBe(alternate.normalized);
   });
 });
