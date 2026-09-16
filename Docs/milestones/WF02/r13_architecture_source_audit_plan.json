@@ -1,0 +1,411 @@
+{
+  "generatedAt": "2026-09-16T14:17:59.294Z",
+  "planRevision": 13,
+  "investigationBaseSha": "ab4a8d2a68be55af47d4a042a9d3a63a03d0702b",
+  "r12Performance": {
+    "overviewDc": 100,
+    "overviewTris": 48434,
+    "streetDc": 69,
+    "streetTris": 87159
+  },
+  "strategyComparison": [
+    {
+      "id": "A-modular-assembly",
+      "label": "Continue Kenney Modular Buildings cell assembly",
+      "verdict": "reject",
+      "r11Result": "FIX_REQUIRED @ 4658dd2 — flat tan wall grids",
+      "r12Result": "FIX_REQUIRED @ ab4a8d2 — visually indistinguishable from R11 at Overview/civic",
+      "moduleCount": 30,
+      "estimatedPrototypeInstances": 400,
+      "silhouetteClass": "coplanar-wall-dominant",
+      "northStarFit": "poor"
+    },
+    {
+      "id": "B-prefab-family",
+      "label": "Kenney City Kit finished prefab shells (already registered)",
+      "verdict": "reject-for-prototypes",
+      "r10Result": "FIX_REQUIRED @ 9c64b9c — disconnected boxes; no continuous frontage/civic enclosure",
+      "measuredPrefabs": {
+        "civic-candidate": {
+          "role": "civic-candidate",
+          "path": "public/assets/glb/kenney/commercial/community-hall.glb",
+          "license": "CC0",
+          "bounds": {
+            "min": [
+              -0.8199999928474426,
+              0,
+              -0.5039456486701965
+            ],
+            "max": [
+              0.8200000524520874,
+              0.8930000066757202,
+              0.5039458870887756
+            ],
+            "size": [
+              1.64000004529953,
+              0.8930000066757202,
+              1.0078915357589722
+            ],
+            "triangles": 1509
+          },
+          "heightM": 0.8930000066757202,
+          "widthM": 1.64000004529953,
+          "depthM": 1.0078915357589722,
+          "triangles": 1509
+        },
+        "civic-alt": {
+          "role": "civic-alt",
+          "path": "public/assets/glb/kenney/commercial/school.glb",
+          "license": "CC0",
+          "bounds": {
+            "min": [
+              -0.44179391860961914,
+              0,
+              -0.5039456486701965
+            ],
+            "max": [
+              0.44179391860961914,
+              1.2929999828338623,
+              0.5039454698562622
+            ],
+            "size": [
+              0.8835878372192383,
+              1.2929999828338623,
+              1.0078911185264587
+            ],
+            "triangles": 1512
+          },
+          "heightM": 1.2929999828338623,
+          "widthM": 0.8835878372192383,
+          "depthM": 1.0078911185264587,
+          "triangles": 1512
+        },
+        "commercial-store": {
+          "role": "commercial-store",
+          "path": "public/assets/glb/kenney/commercial/store-general.glb",
+          "license": "CC0",
+          "bounds": {
+            "min": [
+              -0.42000001668930054,
+              0,
+              -0.5149999856948853
+            ],
+            "max": [
+              0.42000001668930054,
+              1.693000078201294,
+              0.5150002241134644
+            ],
+            "size": [
+              0.8400000333786011,
+              1.693000078201294,
+              1.0300002098083496
+            ],
+            "triangles": 1794
+          },
+          "heightM": 1.693000078201294,
+          "widthM": 0.8400000333786011,
+          "depthM": 1.0300002098083496,
+          "triangles": 1794
+        },
+        "commercial-workshop": {
+          "role": "commercial-workshop",
+          "path": "public/assets/glb/kenney/industrial/workshop-industrial.glb",
+          "license": "CC0",
+          "bounds": {
+            "min": [
+              -1.4635876417160034,
+              -6.261583359519332e-34,
+              -0.7110000848770142
+            ],
+            "max": [
+              0.6199999451637268,
+              1.9249999523162842,
+              1.159000039100647
+            ],
+            "size": [
+              2.0835875868797302,
+              1.9249999523162842,
+              1.8700001239776611
+            ],
+            "triangles": 1896
+          },
+          "heightM": 1.9249999523162842,
+          "widthM": 2.0835875868797302,
+          "depthM": 1.8700001239776611,
+          "triangles": 1896
+        },
+        "commercial-cafe": {
+          "role": "commercial-cafe",
+          "path": "public/assets/glb/kenney/commercial/cafe-bistro.glb",
+          "license": "CC0",
+          "bounds": {
+            "min": [
+              -0.48500001430511475,
+              0,
+              -0.4699999690055847
+            ],
+            "max": [
+              0.4850000739097595,
+              1.2929999828338623,
+              0.4700000286102295
+            ],
+            "size": [
+              0.9700000882148743,
+              1.2929999828338623,
+              0.9399999976158142
+            ],
+            "triangles": 1276
+          },
+          "heightM": 1.2929999828338623,
+          "widthM": 0.9700000882148743,
+          "depthM": 0.9399999976158142,
+          "triangles": 1276
+        },
+        "residential-home1": {
+          "role": "residential-home1",
+          "path": "public/assets/glb/kenney/suburban/home-cottage.glb",
+          "license": "CC0",
+          "bounds": {
+            "min": [
+              -0.9140000343322754,
+              0,
+              -0.5699999928474426
+            ],
+            "max": [
+              0.9140000343322754,
+              1.1375000476837158,
+              0.5699999928474426
+            ],
+            "size": [
+              1.8280000686645508,
+              1.1375000476837158,
+              1.1399999856948853
+            ],
+            "triangles": 1748
+          },
+          "heightM": 1.1375000476837158,
+          "widthM": 1.8280000686645508,
+          "depthM": 1.1399999856948853,
+          "triangles": 1748
+        },
+        "residential-home2": {
+          "role": "residential-home2",
+          "path": "public/assets/glb/kenney/suburban/home-type-a.glb",
+          "license": "CC0",
+          "bounds": {
+            "min": [
+              -0.6499999761581421,
+              0,
+              -0.5140689015388489
+            ],
+            "max": [
+              0.6499999761581421,
+              0.8335409760475159,
+              0.5140689015388489
+            ],
+            "size": [
+              1.2999999523162842,
+              0.8335409760475159,
+              1.0281378030776978
+            ],
+            "triangles": 1174
+          },
+          "heightM": 0.8335409760475159,
+          "widthM": 1.2999999523162842,
+          "depthM": 1.0281378030776978,
+          "triangles": 1174
+        }
+      },
+      "silhouetteClass": "finished-monolith-low-rise",
+      "northStarFit": "partial — individual reads OK; 3-bay continuity and civic landmark FAIL without merge",
+      "note": "Repeats R10 failure class for commercial continuity and civic enclosure at prototype fidelity"
+    },
+    {
+      "id": "C-offline-kitbash-shells",
+      "label": "Bounded offline-authored prototype shells (CC0 Kenney sources only)",
+      "verdict": "recommend",
+      "kitbashSources": [
+        "building-sample-house-a.glb",
+        "building-sample-house-b.glb",
+        "building-sample-house-c.glb",
+        "building-sample-tower-a.glb",
+        "community-hall.glb (City Kit mesh extract)",
+        "store-general.glb + detail-awning.glb (City Kit merge)"
+      ],
+      "sampleReferenceMeasures": {
+        "building-sample-house-a": {
+          "bounds": {
+            "min": [
+              -0.5478213429450989,
+              0,
+              -1.0000001192092896
+            ],
+            "max": [
+              0.5478214621543884,
+              1.1437499523162842,
+              1
+            ],
+            "size": [
+              1.0956428050994873,
+              1.1437499523162842,
+              2.0000001192092896
+            ],
+            "triangles": 312
+          },
+          "heightM": 1.1437499523162842,
+          "widthM": 1.0956428050994873,
+          "depthM": 2.0000001192092896,
+          "triangles": 312
+        },
+        "building-sample-house-b": {
+          "bounds": {
+            "min": [
+              -0.5456427335739136,
+              0,
+              -1.100000023841858
+            ],
+            "max": [
+              0.5456427335739136,
+              1.9812500476837158,
+              1.100000023841858
+            ],
+            "size": [
+              1.0912854671478271,
+              1.9812500476837158,
+              2.200000047683716
+            ],
+            "triangles": 374
+          },
+          "heightM": 1.9812500476837158,
+          "widthM": 1.0912854671478271,
+          "depthM": 2.200000047683716,
+          "triangles": 374
+        },
+        "building-sample-house-c": {
+          "bounds": {
+            "min": [
+              -1.0000001192092896,
+              0,
+              -1.100000023841858
+            ],
+            "max": [
+              1.0000001192092896,
+              1.9812500476837158,
+              1.100000023841858
+            ],
+            "size": [
+              2.000000238418579,
+              1.9812500476837158,
+              2.200000047683716
+            ],
+            "triangles": 322
+          },
+          "heightM": 1.9812500476837158,
+          "widthM": 2.000000238418579,
+          "depthM": 2.200000047683716,
+          "triangles": 322
+        },
+        "building-sample-tower-a": {
+          "bounds": {
+            "min": [
+              -0.550000011920929,
+              0,
+              -0.550000011920929
+            ],
+            "max": [
+              0.550000011920929,
+              2.5,
+              0.7000000476837158
+            ],
+            "size": [
+              1.100000023841858,
+              2.5,
+              1.2500000596046448
+            ],
+            "triangles": 398
+          },
+          "heightM": 2.5,
+          "widthM": 1.100000023841858,
+          "depthM": 1.2500000596046448,
+          "triangles": 398
+        }
+      },
+      "proposedShells": [
+        {
+          "shellId": "wf02-civic-enclosure-shell",
+          "role": "civic-enclosure-edge",
+          "sourceDisassembly": [
+            "building-sample-tower-a",
+            "building-sample-house-c wing",
+            "steps-narrow-windows-round bake"
+          ],
+          "targetFootprintM": "18×6",
+          "targetHeightM": 6.5,
+          "estimatedTris": 1200
+        },
+        {
+          "shellId": "wf02-commercial-frontage-shell",
+          "role": "commercial-frontage-3bay",
+          "sourceDisassembly": [
+            "building-sample-house-c wide facade",
+            "store-general door bay",
+            "awning bake"
+          ],
+          "targetFootprintM": "34×5",
+          "targetHeightM": 5.5,
+          "estimatedTris": 1800
+        },
+        {
+          "shellId": "wf02-residential-cottage-shell",
+          "role": "residential-house-1",
+          "sourceDisassembly": [
+            "building-sample-house-a"
+          ],
+          "targetFootprintM": "6×5",
+          "targetHeightM": 4.5,
+          "estimatedTris": 450
+        },
+        {
+          "shellId": "wf02-residential-gable-shell",
+          "role": "residential-house-2",
+          "sourceDisassembly": [
+            "building-sample-house-b"
+          ],
+          "targetFootprintM": "7×6",
+          "targetHeightM": 6,
+          "estimatedTris": 500
+        }
+      ],
+      "estimatedTotalShellTris": 3950,
+      "silhouetteClass": "authored-finished-form",
+      "northStarFit": "best-available-within-license-pipeline",
+      "license": "CC0 1.0 — derivative meshes from approved Kenney packs only; no external import",
+      "rollback": "WORLD_LAB_PROTOTYPE_SHELL=false restores R12 modular assemblies"
+    }
+  ],
+  "recommendation": {
+    "selectedPath": "C-offline-kitbash-shells",
+    "rationale": [
+      "Path A exhausted: R11+R12 consecutive prototype visual FAIL with same modular assembly method",
+      "Path B insufficient: registered City Kit prefabs already failed R10 continuous frontage and civic enclosure reads",
+      "Path C merges finished-form reference meshes (modular sample houses/tower + selective City Kit extracts) into 4 authored shell GLBs with warm colormap — silhouette-first, not cell stacking"
+    ],
+    "rejectedPaths": [
+      "A-modular-assembly",
+      "B-prefab-family"
+    ],
+    "externalFamilyHold": "KayKit and other non-Kenney families remain HOLD unless ChatGPT explicitly approves after Path C prototype FAIL"
+  },
+  "doorHeightTargets": {
+    "visualDoorHeightM": 2.32,
+    "simCitizenHeightM": 1.8,
+    "note": "Shell door sockets must align to frozen sim entrances within 0.3 m"
+  },
+  "performanceBudget": {
+    "overviewDcHardCap": 140,
+    "overviewTrisHardCap": 150000,
+    "streetDcHardCap": 100,
+    "shellPrototypeDcEstimate": "4 shells + props ≤ 12 DC vs R12 ~400 instanced modules",
+    "m03HeadroomNote": "Shell path preserves ≥50k Overview tri slack; M03 still requires citizen LOD/culling"
+  }
+}
