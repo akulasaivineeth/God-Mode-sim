@@ -1,70 +1,63 @@
-# WF02 Build Notes — R10 Phases A–C
+# WF02 Build Notes — R11 Modular Prototype
 
 ## Base
 
-- Plan revision **10** @ `864961d` (approved `PHASE_A_B_C_ONLY — EXISTING_REGISTERED_ASSETS`)
-- Prior blocked: R9 @ `f0d7207` (WF02-R9 — visual gate)
-- Handoff SHA: **`8923425731b2add29daff5637e0e567d618d57af`**
+- Plan revision **11** @ `780e93c` (approved `THREE_STRUCTURE_PROTOTYPE_ONLY`)
+- Prior blocked: R10 @ `9c64b9c` (WF02-R10-FINAL FIX_REQUIRED)
+- Handoff SHA: **`7f968784a3dcaba4f13c6c3c27033f249443c787`**
 
-## Phase A — vocabulary audit
+## Phase 0 — Kenney Modular Buildings import
 
-1. **`scripts/wf02-r10-vocabulary-audit.mjs`** — on-disk Kenney inventory audit vs north-star requirements
-2. **`Docs/milestones/WF02/r10_vocabulary_audit.json`** — measured GLB sizes, north-star gap table, Kenney **conditional** sufficiency verdict
-3. **`npm run audit:wf02-r10-vocabulary`** — re-run audit
+1. **`scripts/wf02-r11-modular-import.mjs`** — curated 18 GLBs + warm atlas
+2. **`Docs/milestones/WF02/r11_modular_audit.json`** — measured grid **1.0 m × 0.625 m story × 1.0 m**
+3. **`npm run import:wf02-r11-modular`**
 
-**Verdict:** Registered Kenney assets can support Phase C assembly for residential/gardens and partial civic/commercial reads. Vertical layering and full civic enclosure may need Phase D modular family **if visual gate still fails** — Phase D **not implemented** in this build.
+## Phase 1 — module abstraction
 
-## Phase B — street portal camera
+1. **`src/rendering/modular/modularModuleRegistry.ts`** — measured module defs
+2. **`src/rendering/modular/modularLayout.ts`** — grid → world instances
+3. **`src/rendering/modular/modularPresentationBounds.ts`** — assembly AABB for street portal
+4. **`src/world/worldLabModularMode.ts`** — `WORLD_LAB_MODULAR_PROTOTYPE` rollback flag
 
-1. **`src/rendering/assets/presentationBounds.ts`** — `resolvePresentationWorldAabb()`, facade-bound AABB from model layout
-2. **`src/rendering/streetPortalCamera.ts`** — `resolveFacilityStreetPortal()`, `resolveStreetCorridorPortal()` with distance/lateral sweep fallback
-3. **`src/rendering/facilityStreetCamera.ts`** — delegates to street portal when World Lab active
-4. **`src/rendering/cameraPresets.ts`** — World Lab street preset from portal resolver (removed hardcoded street from `heroNeighborhood.ts`)
-5. **`tests/unit/wf02/streetPortalCamera.test.ts`** — 6 unit tests
+## Phase 2 — three prototypes
 
-## Phase C — district vocabulary (registered assets only)
+1. **Civic enclosure edge** — `civicEnclosureAssembly.ts` (28 m colonnade @ square south)
+2. **Commercial 3-bay frontage** — `commercialFrontageAssembly.ts` (34 m, height rhythm, store/work doors)
+3. **Residential pair** — `residentialPairAssembly.ts` (8 vs 11 story modules + slanted vs gable roof)
 
-1. **`src/world/worldLab/districtCompositionSpec.ts`** — declarative civic/commercial/residential/future-lot/frame specs
-2. **`src/rendering/environment/worldLab/`** — `CivicEnclosure`, `CommercialFrontage`, `ResidentialGardens`, `FutureLotFrame`, `VegetationFrame`, `WorldLabGroundTint`
-3. **`src/rendering/environment/WorldLabCompositionLayer.tsx`** — orchestrates R10 modules via `InstancedGltfPlacements`
-4. **`src/rendering/environment/VisualTownLayout.ts`** — bounded staging offsets (≤~1 m) for hero buildings
-5. **`src/rendering/assets/buildings/buildingPrefabConfig.ts`** — silhouette variation (house-1 11.8 m, house-2 10.4 m, workshop awning, cafe awning)
+Rendering via **`ModularAssemblyLayer`** + **`InstancedGltfPlacements`**. Kenney prefabs suppressed for replaced buildings only.
 
-## Preserved (simulation semantics)
+## Preserved
 
-- R9 `WorldDefinition` / `worldResolver` / hero neighborhood ~70×58 m layout
-- Action → location mapping, worker authority, seeded determinism
-- Semantic IDs: home / store / work
-- 2.32 m presentation / 1.8 m simulation citizen split
-- Registered Kenney + Quaternius inventory only (no Phase D import)
-- Legacy 240 m layout available via `WORLD_LAB_MODE = false`
+- R9 `WorldDefinition` / resolver / hero neighborhood semantic layout
+- R10 street portal camera (extends modular presentation bounds)
+- Simulation entrances: home **(16, −6.4)**, store **(−14, 10.8)**, work **(4, 10.8)** unchanged
+- Kenney roads/props, Quaternius nature, R10 district layers (except R10 commercial scatter when modular active)
 
 ## Performance (measured live GL @ handoff SHA)
 
 | Preset | Draw calls | Triangles | Gate |
 |---|---:|---:|---|
-| Overview 06:00 | **98** | **28,882** | ≤140 / <150k ✅ |
-| Overview 12:00 | **95** | **28,546** | ≤140 / <150k ✅ |
-| Angled | **96** | **28,548** | info |
-| Street | **59** | **64,889** | ≤100 DC ✅ |
-
-Large headroom vs M2/8GB gates; M03 still requires separate citizen LOD/culling.
+| Overview 06:00 | **89** | **42,372** | ≤140 / <150k ✅ |
+| Overview 12:00 | **86** | **42,036** | ≤140 / <150k ✅ |
+| Street | **62** | **81,385** | ≤100 ✅ |
 
 ## Tests
 
-- `npm run test:all` — typecheck, lint, **182 unit + 7 e2e PASS**, build PASS @ handoff SHA
-- Street portal: `tests/unit/wf02/streetPortalCamera.test.ts`
-- Resolver parity: `tests/unit/world/worldResolver.test.ts`
-- Determinism: `tests/integration/m02/determinism.test.ts`, `tests/integration/determinism.test.ts`
+- `npm run test:all` — **189 unit + 7 e2e PASS**, build PASS @ handoff SHA
+- `tests/unit/wf02/modularAssembly.test.ts` — grid, door binding, portal bounds
 
 ## Evidence
 
-- Tag pattern: `review-evidence-wf02-r10-<sha7>`
-- Shots: Overview dawn/noon, Angled, Street portal, civic/residential/commercial closeups, store/workshop, M02 home/store/workshop street + door scale, future lot, night, R9→R10→north-star compare strip
-- 0 asset/network errors (capture manifest)
+- Manifest: `Docs/milestones/WF02/r11_prototype_manifest.json`
+- Compare: `Docs/milestones/WF02/compare_r10_r11_northstar.png`
+- Tag: `review-evidence-wf02-r11-7f96878`
+
+## Rollback
+
+Set `WORLD_LAB_MODULAR_PROTOTYPE = false` in `src/world/worldLabModularMode.ts` → R10 presentation restored.
 
 ## Not authorized (explicit STOP)
 
-- Phase D modular exterior asset-family import
-- Generic box/building filler, fake future-lot buildings
+- Neighborhood-wide modular replacement
 - 240 m expansion, merge, M03
