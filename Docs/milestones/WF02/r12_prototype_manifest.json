@@ -1,0 +1,169 @@
+{
+  "sha": "26c57f0386b2e58f11ef66e9b0af7bcf85bd77b4",
+  "worldLab": true,
+  "modularPrototype": true,
+  "planRevision": 12,
+  "worldId": "hero-neighborhood-r12-modular",
+  "measuredGridUnit": {
+    "widthM": 1,
+    "depthM": 1,
+    "storyHeightM": 0.625
+  },
+  "moduleCount": 30,
+  "r12NewModules": [
+    "building-window-balcony",
+    "building-steps-narrow-windows",
+    "building-steps-narrow-windows-round",
+    "building-window-large-left",
+    "building-window-large-middle",
+    "building-window-large-right",
+    "building-windows-high-middle",
+    "building-corner-window-top-round",
+    "roof-flat-detail-a",
+    "roof-flat-detail-b",
+    "roof-slanted-window",
+    "roof-slanted-detail"
+  ],
+  "shots": [
+    {
+      "name": "01_r12_overview_dawn",
+      "cam": "overview",
+      "simMinute": 0,
+      "clockLabel": "06:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/01_r12_overview_dawn.png",
+      "sha256": "fab75d18b058ee25d4e7f8ce9138b6fcc34066764ee6f2d417991b541ac7b4a3",
+      "diagnostics": {
+        "drawCalls": 100,
+        "triangles": 48434,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "01b_r12_overview_noon",
+      "cam": "overview",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/01b_r12_overview_noon.png",
+      "sha256": "d0fdcdc93f4b83e0a7ae16d47b2bf705abad79ea67db2ca9e350c93d46d2a093",
+      "diagnostics": {
+        "drawCalls": 97,
+        "triangles": 48098,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "02_r12_angled",
+      "cam": "angled",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/02_r12_angled.png",
+      "sha256": "3010f206c2492e871627ae0c22f53ef37f9c72b66b20dd52eea35a3e51215bbc",
+      "diagnostics": {
+        "drawCalls": 98,
+        "triangles": 48100,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "03_r12_civic_closeup",
+      "cam": "civic",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/03_r12_civic_closeup.png",
+      "sha256": "9d6a7bd24f941ab78e8158c1d5d930c0f05cda1bd02ea68b6bec5a3fe2d9097f"
+    },
+    {
+      "name": "04_r12_commercial_closeup",
+      "cam": "commercial",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/04_r12_commercial_closeup.png",
+      "sha256": "28189cd4a20812879c91be64e9f3a1eb08737c407976966e4873b718f25651e0"
+    },
+    {
+      "name": "05_r12_residential_closeup",
+      "cam": "residential",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/05_r12_residential_closeup.png",
+      "sha256": "a55378aa31fb6bd83269fb714af48767dbab112670f3cac8908f2da017bc0a38"
+    },
+    {
+      "name": "06_r12_street_portal",
+      "cam": "street",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/06_r12_street_portal.png",
+      "sha256": "8a46cad7ec5f1629e1da4668582beba11573a80c8180af73ef1695498b9c3fb1",
+      "diagnostics": {
+        "drawCalls": 69,
+        "triangles": 87159,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "07_r12_home_street",
+      "cam": "home-street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/07_r12_home_street.png",
+      "sha256": "9e83b84384d40ca32386dc2dc17f52668ec167365ef7ee233eceddabf674e32d"
+    },
+    {
+      "name": "08_r12_store_street",
+      "cam": "store-street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/08_r12_store_street.png",
+      "sha256": "cb7003b5032eb80c02e63c40e5052b3d0f2d7db74227ba4c864b11406119126b"
+    },
+    {
+      "name": "09_r12_workshop_street",
+      "cam": "workshop-street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/09_r12_workshop_street.png",
+      "sha256": "f1947d6e0e21f7eb95be8e9c025929060c3bfadde78d02c244f214e5a473e2df"
+    },
+    {
+      "name": "10_r12_street_scale_proof",
+      "cam": "street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/10_r12_street_scale_proof.png",
+      "sha256": "0389250d2c50b01b309c53cd08303dcc3f132e24cf2db18ff1fc32a54f04cb9e",
+      "diagnostics": {
+        "drawCalls": 69,
+        "triangles": 87159,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "11_r12_night",
+      "cam": "overview",
+      "simMinute": 870,
+      "clockLabel": "20:30",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/11_r12_night.png",
+      "sha256": "708159a7516d30c943efda3f4f521ef49b43ac76c804a9e0b3cda4aae8adc84e"
+    }
+  ],
+  "silhouettes": [
+    {
+      "name": "silhouette_civic",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/silhouette_civic.png",
+      "sha256": "5fb611dd02d1384094fca59020c547aef3c97ec8411db340c33c8aff05aad475"
+    },
+    {
+      "name": "silhouette_commercial",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/silhouette_commercial.png",
+      "sha256": "baa3514e936d48d8e0c2cc13ddad7bc576e45358fb59b87a92f44c05060aec4b"
+    },
+    {
+      "name": "silhouette_residential",
+      "file": "/opt/cursor/artifacts/wf02_r12_prototype/silhouette_residential.png",
+      "sha256": "0aa61381d43b9229144330e3f180e058b4aae0eea12cbae8747e897829aeead1"
+    }
+  ],
+  "consoleErrors": [],
+  "networkAssetErrors": []
+}

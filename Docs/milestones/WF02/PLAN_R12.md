@@ -1,10 +1,8 @@
 # WF02 Plan Revision 12 — Architectural Form & Facade Depth Prototype
 
-**State:** WAITING_FOR_CHATGPT_PLAN_APPROVAL  
-**Supersedes:** Plan revision 11 implementation @ `7f968784a3dcaba4f13c6c3c27033f249443c787` (evidence head `4658dd2fec0ebafd9a8b21488f393788a1e218cc`) — WF02-R11-FINAL **FIX_REQUIRED**  
-**Investigation base SHA:** `4658dd2fec0ebafd9a8b21488f393788a1e218cc`  
-**Branch:** `cursor/wf02-scale-calibration-754a`  
-**Scope:** PLAN ONLY — no asset import, production assembly rewrite, evidence capture, neighborhood rollout, merge, or M03 until `[GOD-MODE:CHATGPT-PLAN-DECISION] Decision: APPROVED_TO_BUILD`
+**State:** READY_FOR_REVIEW  
+**Supersedes:** Plan revision 11 implementation @ `4658dd2` — WF02-R11-FINAL **FIX_REQUIRED**  
+**Implementation base:** Plan approved @ `26c57f0` — ChatGPT **APPROVED_TO_BUILD** (THREE_FINISHED_BUILDING_PROTOTYPES_ONLY)
 
 ---
 

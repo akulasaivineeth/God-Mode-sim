@@ -6,7 +6,7 @@ WF02 calibrates presentation scale, camera framing, and **town composition** tow
 
 ## Status
 
-**WAITING_FOR_CHATGPT_PLAN_APPROVAL (R12)** — Plan R11 @ `4658dd2` received **FIX_REQUIRED** (WF02-R11-FINAL). Plan R12 posted; no implementation until approval. Do not merge. Do not start M03. No neighborhood-wide rollout.
+**READY_FOR_REVIEW (R12)** — Plan R12 finished-building prototype implemented @ approved scope. Awaiting independent Grok review. Do not merge. Do not start M03. No neighborhood-wide rollout.
 
 ## Plans
 
@@ -14,26 +14,16 @@ WF02 calibrates presentation scale, camera framing, and **town composition** tow
 |---:|---|---|
 | 10 | [`PLAN_R10.md`](PLAN_R10.md) | Implemented + FIX_REQUIRED @ `9c64b9c` |
 | 11 | [`PLAN_R11.md`](PLAN_R11.md) | Implemented + FIX_REQUIRED @ `4658dd2` |
-| **12** | [`PLAN_R12.md`](PLAN_R12.md) | **WAITING_FOR_CHATGPT_PLAN_APPROVAL** |
+| **12** | [`PLAN_R12.md`](PLAN_R12.md) | **Implemented — READY_FOR_REVIEW** |
 
-## R11 outcome (blocked — preserved as rollback base)
+## R12 deliverables (this handoff)
 
 | Phase | Deliverable |
 |---|---|
-| **0** | Curated Kenney Modular Buildings import (18 GLBs) + `r11_modular_audit.json` |
-| **1** | Module manifest / assembly / bounds abstraction + rollback flag |
-| **2** | 3 prototypes: civic enclosure edge, 3-bay commercial frontage, residential pair |
-| **3** | R10 BEFORE → R11 AFTER → north-star evidence @ `4658dd2` |
-
-**Lesson:** True modularity alone is not art direction — R12 addresses finished architectural form & facade depth.
-
-## R12 plan deliverable (this handoff)
-
-| Item | Artifact |
-|---|---|
-| Plan document | [`PLAN_R12.md`](PLAN_R12.md) |
-| Facade depth audit | [`r12_facade_depth_audit_plan.json`](r12_facade_depth_audit_plan.json) |
-| Audit script | `npm run audit:wf02-r12-facade-depth` |
+| **0** | Same-pack Kenney expansion (+12 modules, 30 total) + `r12_modular_audit.json` |
+| **1** | Authored civic/commercial/residential assemblies with multi-layer facade depth |
+| **2** | Tests + presentation bounds audit (door bindings, Street portal) |
+| **3** | R10 → R11 → R12 → north-star evidence + silhouette thumbnails |
 
 ## Rollback
 

@@ -696,5 +696,221 @@
       0.05000000074505806
     ],
     "triangles": 28
+  },
+  "/assets/glb/kenney/modular/building-window-balcony.glb": {
+    "min": [
+      -0.5,
+      0,
+      -0.574999988079071
+    ],
+    "max": [
+      0.5,
+      0.625,
+      0.574999988079071
+    ],
+    "size": [
+      1,
+      0.625,
+      1.149999976158142
+    ],
+    "triangles": 72
+  },
+  "/assets/glb/kenney/modular/building-steps-narrow-windows.glb": {
+    "min": [
+      -0.5,
+      0,
+      -0.5
+    ],
+    "max": [
+      0.5,
+      0.8374999761581421,
+      0.7000000476837158
+    ],
+    "size": [
+      1,
+      0.8374999761581421,
+      1.2000000476837158
+    ],
+    "triangles": 106
+  },
+  "/assets/glb/kenney/modular/building-steps-narrow-windows-round.glb": {
+    "min": [
+      -0.5,
+      -2.255973158774445e-17,
+      -0.6000000238418579
+    ],
+    "max": [
+      0.5,
+      0.8374999761581421,
+      0.6000000238418579
+    ],
+    "size": [
+      1,
+      0.8374999761581421,
+      1.2000000476837158
+    ],
+    "triangles": 130
+  },
+  "/assets/glb/kenney/modular/building-window-large-left.glb": {
+    "min": [
+      -0.5,
+      0,
+      -0.5
+    ],
+    "max": [
+      0.5,
+      0.625,
+      0.5
+    ],
+    "size": [
+      1,
+      0.625,
+      1
+    ],
+    "triangles": 24
+  },
+  "/assets/glb/kenney/modular/building-window-large-middle.glb": {
+    "min": [
+      -0.5,
+      0,
+      -0.5
+    ],
+    "max": [
+      0.5,
+      0.625,
+      0.5
+    ],
+    "size": [
+      1,
+      0.625,
+      1
+    ],
+    "triangles": 20
+  },
+  "/assets/glb/kenney/modular/building-window-large-right.glb": {
+    "min": [
+      -0.5,
+      0,
+      -0.5
+    ],
+    "max": [
+      0.5,
+      0.625,
+      0.5
+    ],
+    "size": [
+      1,
+      0.625,
+      1
+    ],
+    "triangles": 24
+  },
+  "/assets/glb/kenney/modular/building-windows-high-middle.glb": {
+    "min": [
+      -0.5000001192092896,
+      0,
+      -0.5000001192092896
+    ],
+    "max": [
+      0.5000001192092896,
+      0.625,
+      0.5000001192092896
+    ],
+    "size": [
+      1.000000238418579,
+      0.625,
+      1.000000238418579
+    ],
+    "triangles": 44
+  },
+  "/assets/glb/kenney/modular/building-corner-window-top-round.glb": {
+    "min": [
+      -0.5,
+      0,
+      -0.5
+    ],
+    "max": [
+      0.5,
+      0.625,
+      0.5
+    ],
+    "size": [
+      1,
+      0.625,
+      1
+    ],
+    "triangles": 44
+  },
+  "/assets/glb/kenney/modular/roof-flat-detail-a.glb": {
+    "min": [
+      -0.5,
+      0,
+      -0.5
+    ],
+    "max": [
+      0.5,
+      0.21249999105930328,
+      0.5
+    ],
+    "size": [
+      1,
+      0.21249999105930328,
+      1
+    ],
+    "triangles": 50
+  },
+  "/assets/glb/kenney/modular/roof-flat-detail-b.glb": {
+    "min": [
+      -0.5,
+      0,
+      -0.5
+    ],
+    "max": [
+      0.5,
+      0.21249999105930328,
+      0.5
+    ],
+    "size": [
+      1,
+      0.21249999105930328,
+      1
+    ],
+    "triangles": 48
+  },
+  "/assets/glb/kenney/modular/roof-slanted-window.glb": {
+    "min": [
+      -0.5,
+      -0.05703957751393318,
+      -0.5
+    ],
+    "max": [
+      0.5,
+      0.7249999642372131,
+      0.639176607131958
+    ],
+    "size": [
+      1,
+      0.7820395417511463,
+      1.139176607131958
+    ],
+    "triangles": 80
+  },
+  "/assets/glb/kenney/modular/roof-slanted-detail.glb": {
+    "min": [
+      -0.5,
+      -0.05703957751393318,
+      -0.5
+    ],
+    "max": [
+      0.5,
+      0.7250000238418579,
+      0.639176607131958
+    ],
+    "size": [
+      1,
+      0.7820396013557911,
+      1.139176607131958
+    ],
+    "triangles": 42
   }
 }

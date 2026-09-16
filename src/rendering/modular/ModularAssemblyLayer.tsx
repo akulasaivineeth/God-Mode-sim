@@ -8,12 +8,12 @@ import {
   type GltfInstancePlacement,
 } from '../assets/InstancedGltfPlacements';
 import { isModularPrototypeActive } from './modularMode';
-import { R11_MODULAR_ASSEMBLIES } from './modularAssemblies';
+import { R12_MODULAR_ASSEMBLIES } from './modularAssemblies';
 import { resolveAllModularInstances } from './modularLayout';
 
 function ModularInstances() {
   const instances = useMemo(
-    () => resolveAllModularInstances(R11_MODULAR_ASSEMBLIES),
+    () => resolveAllModularInstances(R12_MODULAR_ASSEMBLIES),
     [],
   );
 
@@ -45,7 +45,7 @@ export function ModularAssemblyLayer() {
   if (!isModularPrototypeActive()) return null;
 
   return (
-    <group name="world-lab-modular-r11">
+    <group name="world-lab-modular-r12">
       <ModularInstances />
     </group>
   );
