@@ -6,27 +6,36 @@ WF02 calibrates presentation scale, camera framing, and **town composition** tow
 
 ## Status
 
-**WAITING_FOR_CHATGPT_PLAN_APPROVAL (R10)** — Plan R9 implemented @ `f0d7207` but **BLOCKED** on visual gate (WF02-R9). Plan R10 posted for vocabulary + street proof. No implementation until `[GOD-MODE:CHATGPT-PLAN-DECISION] APPROVED_TO_BUILD`.
+**READY_FOR_REVIEW (R10)** — Plan R10 Phases A–C implemented @ `8923425`. Awaiting independent Grok review. Do not merge. Do not start M03.
 
 ## Plans
 
 | Revision | Document | State |
 |---:|---|---|
 | 9 | [`PLAN_R9.md`](PLAN_R9.md) | Implemented + BLOCKED @ `f0d7207` |
-| **10** | [`PLAN_R10.md`](PLAN_R10.md) | **WAITING_FOR_CHATGPT_PLAN_APPROVAL** |
+| **10** | [`PLAN_R10.md`](PLAN_R10.md) | **Implemented @ `8923425` — READY_FOR_REVIEW** |
 
-## R9 deliverables (this handoff)
+## R10 deliverables (this handoff)
 
 | Phase | Deliverable |
 |---|---|
-| **0** | `WorldDefinition` API, `worldResolver.ts`, `WORLD_LAB_MODE` flag, legacy rollback (`LEGACY_CANONICAL_TOWN`), resolver parity tests |
-| **1** | ~70×58 m hero neighborhood (7 buildings + 1 future lot), re-authored cameras, `WorldLabCompositionLayer`, compact road topology |
+| **A** | Vocabulary audit script + `r10_vocabulary_audit.json` (Kenney conditional sufficiency verdict) |
+| **B** | `presentationBounds.ts`, `streetPortalCamera.ts`, facade-bound M02 street presets with collision/occlusion fallback |
+| **C** | District composition: civic enclosure, commercial frontage, residential gardens, future-lot frame, vegetation frame via `WorldLabCompositionLayer` + `InstancedGltfPlacements` |
+
+## R9 foundation (preserved)
+
+| Phase | Deliverable |
+|---|---|
+| **0** | `WorldDefinition` API, `worldResolver.ts`, `WORLD_LAB_MODE` flag, legacy rollback |
+| **1** | ~70×58 m hero neighborhood (7 buildings + 1 future lot), compact road topology |
 
 ## Evidence
 
-- Capture: `npm run capture:wf02-r9-neighborhood` → `/opt/cursor/artifacts/wf02_r9_neighborhood/`
-- Manifest: `Docs/milestones/WF02/r9_neighborhood_manifest.json`
-- Compare strip: `Docs/milestones/WF02/compare_r8_r9_northstar.png`
+- Capture: `npm run capture:wf02-r10-neighborhood` → `/opt/cursor/artifacts/wf02_r10_neighborhood/`
+- Manifest: [`r10_neighborhood_manifest.json`](r10_neighborhood_manifest.json)
+- Compare strip: [`compare_r9_r10_northstar.png`](compare_r9_r10_northstar.png)
+- Vocabulary audit: [`r10_vocabulary_audit.json`](r10_vocabulary_audit.json)
 
 ## Rollback
 
