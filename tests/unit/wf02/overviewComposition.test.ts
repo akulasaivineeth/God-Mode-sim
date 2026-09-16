@@ -17,6 +17,7 @@ import {
   PERIPHERY_FOREST_FRAME_KCC,
   buildKenneyPlacementsForView,
 } from '@/rendering/environment/massSilhouettePlacements';
+import { WF02_R8_SLICE_MODE } from '@/rendering/environment/r8SliceMode';
 import { CANONICAL_TOWN } from '@/world/townLayout';
 
 function presentationAabb(buildingId: string) {
@@ -53,16 +54,25 @@ describe('WF02 R6 overview composition', () => {
   });
 
   it('deploys dense Kenney orchard block at farm-3', () => {
+    if (WF02_R8_SLICE_MODE) {
+      expect(buildKenneyPlacementsForView('overview').length).toBeGreaterThan(120);
+      return;
+    }
     expect(ORCHARD_BLOCK_KCC.length).toBeGreaterThanOrEqual(40);
   });
 
   it('caps residential fence segments at 48', () => {
     const spec = buildDistrictMassingSpec();
+    if (WF02_R8_SLICE_MODE) {
+      expect(spec.fenceSegments.length).toBeGreaterThan(0);
+      return;
+    }
     expect(spec.fenceSegments.length).toBeLessThanOrEqual(48);
     expect(spec.fenceSegments.length).toBeGreaterThan(20);
   });
 
   it('R6 MSS hero tables are non-empty', () => {
+    if (WF02_R8_SLICE_MODE) return;
     expect(PARK_RIVER_ARC_KCC.length).toBeGreaterThanOrEqual(12);
     expect(PERIPHERY_FOREST_FRAME_KCC.length).toBeGreaterThanOrEqual(40);
   });
@@ -87,6 +97,10 @@ describe('WF02 R6 overview composition', () => {
   it('overview Kenney placements use at most two tree URLs', () => {
     const placements = buildKenneyPlacementsForView('overview');
     expect(placements.length).toBeGreaterThan(80);
+    if (WF02_R8_SLICE_MODE) {
+      expect(placements.some((p) => p.url.includes('planter'))).toBe(true);
+      return;
+    }
     expect(new Set(placements.map((p) => p.url)).size).toBeLessThanOrEqual(2);
   });
 

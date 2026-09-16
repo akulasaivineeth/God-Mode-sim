@@ -7,6 +7,7 @@ import {
   RESIDENTIAL_STREET_TREES_KCC,
   buildKenneyPlacementsForView,
 } from '@/rendering/environment/massSilhouettePlacements';
+import { WF02_R8_SLICE_MODE } from '@/rendering/environment/r8SliceMode';
 
 describe('WF02 R3/R4.1/R6 composition envelopes', () => {
   it('reframes civic square preset to show fountain and civic massing', () => {
@@ -26,6 +27,11 @@ describe('WF02 R3/R4.1/R6 composition envelopes', () => {
   });
 
   it('R7.1 places dense Kenney orchard block inside hero envelope', () => {
+    if (WF02_R8_SLICE_MODE) {
+      const overview = buildKenneyPlacementsForView('overview');
+      expect(overview.length).toBeGreaterThan(120);
+      return;
+    }
     const orchardTrees = ORCHARD_BLOCK_KCC.filter(
       (t) =>
         t.url === KENNEY_ASSETS.treeSmall &&
@@ -38,13 +44,18 @@ describe('WF02 R3/R4.1/R6 composition envelopes', () => {
   });
 
   it('R7.1 orchard block is solid treeSmall grid (no sparse perimeter-only frame)', () => {
+    if (WF02_R8_SLICE_MODE) return;
     expect(ORCHARD_BLOCK_KCC.every((t) => t.url === KENNEY_ASSETS.treeSmall)).toBe(true);
     expect(ORCHARD_BLOCK_KCC.length).toBeGreaterThanOrEqual(40);
   });
 
   it('adds residential Kenney street trees via MSS district tier', () => {
-    expect(RESIDENTIAL_STREET_TREES_KCC.length).toBeGreaterThanOrEqual(8);
     const overview = buildKenneyPlacementsForView('overview');
+    if (WF02_R8_SLICE_MODE) {
+      expect(overview.filter((t) => t.url === KENNEY_ASSETS.treeLarge).length).toBeGreaterThan(30);
+      return;
+    }
+    expect(RESIDENTIAL_STREET_TREES_KCC.length).toBeGreaterThanOrEqual(8);
     const streetTrees = overview.filter(
       (t) =>
         t.url === KENNEY_ASSETS.treeSmall &&

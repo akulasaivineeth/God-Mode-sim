@@ -21,6 +21,11 @@ import {
   buildParkUFrameCvp,
   buildResidentialClusterCvp,
 } from './envelopeFillBuilders';
+import { WF02_R8_SLICE_MODE } from './r8SliceMode';
+import {
+  buildR8SliceKenneyPlacements,
+  buildR8SliceVolumePlacements,
+} from './r8SliceDensityBuilders';
 
 const orchardVisualCenter = { x: 70, z: 68 };
 
@@ -73,6 +78,12 @@ export const PERIPHERY_FOREST_FRAME = PERIPHERY_FOREST_FRAME_KCC;
 export const RESIDENTIAL_STREET_TREES_KCC: readonly MassingGltfPlacement[] = buildResidentialStreetTrees();
 
 export function buildKenneyPlacementsForView(cameraView: CameraView): MassingGltfPlacement[] {
+  if (WF02_R8_SLICE_MODE) {
+    if (!isCompositionTierVisible('core', cameraView) && !isCompositionTierVisible('district', cameraView)) {
+      return [];
+    }
+    return buildR8SliceKenneyPlacements();
+  }
   const all: MassingGltfPlacement[] = [];
   if (isCompositionTierVisible('core', cameraView)) {
     all.push(...CIVIC_COLONNADE_KCC);
@@ -96,6 +107,12 @@ export function buildVolumePlacementsForView(cameraView: CameraView): {
   canopyWarm: VolumeScatterPoint[];
   fieldWarm: VolumeScatterPoint[];
 } {
+  if (WF02_R8_SLICE_MODE) {
+    if (!isCompositionTierVisible('core', cameraView) && !isCompositionTierVisible('district', cameraView)) {
+      return { canopyWarm: [], fieldWarm: [] };
+    }
+    return buildR8SliceVolumePlacements();
+  }
   const canopyWarm: VolumeScatterPoint[] = [];
   const fieldWarm: VolumeScatterPoint[] = [];
 

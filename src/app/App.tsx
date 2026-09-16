@@ -7,6 +7,8 @@ import {
   recenterOrbitOnPoint,
 } from '@/rendering/cameraPlayerControl';
 import { terrainHeightAt } from '@/world/townLayout';
+import { getR8SliceCompositionCounts } from '@/rendering/environment/r8SliceDensityBuilders';
+import { WF02_R8_SLICE_MODE } from '@/rendering/environment/r8SliceMode';
 import {
   assertCameraOutsideFacilityBuilding,
   computeFacilityStreetPreset,
@@ -400,6 +402,7 @@ export function App() {
           citizenPosition: citizen
             ? { x: citizen.x, z: citizen.z, facingRadians: citizen.facingRadians }
             : null,
+          r8SliceCounts: WF02_R8_SLICE_MODE ? getR8SliceCompositionCounts() : null,
         };
       },
       getRenderDiagnostics: () => readRenderDiagnostics(),

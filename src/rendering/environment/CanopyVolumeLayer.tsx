@@ -9,6 +9,7 @@ import { InstancedScatter } from '../InstancedScatter';
 import { SCATTER_GEOM } from '../scatterGeometries';
 import { DISTRICT_PALETTE } from '../palette/DistrictPalette';
 import { buildVolumePlacementsForView } from './massSilhouettePlacements';
+import { WF02_R8_SLICE_MODE } from './r8SliceMode';
 
 const canopyWarmMaterial = new MeshStandardMaterial({
   color: new Color(DISTRICT_PALETTE.canopyLight),
@@ -40,7 +41,7 @@ export function CanopyVolumeLayer({ cameraView }: { cameraView: CameraView }) {
       {canopyPoints.length > 0 ? (
         <InstancedScatter
           points={canopyPoints}
-          geometry={SCATTER_GEOM.gardenMound}
+          geometry={WF02_R8_SLICE_MODE ? SCATTER_GEOM.civicPlazaMound : SCATTER_GEOM.gardenMound}
           material={canopyWarmMaterial}
           castShadow={false}
         />

@@ -51,6 +51,9 @@ Script: `npm run repack:wf02-atlas` (`scripts/wf02-r51-repack-atlas.mjs`).
 | `roads/road-curve-pavement.glb` | `road-curve-pavement.glb` | City Kit Roads 2.1 | https://kenney.nl/assets/city-kit-roads | CC0 1.0 | 2026-09-13 | T-junction transitions |
 | `roads/road-driveway-double.glb` | `road-driveway-double.glb` | City Kit Roads 2.1 | https://kenney.nl/assets/city-kit-roads | CC0 1.0 | 2026-09-13 | Facility aprons |
 | Suburban props | various | City Kit Suburban | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-13 | Paths, fences, trees |
+| `suburban/planter.glb` | `planter.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-16 | R8 Phase 0b civic anchor + garden bands |
+| `suburban/path-stones-short.glb` | `path-stones-short.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-16 | R8 Phase 0b plaza radial paths |
+| `suburban/path-stones-messy.glb` | `path-stones-messy.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-16 | R8 Phase 0b commercial apron |
 | `gltf/quaternius/*` | Stylized Nature MegaKit | Quaternius | https://opengameart.org/content/stylized-nature-megakit | CC0 1.0 | 2026-09-13 | Instanced vegetation |
 
 ## Character animation (R7)

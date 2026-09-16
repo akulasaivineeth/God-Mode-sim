@@ -7,9 +7,12 @@ import { terrainHeightAt } from '@/world/townLayout';
 import { InstancedScatter, type ScatterPoint } from '../InstancedScatter';
 import { SCATTER_GEOM } from '../scatterGeometries';
 import { MAT } from '../sharedMaterials';
+import { WF02_R8_SLICE_MODE } from './r8SliceMode';
 
 function buildCommercialBenches(): ScatterPoint[] {
-  const zPositions = [12.5, 15.5, 18.5, 22.5];
+  const zPositions = WF02_R8_SLICE_MODE
+    ? [8, 10.5, 13, 15.5, 18, 20.5, 23]
+    : [12.5, 15.5, 18.5, 22.5];
   return zPositions.map((z, i) => ({
     x: -14.2 + (i % 2) * 0.4,
     z,
@@ -19,7 +22,9 @@ function buildCommercialBenches(): ScatterPoint[] {
 }
 
 function buildCommercialLamps(): ScatterPoint[] {
-  const zPositions = [13.5, 19.5, 25.5];
+  const zPositions = WF02_R8_SLICE_MODE
+    ? [7, 9.5, 12, 14.5, 17, 19.5, 22, 24.5]
+    : [13.5, 19.5, 25.5];
   return zPositions.map((z, i) => ({
     x: -15.8 + (i % 2) * 0.3,
     z,
@@ -29,6 +34,19 @@ function buildCommercialLamps(): ScatterPoint[] {
 }
 
 function buildSeparatorBushes(): ScatterPoint[] {
+  if (WF02_R8_SLICE_MODE) {
+    const out: ScatterPoint[] = [];
+    for (let z = 8; z <= 22; z += 2.2) {
+      out.push({
+        x: -12.8,
+        z,
+        y: terrainHeightAt(-12.8, z),
+        scale: 1.15 + (z % 2) * 0.08,
+        rotY: 0.35,
+      });
+    }
+    return out;
+  }
   return [
     { x: -13.2, z: 16.8, y: terrainHeightAt(-13.2, 16.8), scale: 1.05, rotY: 0.4 },
     { x: -12.4, z: 17.4, y: terrainHeightAt(-12.4, 17.4), scale: 0.95, rotY: 1.1 },
@@ -36,7 +54,9 @@ function buildSeparatorBushes(): ScatterPoint[] {
 }
 
 function buildCommercialAprons(): ScatterPoint[] {
-  const zPositions = [13.8, 19.5, 25.2];
+  const zPositions = WF02_R8_SLICE_MODE
+    ? [8, 11, 14, 17, 20, 23]
+    : [13.8, 19.5, 25.2];
   return zPositions.map((z, i) => ({
     x: -11,
     z,

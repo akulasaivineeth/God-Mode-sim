@@ -7,6 +7,10 @@ import * as THREE from 'three';
 const gardenMound = new THREE.SphereGeometry(0.85, 5, 4);
 gardenMound.scale(1, 0.42, 1);
 
+/** WF02 R8 slice — taller plaza/garden mass for Overview readability. */
+const civicPlazaMound = new THREE.SphereGeometry(1.05, 6, 5);
+civicPlazaMound.scale(1, 0.58, 1);
+
 /** WF02 R6 CVP — crop-row segment for orchard field bands. */
 const fieldBand = new THREE.BoxGeometry(0.95, 0.18, 0.38);
 
@@ -22,5 +26,6 @@ export const SCATTER_GEOM = {
   benchSeat: new THREE.BoxGeometry(1.0, 0.12, 0.4).translate(0, 0.18, 0),
   benchBack: new THREE.BoxGeometry(0.95, 0.35, 0.08).translate(0, 0.4, -0.12),
   gardenMound,
+  civicPlazaMound,
   fieldBand,
 };

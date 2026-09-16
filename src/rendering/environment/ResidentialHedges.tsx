@@ -4,8 +4,12 @@
 import { useMemo } from 'react';
 import { buildDistrictMassingSpec } from './districtMassing';
 import { InstancedGltfPlacements } from '../assets/InstancedGltfPlacements';
+import { WF02_R8_SLICE_MODE } from './r8SliceMode';
 
 export function ResidentialHedges() {
-  const segments = useMemo(() => buildDistrictMassingSpec().fenceSegments, []);
+  const segments = useMemo(() => {
+    if (WF02_R8_SLICE_MODE) return [];
+    return buildDistrictMassingSpec().fenceSegments;
+  }, []);
   return <InstancedGltfPlacements placements={segments} />;
 }
