@@ -1,0 +1,163 @@
+{
+  "workItem": "WF02",
+  "planRevision": "8",
+  "phase": "PHASE_0B_SLICE",
+  "sha": "314d57cc088b75c1a837ceb08877955e36c748da",
+  "releaseTag": "review-evidence-wf02-r8-slice-314d57c",
+  "sliceZones": {
+    "civic": {
+      "minX": -40,
+      "maxX": -8,
+      "minZ": -28,
+      "maxZ": 8
+    },
+    "commercial": {
+      "minX": -36,
+      "maxX": 4,
+      "minZ": 0,
+      "maxZ": 24
+    },
+    "residential": {
+      "minX": 8,
+      "maxX": 52,
+      "minZ": -32,
+      "maxZ": -4
+    }
+  },
+  "overviewDawnDiagnostics": {
+    "drawCalls": 124,
+    "triangles": 68570,
+    "source": "live-gl",
+    "simMinute": 0,
+    "clockLabel": "06:00"
+  },
+  "overviewNoonDiagnostics": {
+    "drawCalls": 121,
+    "triangles": 68234,
+    "source": "live-gl",
+    "simMinute": 360,
+    "clockLabel": "12:00"
+  },
+  "streetDiagnostics": {
+    "drawCalls": 83,
+    "triangles": 108418,
+    "source": "live-gl"
+  },
+  "r8SliceCounts": {
+    "kenneyInstances": 180,
+    "cvpCanopyWarm": 525,
+    "civicColonnade": 86,
+    "civicPlazaCvp": 281,
+    "commercialFrontageCvp": 206,
+    "residentialGardenCvp": 38,
+    "residentialStreetTrees": 24,
+    "detailProps": 34
+  },
+  "wholeTownPropagationEstimate": {
+    "note": "Phase 0b slice only — extrapolated full-hero-core multiplier ~2.4× slice DC/tris if orchard/park/periphery re-enabled at slice density",
+    "sliceOverviewDrawCalls": 124,
+    "sliceOverviewTriangles": 68570,
+    "estimatedHeroCoreDrawCalls": 298,
+    "estimatedHeroCoreTriangles": 164568,
+    "hardCeiling": {
+      "overviewDrawCalls": 135,
+      "overviewTriangles": 118000
+    }
+  },
+  "networkAssetErrors": [],
+  "consoleErrors": [],
+  "shots": [
+    {
+      "name": "r8_slice_overview_dawn",
+      "hash": "a36e5aaca07f",
+      "simMinute": 0,
+      "clockLabel": "06:00",
+      "diagnostics": {
+        "drawCalls": 124,
+        "triangles": 68570,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "r8_slice_overview_noon",
+      "hash": "147b85898924",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "diagnostics": {
+        "drawCalls": 121,
+        "triangles": 68234,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "r8_slice_angled",
+      "hash": "32956ffdc742",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "diagnostics": {
+        "drawCalls": 113,
+        "triangles": 71540,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "r8_slice_civic",
+      "hash": "92e85f1897be",
+      "simMinute": 360,
+      "clockLabel": "12:00"
+    },
+    {
+      "name": "r8_slice_commercial",
+      "hash": "7de9caa40266",
+      "simMinute": 360,
+      "clockLabel": "12:00"
+    },
+    {
+      "name": "r8_slice_residential",
+      "hash": "97c36945c10f",
+      "simMinute": 360,
+      "clockLabel": "12:00"
+    },
+    {
+      "name": "r8_slice_store_workshop",
+      "hash": "e8f32bdd8531",
+      "simMinute": 360,
+      "clockLabel": "12:00"
+    },
+    {
+      "name": "r8_slice_attachment_house1",
+      "hash": "7dedce77ff0a",
+      "simMinute": 360,
+      "clockLabel": "12:00"
+    },
+    {
+      "name": "r8_slice_street",
+      "hash": "973903516378",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "diagnostics": {
+        "drawCalls": 83,
+        "triangles": 108418,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "r8_slice_night",
+      "hash": "b86cd0071c39",
+      "simMinute": 870,
+      "clockLabel": "20:30"
+    }
+  ],
+  "importedAssets": [
+    "suburban/planter.glb",
+    "suburban/path-stones-short.glb",
+    "suburban/path-stones-messy.glb"
+  ],
+  "notes": [
+    "Real engine pixels — R8 Phase 0b representative slice only",
+    "§6.3 detail-bench/fountain/lamp-post not in Suburban 2.0 pack; planter + path-stones used with registered provenance",
+    "No Nature Kit / Quaternius impostors",
+    "Clock labels verified via deriveCalendar (dawn=simMinute 0 → 06:00)"
+  ],
+  "releaseUrl": "https://github.com/akulasaivineeth/God-Mode-sim/releases/tag/review-evidence-wf02-r8-slice-314d57c"
+}
