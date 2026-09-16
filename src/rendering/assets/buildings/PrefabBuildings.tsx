@@ -8,6 +8,7 @@ import {
   resolveBuildingAnchors,
   resolveVisualTransform,
 } from './buildingPresentationAnchors';
+import { isBuildingSuppressedByModular } from '@/rendering/modular/modularMode';
 import { BUILDING_PREFABS, getBuildingPosition } from './buildingPrefabConfig';
 import { CANONICAL_TOWN } from '@/world/townLayout';
 
@@ -15,6 +16,8 @@ const ACTIVE_BUILDING_IDS = new Set(CANONICAL_TOWN.buildings.map((b) => b.id));
 const ACTIVE_PREFABS = BUILDING_PREFABS.filter((config) => ACTIVE_BUILDING_IDS.has(config.buildingId));
 
 function PrefabBuilding({ config }: { config: (typeof BUILDING_PREFABS)[number] }) {
+  if (isBuildingSuppressedByModular(config.buildingId)) return null;
+
   const { x, z } = getBuildingPosition(config.buildingId);
   const presentation = resolveVisualTransform(config.buildingId);
   const y = terrainHeightAt(x + presentation.positionOffset[0], z + presentation.positionOffset[2]);

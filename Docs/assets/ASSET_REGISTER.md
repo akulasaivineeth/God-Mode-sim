@@ -18,6 +18,22 @@ Offline hue normalization from approved Kenney pack `colormap.png` sources (512�
 
 Script: `npm run repack:wf02-atlas` (`scripts/wf02-r51-repack-atlas.mjs`).
 
+## WF02 R11 Kenney Modular Buildings (curated subset)
+
+Source pack: [Kenney Modular Buildings 2.1](https://kenney.nl/assets/modular-buildings) — **CC0 1.0 Universal**. Import script: `npm run import:wf02-r11-modular`. Measured grid unit: **1.0 m × 0.625 m story × 1.0 m depth**.
+
+| Local path | Original identifier | License | Role |
+|---|---|---|---|
+| `public/assets/glb/kenney/modular/building-block.glb` | `building-block.glb` | CC0 1.0 | Wall/floor module |
+| `public/assets/glb/kenney/modular/building-corner.glb` | `building-corner.glb` | CC0 1.0 | Corner module |
+| `public/assets/glb/kenney/modular/building-window*.glb` | various | CC0 1.0 | Facade rhythm |
+| `public/assets/glb/kenney/modular/building-door-window*.glb` | various | CC0 1.0 | Shopfront doors |
+| `public/assets/glb/kenney/modular/roof-*.glb` | various | CC0 1.0 | Roof caps / layering |
+| `public/assets/glb/kenney/modular/door-white.glb` | `door-white.glb` | CC0 1.0 | Door detail |
+| `public/assets/glb/kenney/modular/Textures/colormap_warm_modular.png` | `colormap.png` | CC0 1.0 | Warm atlas (repacked) |
+
+Full curated list (18 modules): see `Docs/milestones/WF02/r11_modular_audit.json`. Rollback: `WORLD_LAB_MODULAR_PROTOTYPE = false` in `src/world/worldLabModularMode.ts`.
+
 ## WF01 curated imports — full provenance
 
 | Local renamed path | Original Kenney identifier | Pack | Source URL | License | Download | Modifications |

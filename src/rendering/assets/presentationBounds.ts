@@ -36,7 +36,16 @@ function rotateXZ(x: number, z: number, rotationY: number): [number, number] {
   return [x * cos - z * sin, x * sin + z * cos];
 }
 
+import { isModularPrototypeActive } from '../modular/modularMode';
+import { findAssemblyForBuilding } from '../modular/modularAssemblies';
+import { resolveModularAssemblyAabb } from '../modular/modularPresentationBounds';
+
 export function resolvePresentationWorldAabb(buildingId: string): PresentationWorldAabb {
+  if (isModularPrototypeActive()) {
+    const assembly = findAssemblyForBuilding(buildingId);
+    if (assembly) return resolveModularAssemblyAabb(assembly);
+  }
+
   const config = BUILDING_PREFABS.find((entry) => entry.buildingId === buildingId);
   if (!config) throw new Error(`Unknown building prefab: ${buildingId}`);
 

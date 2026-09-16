@@ -9,6 +9,7 @@ import { FutureLotFrame } from './worldLab/FutureLotFrame';
 import { ResidentialGardens } from './worldLab/ResidentialGardens';
 import { VegetationFrame } from './worldLab/VegetationFrame';
 import { WorldLabGroundTint } from './worldLab/WorldLabGroundTint';
+import { ModularAssemblyLayer } from '@/rendering/modular/ModularAssemblyLayer';
 
 export function WorldLabCompositionLayer() {
   if (!isWorldLabActive()) return null;
@@ -17,6 +18,7 @@ export function WorldLabCompositionLayer() {
     <group name="world-lab-composition-r10">
       <WorldLabGroundTint />
       <Suspense fallback={null}>
+        <ModularAssemblyLayer />
         <CivicEnclosure />
         <CommercialFrontage />
         <ResidentialGardens />

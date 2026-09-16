@@ -1,0 +1,452 @@
+{
+  "building-block": {
+    "moduleId": "building-block",
+    "assetUrl": "/assets/glb/kenney/modular/building-block.glb",
+    "gridWidth": 1,
+    "gridDepth": 1,
+    "gridHeight": 0.625,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.625,
+        0.5
+      ],
+      "size": [
+        1,
+        0.625,
+        1
+      ],
+      "triangles": 12
+    }
+  },
+  "building-corner": {
+    "moduleId": "building-corner",
+    "assetUrl": "/assets/glb/kenney/modular/building-corner.glb",
+    "gridWidth": 1,
+    "gridDepth": 1,
+    "gridHeight": 0.625,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.625,
+        0.5
+      ],
+      "size": [
+        1,
+        0.625,
+        1
+      ],
+      "triangles": 16
+    }
+  },
+  "building-window": {
+    "moduleId": "building-window",
+    "assetUrl": "/assets/glb/kenney/modular/building-window.glb",
+    "gridWidth": 1,
+    "gridDepth": 1,
+    "gridHeight": 0.625,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.625,
+        0.5
+      ],
+      "size": [
+        1,
+        0.625,
+        1
+      ],
+      "triangles": 28
+    }
+  },
+  "building-window-wide": {
+    "moduleId": "building-window-wide",
+    "assetUrl": "/assets/glb/kenney/modular/building-window-wide.glb",
+    "gridWidth": 1,
+    "gridDepth": 1,
+    "gridHeight": 0.625,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.625,
+        0.5
+      ],
+      "size": [
+        1,
+        0.625,
+        1
+      ],
+      "triangles": 28
+    }
+  },
+  "building-window-sill": {
+    "moduleId": "building-window-sill",
+    "assetUrl": "/assets/glb/kenney/modular/building-window-sill.glb",
+    "gridWidth": 1,
+    "gridDepth": 1.050000011920929,
+    "gridHeight": 0.625,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.625,
+        0.550000011920929
+      ],
+      "size": [
+        1,
+        0.625,
+        1.050000011920929
+      ],
+      "triangles": 40
+    }
+  },
+  "building-door-window": {
+    "moduleId": "building-door-window",
+    "assetUrl": "/assets/glb/kenney/modular/building-door-window.glb",
+    "gridWidth": 1,
+    "gridDepth": 1,
+    "gridHeight": 0.625,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.625,
+        0.5
+      ],
+      "size": [
+        1,
+        0.625,
+        1
+      ],
+      "triangles": 44
+    }
+  },
+  "building-door-window-narrow": {
+    "moduleId": "building-door-window-narrow",
+    "assetUrl": "/assets/glb/kenney/modular/building-door-window-narrow.glb",
+    "gridWidth": 1,
+    "gridDepth": 1,
+    "gridHeight": 0.625,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.625,
+        0.5
+      ],
+      "size": [
+        1,
+        0.625,
+        1
+      ],
+      "triangles": 44
+    }
+  },
+  "building-window-awnings": {
+    "moduleId": "building-window-awnings",
+    "assetUrl": "/assets/glb/kenney/modular/building-window-awnings.glb",
+    "gridWidth": 1,
+    "gridDepth": 1.128250002861023,
+    "gridHeight": 0.625,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.5641250014305115
+      ],
+      "max": [
+        0.5,
+        0.625,
+        0.5641250014305115
+      ],
+      "size": [
+        1,
+        0.625,
+        1.128250002861023
+      ],
+      "triangles": 116
+    }
+  },
+  "building-edges-door": {
+    "moduleId": "building-edges-door",
+    "assetUrl": "/assets/glb/kenney/modular/building-edges-door.glb",
+    "gridWidth": 1,
+    "gridDepth": 1,
+    "gridHeight": 0.625,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.625,
+        0.5
+      ],
+      "size": [
+        1,
+        0.625,
+        1
+      ],
+      "triangles": 36
+    }
+  },
+  "building-steps-wide": {
+    "moduleId": "building-steps-wide",
+    "assetUrl": "/assets/glb/kenney/modular/building-steps-wide.glb",
+    "gridWidth": 1,
+    "gridDepth": 1.2000000476837158,
+    "gridHeight": 0.8374999761581421,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.6000000238418579
+      ],
+      "max": [
+        0.5,
+        0.8374999761581421,
+        0.6000000238418579
+      ],
+      "size": [
+        1,
+        0.8374999761581421,
+        1.2000000476837158
+      ],
+      "triangles": 82
+    }
+  },
+  "roof-flat-top": {
+    "moduleId": "roof-flat-top",
+    "assetUrl": "/assets/glb/kenney/modular/roof-flat-top.glb",
+    "gridWidth": 1.100000023841858,
+    "gridDepth": 1.100000023841858,
+    "gridHeight": 0.21249999105930328,
+    "bounds": {
+      "min": [
+        -0.550000011920929,
+        0,
+        -0.550000011920929
+      ],
+      "max": [
+        0.550000011920929,
+        0.21249999105930328,
+        0.550000011920929
+      ],
+      "size": [
+        1.100000023841858,
+        0.21249999105930328,
+        1.100000023841858
+      ],
+      "triangles": 28
+    }
+  },
+  "roof-flat-border-straight": {
+    "moduleId": "roof-flat-border-straight",
+    "assetUrl": "/assets/glb/kenney/modular/roof-flat-border-straight.glb",
+    "gridWidth": 1,
+    "gridDepth": 1,
+    "gridHeight": 0.21249999105930328,
+    "bounds": {
+      "min": [
+        -0.5,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.21249999105930328,
+        0.5
+      ],
+      "size": [
+        1,
+        0.21249999105930328,
+        1
+      ],
+      "triangles": 28
+    }
+  },
+  "roof-flat-awning-a": {
+    "moduleId": "roof-flat-awning-a",
+    "assetUrl": "/assets/glb/kenney/modular/roof-flat-awning-a.glb",
+    "gridWidth": 1.000000238418579,
+    "gridDepth": 1.110000193119049,
+    "gridHeight": 0.21249999105930328,
+    "bounds": {
+      "min": [
+        -0.5000001192092896,
+        0,
+        -0.5000001192092896
+      ],
+      "max": [
+        0.5000001192092896,
+        0.21249999105930328,
+        0.6100000739097595
+      ],
+      "size": [
+        1.000000238418579,
+        0.21249999105930328,
+        1.110000193119049
+      ],
+      "triangles": 28
+    }
+  },
+  "roof-slanted": {
+    "moduleId": "roof-slanted",
+    "assetUrl": "/assets/glb/kenney/modular/roof-slanted.glb",
+    "gridWidth": 1,
+    "gridDepth": 1.139176607131958,
+    "gridHeight": 0.7820395417511463,
+    "bounds": {
+      "min": [
+        -0.5,
+        -0.05703957751393318,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.7249999642372131,
+        0.639176607131958
+      ],
+      "size": [
+        1,
+        0.7820395417511463,
+        1.139176607131958
+      ],
+      "triangles": 28
+    }
+  },
+  "roof-gable": {
+    "moduleId": "roof-gable",
+    "assetUrl": "/assets/glb/kenney/modular/roof-gable.glb",
+    "gridWidth": 1.0912854671478271,
+    "gridDepth": 1,
+    "gridHeight": 0.518750011920929,
+    "bounds": {
+      "min": [
+        -0.5456427335739136,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5456427335739136,
+        0.518750011920929,
+        0.5
+      ],
+      "size": [
+        1.0912854671478271,
+        0.518750011920929,
+        1
+      ],
+      "triangles": 20
+    }
+  },
+  "roof-gable-end": {
+    "moduleId": "roof-gable-end",
+    "assetUrl": "/assets/glb/kenney/modular/roof-gable-end.glb",
+    "gridWidth": 1.0912854671478271,
+    "gridDepth": 1,
+    "gridHeight": 0.518750011920929,
+    "bounds": {
+      "min": [
+        -0.5456427335739136,
+        -4.51194631754889e-17,
+        -0.5
+      ],
+      "max": [
+        0.5456427335739136,
+        0.518750011920929,
+        0.5
+      ],
+      "size": [
+        1.0912854671478271,
+        0.518750011920929,
+        1
+      ],
+      "triangles": 16
+    }
+  },
+  "roof-gable-corner": {
+    "moduleId": "roof-gable-corner",
+    "assetUrl": "/assets/glb/kenney/modular/roof-gable-corner.glb",
+    "gridWidth": 1.0456427335739136,
+    "gridDepth": 1.0456427335739136,
+    "gridHeight": 0.518750011920929,
+    "bounds": {
+      "min": [
+        -0.5456427335739136,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.5,
+        0.518750011920929,
+        0.5456427335739136
+      ],
+      "size": [
+        1.0456427335739136,
+        0.518750011920929,
+        1.0456427335739136
+      ],
+      "triangles": 18
+    }
+  },
+  "door-white": {
+    "moduleId": "door-white",
+    "assetUrl": "/assets/glb/kenney/modular/door-white.glb",
+    "gridWidth": 0.25,
+    "gridDepth": 0.05000000074505806,
+    "gridHeight": 0.5,
+    "bounds": {
+      "min": [
+        -0.125,
+        0,
+        0
+      ],
+      "max": [
+        0.125,
+        0.5,
+        0.05000000074505806
+      ],
+      "size": [
+        0.25,
+        0.5,
+        0.05000000074505806
+      ],
+      "triangles": 28
+    }
+  }
+}
