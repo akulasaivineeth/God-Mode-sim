@@ -1,0 +1,118 @@
+{
+  "generatedAt": "2026-09-16T07:31:28.725Z",
+  "planRevision": 10,
+  "scope": "PHASE_A_B_C_EXISTING_REGISTERED_ASSETS",
+  "heroBuildingCount": 7,
+  "buildings": [
+    {
+      "buildingId": "house-1",
+      "assetUrl": "/assets/glb/kenney/suburban/home-cottage.glb",
+      "targetWidth": 11.8,
+      "intrinsicSize": [
+        1.8280000686645508,
+        1.1375000476837158,
+        1.1399999856948853
+      ],
+      "triangleEstimate": 1
+    },
+    {
+      "buildingId": "house-2",
+      "assetUrl": "/assets/glb/kenney/suburban/home-type-a.glb",
+      "targetWidth": 10.4,
+      "intrinsicSize": [
+        1.2999999523162842,
+        0.8335409760475159,
+        1.0281378030776978
+      ],
+      "triangleEstimate": 0
+    },
+    {
+      "buildingId": "community-hall",
+      "assetUrl": "/assets/glb/kenney/commercial/community-hall.glb",
+      "targetWidth": 16,
+      "intrinsicSize": [
+        1.64000004529953,
+        0.8930000066757202,
+        1.0078915357589722
+      ],
+      "triangleEstimate": 0
+    },
+    {
+      "buildingId": "clinic",
+      "assetUrl": "/assets/glb/kenney/commercial/clinic.glb",
+      "targetWidth": 13.5,
+      "intrinsicSize": [
+        0.8400000333786011,
+        1.2929999828338623,
+        0.8999998569488525
+      ],
+      "triangleEstimate": 0
+    },
+    {
+      "buildingId": "store",
+      "assetUrl": "/assets/glb/kenney/commercial/store-general.glb",
+      "targetWidth": 13.5,
+      "intrinsicSize": [
+        0.8400000333786011,
+        1.693000078201294,
+        1.0300002098083496
+      ],
+      "triangleEstimate": 0
+    },
+    {
+      "buildingId": "cafe",
+      "assetUrl": "/assets/glb/kenney/commercial/cafe-bistro.glb",
+      "targetWidth": 11.6,
+      "intrinsicSize": [
+        0.9700000882148743,
+        1.2929999828338623,
+        0.9399999976158142
+      ],
+      "triangleEstimate": 0
+    },
+    {
+      "buildingId": "workshop",
+      "assetUrl": "/assets/glb/kenney/industrial/workshop-industrial.glb",
+      "targetWidth": 14.2,
+      "intrinsicSize": [
+        2.0835875868797302,
+        1.9249999523162842,
+        1.8700001239776611
+      ],
+      "triangleEstimate": 2
+    }
+  ],
+  "northStarGaps": [
+    {
+      "requirement": "civic_plaza_enclosure",
+      "kenneyOnly": "partial",
+      "gap": "No portico/colonnade meshes — fence/path assembly required"
+    },
+    {
+      "requirement": "commercial_frontage_continuity",
+      "kenneyOnly": "partial",
+      "gap": "Disconnected GLBs — awning/path cadence + ground band required"
+    },
+    {
+      "requirement": "residential_silhouette_variation",
+      "kenneyOnly": "partial",
+      "gap": "Similar suburban types — targetWidth/staging + garden depth required"
+    },
+    {
+      "requirement": "vertical_layering",
+      "kenneyOnly": "fail",
+      "gap": "Single-story colormap meshes — modular family may be needed if Phase C fails"
+    },
+    {
+      "requirement": "street_human_scale_proof",
+      "kenneyOnly": "n/a",
+      "gap": "Camera portal system required (Phase B)"
+    }
+  ],
+  "verdict": {
+    "kenneySufficientForNearTermMilestone": "conditional",
+    "rationale": "Registered Kenney assets can support R10 Phase C assembly pass for residential/gardens and partial civic/commercial reads. Civic enclosure + commercial continuity likely need deliberate multi-part staging; if Phase C compare strip fails, propose one CC0 modular exterior family (Phase D — not authorized in this build).",
+    "phaseDRequiredIfPhaseCFails": true,
+    "proposedFamilyCandidate": "KayKit City Builder Bits OR Kenney Modular Town (CC0 audit at Phase C STOP)"
+  }
+}

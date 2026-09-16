@@ -295,7 +295,6 @@ export const HERO_NEIGHBORHOOD_DEFINITION: WorldDefinition = {
   cameras: {
     overview: { position: [0, 46, 36], target: [0, 0, 4] },
     angled: { position: [34, 26, 26], target: [0, 0, 2] },
-    street: { position: [8, 4.8, 22], target: [0, 2, 10] },
     square: { position: [-10, 14, 2], target: [0, 1, -10] },
     civic: { position: [-20, 12, -4], target: [-6, 1, -14] },
     residential: { position: [22, 10, 0], target: [0, 1, -4] },

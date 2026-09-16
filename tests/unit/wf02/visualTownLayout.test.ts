@@ -37,10 +37,14 @@ describe('WF02 R7.1 VisualTownLayout', () => {
     }
   });
 
-  it('World Lab uses zero visual offsets from world definition', () => {
+  it('World Lab uses bounded R10 presentation staging offsets', () => {
     if (!isWorldLabActive()) return;
-    expect(resolveVisualTransform('store').positionOffset).toEqual([0, 0, 0]);
-    expect(resolveVisualTransform('workshop').positionOffset).toEqual([0, 0, 0]);
+    const store = resolveVisualTransform('store');
+    expect(Math.abs(store.positionOffset[0])).toBeLessThanOrEqual(1);
+    expect(Math.abs(store.positionOffset[2])).toBeLessThanOrEqual(1);
+    const workshop = resolveVisualTransform('workshop');
+    expect(Math.abs(workshop.positionOffset[0])).toBeLessThanOrEqual(1);
+    expect(Math.abs(workshop.positionOffset[2])).toBeLessThanOrEqual(1);
   });
 
   it('defines hero core bounds from active world definition in World Lab', () => {

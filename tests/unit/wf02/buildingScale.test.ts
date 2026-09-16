@@ -20,17 +20,17 @@ import { isWorldLabActive } from '@/world/resolver/worldResolver';
 import { HERO_NEIGHBORHOOD_DEFINITION } from '@/world/worldLab/heroNeighborhood';
 
 const WF02_TARGET_WIDTHS: Record<string, number> = {
-  'house-1': 11.2,
-  'house-2': 11.0,
+  'house-1': 11.8,
+  'house-2': 10.4,
   'house-3': 11.0,
   'house-4': 11.2,
-  cafe: 12.2,
+  cafe: 11.6,
   farmhouse: 12.5,
   store: 13.5,
   clinic: 13.5,
   utility: 13.5,
   'community-hall': 16.0,
-  workshop: 15.0,
+  workshop: 14.2,
   apartment: 16.0,
   school: 17.5,
   warehouse: 19.0,
@@ -53,11 +53,13 @@ describe('WF02 building presentation scale', () => {
     expect(urls.size).toBe(activeIds.size);
   });
 
-  it('World Lab uses zero presentation offsets (placement in world definition)', () => {
+  it('World Lab uses bounded R10 presentation staging offsets', () => {
     if (!isWorldLabActive()) return;
-    expect(resolvePresentationTransform('store').positionOffset).toEqual([0, 0, 0]);
-    expect(resolvePresentationTransform('house-1').positionOffset).toEqual([0, 0, 0]);
-    expect(resolvePresentationTransform('workshop').positionOffset).toEqual([0, 0, 0]);
+    for (const id of ['store', 'house-1', 'workshop']) {
+      const offset = resolvePresentationTransform(id).positionOffset;
+      expect(Math.abs(offset[0])).toBeLessThanOrEqual(1);
+      expect(Math.abs(offset[2])).toBeLessThanOrEqual(1);
+    }
   });
 
   it('derives anchor extras on scaled facade without manual coordinates', () => {

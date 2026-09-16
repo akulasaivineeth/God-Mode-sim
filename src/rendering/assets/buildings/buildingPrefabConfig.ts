@@ -36,17 +36,23 @@ export const BUILDING_PREFABS: readonly BuildingPrefabConfig[] = [
   {
     buildingId: 'house-1',
     assetUrl: KENNEY_ASSETS.homeCottage,
-    targetWidth: 11.2,
+    targetWidth: 11.8,
     rotationY: -Math.PI / 2,
     sign: { text: '11 Riverside Lane', width: 3.0, height: 0.55, fontSize: 36 },
-    extras: [{ kind: 'path-short' }],
+    extras: [
+      { kind: 'fence-front' },
+      { kind: 'path-short' },
+    ],
   },
   {
     buildingId: 'house-2',
     assetUrl: KENNEY_ASSETS.homeTypeA,
-    targetWidth: 11.0,
+    targetWidth: 10.4,
     rotationY: -Math.PI / 2,
-    extras: [{ kind: 'driveway-short' }],
+    extras: [
+      { kind: 'fence-front' },
+      { kind: 'path-short' },
+    ],
   },
   {
     buildingId: 'house-3',
@@ -105,18 +111,25 @@ export const BUILDING_PREFABS: readonly BuildingPrefabConfig[] = [
   {
     buildingId: 'cafe',
     assetUrl: KENNEY_ASSETS.cafeBistro,
-    targetWidth: 12.2,
+    targetWidth: 11.6,
     rotationY: SOUTH,
     sign: { text: 'RIVERSIDE CAFE', width: 3.6, height: 0.65, fontSize: 38 },
-    extras: [{ kind: 'parasol-right' }, { kind: 'path-short' }],
+    extras: [
+      { kind: 'parasol-right' },
+      { kind: 'path-short' },
+      { kind: 'awning', scaleMultiplier: 0.85 },
+    ],
   },
   {
     buildingId: 'workshop',
     assetUrl: KENNEY_ASSETS.workshopIndustrial,
-    targetWidth: 15.0,
+    targetWidth: 14.2,
     rotationY: 0,
     sign: { text: 'RIVERSIDE WORKSHOP', width: 4.4, height: 0.75, fontSize: 38 },
-    extras: [{ kind: 'road-driveway' }],
+    extras: [
+      { kind: 'road-driveway' },
+      { kind: 'awning', scaleMultiplier: 0.9 },
+    ],
   },
   {
     buildingId: 'warehouse',

@@ -32,13 +32,15 @@ describe('WF02 R3/R4.1/R6 composition envelopes', () => {
     expect(CAMERA_PRESETS['store-workshop'].target).toEqual([-11, 2, 17]);
   });
 
-  it('World Lab uses zero workshop presentation offset', () => {
+  it('World Lab uses bounded R10 workshop presentation staging', () => {
     if (!isWorldLabActive()) {
       const t = resolvePresentationTransform('workshop');
       expect(t.positionOffset).toEqual([1, 0, -3]);
       return;
     }
-    expect(resolvePresentationTransform('workshop').positionOffset).toEqual([0, 0, 0]);
+    const t = resolvePresentationTransform('workshop');
+    expect(Math.abs(t.positionOffset[0])).toBeLessThanOrEqual(1);
+    expect(Math.abs(t.positionOffset[2])).toBeLessThanOrEqual(1);
   });
 
   it('R7.1 places dense Kenney orchard block inside hero envelope', () => {

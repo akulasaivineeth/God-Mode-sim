@@ -87,9 +87,16 @@ describe('WF02 R9 hero neighborhood layout', () => {
     const cameras = HERO_NEIGHBORHOOD_DEFINITION.cameras;
     expect(cameras.overview).toBeDefined();
     expect(cameras.angled).toBeDefined();
-    expect(cameras.street).toBeDefined();
     expect(cameras.civic).toBeDefined();
     expect(cameras.commercial).toBeDefined();
+  });
+
+  it('derives street preset from R10 portal resolver when World Lab active', async () => {
+    if (!isWorldLabActive()) return;
+    const { resolveStreetCorridorPortal } = await import('@/rendering/streetPortalCamera');
+    const preset = resolveStreetCorridorPortal();
+    expect(preset.position[1]).toBeGreaterThan(2);
+    expect(preset.target[1]).toBeGreaterThan(0.8);
   });
 
   it('connects nav nodes used by pathfinding', () => {

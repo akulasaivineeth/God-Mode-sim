@@ -51,9 +51,20 @@ export function getVisualFacilityMapping(facilityId: string): VisualFacilityMapp
   return mapping;
 }
 
+/** R10 World Lab presentation staging — ≤2 m offsets, simulation centers unchanged. */
+const WORLD_LAB_STAGING: Record<string, VisualTransform> = {
+  'community-hall': { positionOffset: [0, 0, 0.8], rotationDelta: 0 },
+  clinic: { positionOffset: [0, 0, -1.2], rotationDelta: -0.04 },
+  'house-1': { positionOffset: [0.4, 0, 0.3], rotationDelta: 0 },
+  'house-2': { positionOffset: [-0.5, 0, 0.6], rotationDelta: 0.1 },
+  store: { positionOffset: [0, 0, -0.4], rotationDelta: 0 },
+  workshop: { positionOffset: [0.3, 0, -0.5], rotationDelta: 0.02 },
+  cafe: { positionOffset: [-0.2, 0, -0.3], rotationDelta: -0.03 },
+};
+
 export function resolveVisualTransform(buildingId: string): VisualTransform {
   if (isWorldLabActive()) {
-    return { positionOffset: [0, 0, 0], rotationDelta: 0 };
+    return WORLD_LAB_STAGING[buildingId] ?? { positionOffset: [0, 0, 0], rotationDelta: 0 };
   }
   const mapping = getVisualFacilityMapping(buildingId);
   const auth = getAuthPosition(buildingId);

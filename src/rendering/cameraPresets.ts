@@ -3,6 +3,7 @@
  */
 import { computeFacilityStreetPreset } from './facilityStreetCamera';
 import { computeRiverBridgePreset } from './riverBridgeCamera';
+import { resolveStreetCorridorPortal } from './streetPortalCamera';
 import { isWorldLabActive, resolveWorldDefinition } from '@/world/resolver/worldResolver';
 
 export type CameraView =
@@ -45,7 +46,7 @@ function buildPresets(): Record<CameraView, CameraPreset> {
   return {
     overview: world.overview ?? LEGACY_PRESETS.overview,
     angled: world.angled ?? LEGACY_PRESETS.angled,
-    street: world.street ?? LEGACY_PRESETS.street,
+    street: resolveStreetCorridorPortal(),
     'home-street': computeFacilityStreetPreset('home-street'),
     'store-street': computeFacilityStreetPreset('store-street'),
     'workshop-street': computeFacilityStreetPreset('workshop-street'),
