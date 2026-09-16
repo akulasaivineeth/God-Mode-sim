@@ -6,7 +6,14 @@ WF02 calibrates presentation scale, camera framing, and **town composition** tow
 
 ## Status
 
-**READY_FOR_REVIEW (R9 Phase 0 + Phase 1 hero neighborhood)** — Plan R9 approved `APPROVED_TO_BUILD` scope `PHASE_0_AND_PHASE_1_HERO_NEIGHBORHOOD_ONLY`; implementation complete @ handoff SHA; awaiting Grok independent review. **STOP** before Phase 2 asset import, 240 m expansion, merge, or M03.
+**WAITING_FOR_CHATGPT_PLAN_APPROVAL (R10)** — Plan R9 implemented @ `f0d7207` but **BLOCKED** on visual gate (WF02-R9). Plan R10 posted for vocabulary + street proof. No implementation until `[GOD-MODE:CHATGPT-PLAN-DECISION] APPROVED_TO_BUILD`.
+
+## Plans
+
+| Revision | Document | State |
+|---:|---|---|
+| 9 | [`PLAN_R9.md`](PLAN_R9.md) | Implemented + BLOCKED @ `f0d7207` |
+| **10** | [`PLAN_R10.md`](PLAN_R10.md) | **WAITING_FOR_CHATGPT_PLAN_APPROVAL** |
 
 ## R9 deliverables (this handoff)
 
