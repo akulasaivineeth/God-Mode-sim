@@ -42,6 +42,8 @@
     "audit:wf02-r15-footprint-recomposition": "node scripts/wf02-r15-footprint-recomposition-audit.mjs",
     "audit:wf02-r15-footprint-feasibility": "node scripts/wf02-r15-footprint-feasibility-audit.mjs",
     "audit:wf02-r15-authoring-pipeline": "node scripts/wf02-r15-authoring-pipeline-audit.mjs",
+    "import:wf02-r15-hero-neighborhood-scene": "node scripts/wf02-r15-hero-neighborhood-scene-import.mjs",
+    "proof:wf02-r15-scene-phase0": "node scripts/wf02-r15-scene-phase0-proof.mjs",
     "proof:wf02-r15-footprint-phase0": "node scripts/wf02-r15-footprint-phase0-proof.mjs",
     "audit:wf02-r15-pathb-chunk": "node scripts/wf02-r15-pathb-chunk-audit.mjs",
     "audit:wf02-r15-pixel-delta": "node scripts/wf02-r15-pixel-delta.mjs",

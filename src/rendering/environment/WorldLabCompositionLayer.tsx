@@ -20,9 +20,21 @@ import { HeroBlockPhase0ProofLayer } from './heroBlockProof/HeroBlockPhase0Proof
 import { isHeroBlockPhase0ProofActive } from './heroBlockProof/heroBlockPhase0ProofMode';
 import { FootprintPhase0ProofLayer } from '@/rendering/footprintProof/FootprintPhase0ProofLayer';
 import { isFootprintPhase0ProofActive } from '@/rendering/footprintProof/footprintPhase0ProofMode';
+import { HeroNeighborhoodSceneProofLayer } from '@/rendering/heroScene/HeroNeighborhoodSceneProofLayer';
+import { isHeroScenePhase0ProofActive } from '@/rendering/heroScene/heroNeighborhoodSceneProofMode';
 
 export function WorldLabCompositionLayer() {
   if (!isWorldLabActive()) return null;
+
+  if (isHeroScenePhase0ProofActive()) {
+    return (
+      <group name="world-lab-r15-strategy-a-scene-proof-root">
+        <Suspense fallback={null}>
+          <HeroNeighborhoodSceneProofLayer />
+        </Suspense>
+      </group>
+    );
+  }
 
   if (isFootprintPhase0ProofActive()) {
     return (

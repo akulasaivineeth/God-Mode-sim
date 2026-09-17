@@ -48,6 +48,16 @@ Source: CC0 Kenney City Kit + Suburban + Industrial prefabs merged offline — *
 
 Rollback: `WORLD_LAB_PROTOTYPE_SHELL = false` → R12 modular (`WORLD_LAB_MODULAR_PROTOTYPE = true`) or both false → R10 prefabs.
 
+## WF02 R15.4 Strategy A Hero Scene (offline authored — Phase 0 proof only)
+
+Source: CC0 Kenney + Quaternius parts merged offline into one bounded hero-neighborhood chunk. Import: `npm run import:wf02-r15-hero-neighborhood-scene`. Provenance: `Docs/milestones/WF02/r15_hero_scene_provenance.json`. Recipe: `Docs/milestones/WF02/r15_hero_neighborhood_scene_recipe.json`. **Disposable proof only** via `?r15ScenePhase0Proof=1` — not production-wired until senior PASS.
+
+| Path | Role | License |
+|---|---|---|
+| `public/assets/glb/wf02/hero-scenes/wf02-hero-neighborhood-scene.glb` | Bounded ~64×54 m authored hero neighborhood (223 parts → 8 meshes / 130k tris) | CC0 1.0 derivative |
+
+Rollback: remove `?r15ScenePhase0Proof=1` URL param — R14 `WorldLabCompositionLayer` unchanged.
+
 ## WF01 curated imports — full provenance
 
 | Local renamed path | Original Kenney identifier | Pack | Source URL | License | Download | Modifications |

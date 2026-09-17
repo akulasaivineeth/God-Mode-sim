@@ -1,0 +1,252 @@
+{
+  "sha": "20d5f5699ff8d3a881e04c79b30618d8d9b7d6e7",
+  "planRevision": "15.4",
+  "phase": 0,
+  "authorization": "STRATEGY_A_PHASE0_ONLY",
+  "integrationMode": "A-offline-authored-hero-neighborhood-scene",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "camera": {
+    "policy": "frozen-default",
+    "overview": {
+      "position": [
+        0,
+        46,
+        36
+      ],
+      "target": [
+        0,
+        0,
+        4
+      ]
+    },
+    "note": "Candidate D not authorized — unchanged gameplay/evidence cameras"
+  },
+  "simMinute": 0,
+  "clockLabel": "06:00",
+  "baseline": {
+    "file": "Docs/milestones/WF02/01_r14_overview_dawn.png",
+    "sha256": "e90ba51f2ccd25af63b4c139f7efe95b179632d4b7ea156c0b51517917405cc7"
+  },
+  "proof": {
+    "url": "http://127.0.0.1:4173/?evidence=1&r15ScenePhase0Proof=1",
+    "overview": {
+      "file": "Docs/milestones/WF02/r15_scene_phase0_overview.png",
+      "sha256": "c8b6d45acb9811c869e1f004114af5f1d302dc4dd643b97fa3dfa784bfde0336"
+    }
+  },
+  "sceneAsset": {
+    "url": "/assets/glb/wf02/hero-scenes/wf02-hero-neighborhood-scene.glb",
+    "triangles": 130486,
+    "meshCount": 8,
+    "materialCount": 4,
+    "partCount": 223
+  },
+  "recipe": {
+    "file": "Docs/milestones/WF02/r15_hero_neighborhood_scene_recipe.json",
+    "provenanceFile": "Docs/milestones/WF02/r15_hero_scene_provenance.json"
+  },
+  "doorSockets": [
+    {
+      "label": "home-door",
+      "facilityId": "house-1",
+      "localX": 16,
+      "localY": 0,
+      "localZ": -10.4,
+      "frozenEntrance": {
+        "x": 16,
+        "z": -6.4
+      }
+    },
+    {
+      "label": "store-door",
+      "facilityId": "store",
+      "localX": -14,
+      "localY": 0,
+      "localZ": 6.8,
+      "frozenEntrance": {
+        "x": -14,
+        "z": 10.8
+      }
+    },
+    {
+      "label": "workshop-door",
+      "facilityId": "workshop",
+      "localX": 4,
+      "localY": 0,
+      "localZ": 6.8,
+      "frozenEntrance": {
+        "x": 4,
+        "z": 10.8
+      }
+    }
+  ],
+  "doorValidation": [
+    {
+      "label": "home-door",
+      "facilityId": "house-1",
+      "worldX": 16,
+      "worldZ": -6.4,
+      "frozenX": 16,
+      "frozenZ": -6.4,
+      "deltaM": 0,
+      "pass": true
+    },
+    {
+      "label": "store-door",
+      "facilityId": "store",
+      "worldX": -14,
+      "worldZ": 10.8,
+      "frozenX": -14,
+      "frozenZ": 10.8,
+      "deltaM": 0,
+      "pass": true
+    },
+    {
+      "label": "workshop-door",
+      "facilityId": "workshop",
+      "worldX": 4,
+      "worldZ": 10.8,
+      "frozenX": 4,
+      "frozenZ": 10.8,
+      "deltaM": 0,
+      "pass": true
+    }
+  ],
+  "captures": [
+    {
+      "name": "r15_scene_phase0_overview",
+      "file": "Docs/milestones/WF02/r15_scene_phase0_overview.png",
+      "sha256": "c8b6d45acb9811c869e1f004114af5f1d302dc4dd643b97fa3dfa784bfde0336",
+      "camera": "overview"
+    },
+    {
+      "name": "r15_scene_phase0_overview_noon",
+      "file": "Docs/milestones/WF02/r15_scene_phase0_overview_noon.png",
+      "sha256": "619d475d9cb54c80753bf2ff8a7c833218bebf36ffadb88580c909f6f7c35fde",
+      "camera": "overview"
+    },
+    {
+      "name": "r15_scene_phase0_civic",
+      "file": "Docs/milestones/WF02/r15_scene_phase0_civic.png",
+      "sha256": "db85853d90186a1b7b16add27b4b2f84fc24485aceb1d20bee8902d7f876a7e0",
+      "camera": "civic"
+    },
+    {
+      "name": "r15_scene_phase0_commercial",
+      "file": "Docs/milestones/WF02/r15_scene_phase0_commercial.png",
+      "sha256": "c243b5a357ae3cf0a5237f14a097d1c4664f34bd1f62432f1fea92f4cda5c0b9",
+      "camera": "commercial"
+    },
+    {
+      "name": "r15_scene_phase0_residential",
+      "file": "Docs/milestones/WF02/r15_scene_phase0_residential.png",
+      "sha256": "0a5d69891d9bb7c048963b563e45fc87fbd5807689c9d0c18fa0f0fa3230dddc",
+      "camera": "custom"
+    },
+    {
+      "name": "r15_scene_phase0_river",
+      "file": "Docs/milestones/WF02/r15_scene_phase0_river.png",
+      "sha256": "6ac54f6dabe29e44915d99540befeef24f010f289aa7bf47e9b3a755949ac34a",
+      "camera": "river"
+    },
+    {
+      "name": "r15_scene_phase0_street",
+      "file": "Docs/milestones/WF02/r15_scene_phase0_street.png",
+      "sha256": "c1cc4f286df00de1575037f0f55f6c44aa64586327136fdab31c30d943e47580",
+      "camera": "store-workshop"
+    },
+    {
+      "name": "r15_scene_phase0_angled",
+      "file": "Docs/milestones/WF02/r15_scene_phase0_angled.png",
+      "sha256": "b97d95bb89d559d367cb6aa3e002915f6b999d3651c372d2bc1cee57ba88f7d7",
+      "camera": "angled"
+    },
+    {
+      "name": "r15_scene_phase0_night",
+      "file": "Docs/milestones/WF02/r15_scene_phase0_night.png",
+      "sha256": "6257d7dfe6fa9a3223533f35c486bd8d6491b40f4b30391c9577ba8c71c59291",
+      "camera": "overview"
+    }
+  ],
+  "pixelDelta": {
+    "threshold": 5,
+    "mae": 10.9457,
+    "changedPixels": 403005,
+    "changedPct": 31.1,
+    "learningDiagnostics": {
+      "roiMae": 14.8375,
+      "highContrastChangedPct": 26.08,
+      "note": "Diagnostic only — not automatic PASS for Strategy A"
+    }
+  },
+  "frameOccupancy": {
+    "r14Baseline": {
+      "note": "Descriptive design metric — not a pass substitute",
+      "builtMassPct": 11.1,
+      "vegetationPct": 41.9,
+      "roadsPct": 9,
+      "meadowPeripheryPct": 28.7,
+      "riverPct": 7.2,
+      "skyPct": 2.1
+    },
+    "strategyA": {
+      "note": "Descriptive design metric — not a pass substitute",
+      "builtMassPct": 10.4,
+      "vegetationPct": 50.8,
+      "roadsPct": 8.6,
+      "meadowPeripheryPct": 20.9,
+      "riverPct": 7.2,
+      "skyPct": 2
+    },
+    "delta": {
+      "builtMassPct": -0.7,
+      "vegetationPct": 8.9,
+      "meadowPeripheryPct": -7.8
+    }
+  },
+  "productSignals": {
+    "changedPctDiagnostic": 31.1,
+    "maeDiagnostic": 10.9457,
+    "roiMaeDiagnostic": 14.8375,
+    "builtMassDeltaPct": -0.7,
+    "vegetationDeltaPct": 8.9,
+    "meadowPeripheryDeltaPct": -7.8,
+    "requiresSeniorQualitativeReview": true,
+    "note": "Ordinary-viewer north-star gate requires senior review — not auto-scored here"
+  },
+  "hardAbort": {
+    "doorDeltaWithin03": true,
+    "heroSceneMeshCount": true,
+    "zeroAssetErrors": true,
+    "overviewDrawCalls": true,
+    "overviewTriangles": true,
+    "streetDrawCalls": true,
+    "headroomDrawCalls": true,
+    "headroomTriangles": true
+  },
+  "engineeringPass": true,
+  "diagnostics": {
+    "overview": {
+      "drawCalls": 63,
+      "triangles": 136311,
+      "source": "live-gl"
+    },
+    "street": {
+      "drawCalls": 62,
+      "triangles": 96696,
+      "source": "live-gl"
+    }
+  },
+  "provenanceSummary": {
+    "partCount": 223,
+    "sourceMeshCount": 14,
+    "flattenPipeline": "merge → flatten → join → flatten",
+    "license": "CC0 1.0 Universal (Kenney + Quaternius derivatives)"
+  },
+  "consoleErrors": [],
+  "networkAssetErrors": [],
+  "compareStrip": "Docs/milestones/WF02/compare_r14_scene_a_northstar.png"
+}

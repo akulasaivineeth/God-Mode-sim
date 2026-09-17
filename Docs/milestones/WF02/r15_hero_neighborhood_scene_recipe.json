@@ -1,0 +1,4558 @@
+{
+  "planRevision": "15.4",
+  "authorization": "STRATEGY_A_PHASE0_ONLY",
+  "sceneId": "wf02-hero-neighborhood-scene",
+  "anchor": {
+    "x": 0,
+    "y": 0,
+    "z": 4
+  },
+  "heroBounds": {
+    "minX": -32,
+    "maxX": 32,
+    "minZ": -24,
+    "maxZ": 30
+  },
+  "doorSockets": [
+    {
+      "label": "home-door",
+      "facilityId": "house-1",
+      "localX": 16,
+      "localY": 0,
+      "localZ": -10.4,
+      "frozenEntrance": {
+        "x": 16,
+        "z": -6.4
+      }
+    },
+    {
+      "label": "store-door",
+      "facilityId": "store",
+      "localX": -14,
+      "localY": 0,
+      "localZ": 6.8,
+      "frozenEntrance": {
+        "x": -14,
+        "z": 10.8
+      }
+    },
+    {
+      "label": "workshop-door",
+      "facilityId": "workshop",
+      "localX": 4,
+      "localY": 0,
+      "localZ": 6.8,
+      "frozenEntrance": {
+        "x": 4,
+        "z": 10.8
+      }
+    }
+  ],
+  "districtZones": [
+    {
+      "id": "civic",
+      "minX": -28,
+      "maxX": 6,
+      "minZ": -22,
+      "maxZ": -2
+    },
+    {
+      "id": "commercial",
+      "minX": -18,
+      "maxX": 20,
+      "minZ": 6,
+      "maxZ": 20
+    },
+    {
+      "id": "residential",
+      "minX": -28,
+      "maxX": 24,
+      "minZ": -10,
+      "maxZ": 6
+    },
+    {
+      "id": "future-lot",
+      "minX": -10,
+      "maxX": 10,
+      "minZ": 22,
+      "maxZ": 30
+    },
+    {
+      "id": "park-river",
+      "minX": 22,
+      "maxX": 32,
+      "minZ": -22,
+      "maxZ": 26
+    },
+    {
+      "id": "farm",
+      "minX": -30,
+      "maxX": -6,
+      "minZ": 14,
+      "maxZ": 30
+    }
+  ],
+  "partCount": 223,
+  "parts": [
+    {
+      "sourceKey": "school",
+      "sourceUrl": "/assets/glb/kenney/commercial/school.glb",
+      "district": "civic",
+      "world": {
+        "x": -8,
+        "z": -16
+      },
+      "localTranslation": [
+        -8,
+        0,
+        -20
+      ],
+      "scale": [
+        1.8,
+        1.8,
+        1.8
+      ],
+      "rotationY": 0.2
+    },
+    {
+      "sourceKey": "detailParasol",
+      "sourceUrl": "/assets/glb/kenney/commercial/detail-parasol-a.glb",
+      "district": "civic",
+      "world": {
+        "x": -6,
+        "z": -12
+      },
+      "localTranslation": [
+        -6,
+        0,
+        -16
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "homeTypeA",
+      "sourceUrl": "/assets/glb/kenney/suburban/home-type-a.glb",
+      "district": "residential",
+      "world": {
+        "x": -22,
+        "z": -2
+      },
+      "localTranslation": [
+        -22,
+        0,
+        -6
+      ],
+      "scale": [
+        1.7,
+        1.7,
+        1.7
+      ],
+      "rotationY": -0.3
+    },
+    {
+      "sourceKey": "homeTypeD",
+      "sourceUrl": "/assets/glb/kenney/suburban/home-type-d.glb",
+      "district": "residential",
+      "world": {
+        "x": -24,
+        "z": 4
+      },
+      "localTranslation": [
+        -24,
+        0,
+        0
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ],
+      "rotationY": 0.15
+    },
+    {
+      "sourceKey": "farmhouse",
+      "sourceUrl": "/assets/glb/kenney/suburban/farmhouse.glb",
+      "district": "farm",
+      "world": {
+        "x": -26,
+        "z": 18
+      },
+      "localTranslation": [
+        -26,
+        0,
+        14
+      ],
+      "scale": [
+        1.4,
+        1.4,
+        1.4
+      ],
+      "rotationY": 0.3
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "civic",
+      "world": {
+        "x": -6,
+        "z": -12
+      },
+      "localTranslation": [
+        -6,
+        0,
+        -16
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": -0.18
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "civic",
+      "world": {
+        "x": -6,
+        "z": -10
+      },
+      "localTranslation": [
+        -6,
+        0,
+        -14
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": -0.18
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "civic",
+      "world": {
+        "x": -4,
+        "z": -16
+      },
+      "localTranslation": [
+        -4,
+        0,
+        -20
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": -0.12
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "civic",
+      "world": {
+        "x": -4,
+        "z": -14
+      },
+      "localTranslation": [
+        -4,
+        0,
+        -18
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": -0.12
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "civic",
+      "world": {
+        "x": -4,
+        "z": -10
+      },
+      "localTranslation": [
+        -4,
+        0,
+        -14
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": -0.12
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "civic",
+      "world": {
+        "x": 4,
+        "z": -16
+      },
+      "localTranslation": [
+        4,
+        0,
+        -20
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0.12
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "civic",
+      "world": {
+        "x": 4,
+        "z": -14
+      },
+      "localTranslation": [
+        4,
+        0,
+        -18
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0.12
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "civic",
+      "world": {
+        "x": 4,
+        "z": -10
+      },
+      "localTranslation": [
+        4,
+        0,
+        -14
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0.12
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "civic",
+      "world": {
+        "x": 6,
+        "z": -12
+      },
+      "localTranslation": [
+        6,
+        0,
+        -16
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0.18
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "civic",
+      "world": {
+        "x": 6,
+        "z": -10
+      },
+      "localTranslation": [
+        6,
+        0,
+        -14
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0.18
+    },
+    {
+      "sourceKey": "detailAwning",
+      "sourceUrl": "/assets/glb/kenney/commercial/detail-awning.glb",
+      "district": "commercial",
+      "world": {
+        "x": -7,
+        "z": 11.5
+      },
+      "localTranslation": [
+        -7,
+        0,
+        7.5
+      ],
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "detailAwning",
+      "sourceUrl": "/assets/glb/kenney/commercial/detail-awning.glb",
+      "district": "commercial",
+      "world": {
+        "x": -3.5,
+        "z": 11.5
+      },
+      "localTranslation": [
+        -3.5,
+        0,
+        7.5
+      ],
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "detailAwning",
+      "sourceUrl": "/assets/glb/kenney/commercial/detail-awning.glb",
+      "district": "commercial",
+      "world": {
+        "x": 10.5,
+        "z": 11.5
+      },
+      "localTranslation": [
+        10.5,
+        0,
+        7.5
+      ],
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": -10
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": -1.3
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": -24,
+        "z": -10
+      },
+      "localTranslation": [
+        -24,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": -1.2000000000000002
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": -22,
+        "z": -10
+      },
+      "localTranslation": [
+        -22,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": -1.1
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": -14,
+        "z": -10
+      },
+      "localTranslation": [
+        -14,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": -0.7000000000000001
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": -12,
+        "z": -10
+      },
+      "localTranslation": [
+        -12,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": -0.6000000000000001
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": -10,
+        "z": -10
+      },
+      "localTranslation": [
+        -10,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": -0.5
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": -8,
+        "z": -10
+      },
+      "localTranslation": [
+        -8,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": -0.4
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": -6,
+        "z": -10
+      },
+      "localTranslation": [
+        -6,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": -0.30000000000000004
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": -4,
+        "z": -10
+      },
+      "localTranslation": [
+        -4,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": -0.2
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": 4,
+        "z": -10
+      },
+      "localTranslation": [
+        4,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 0.2
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": 6,
+        "z": -10
+      },
+      "localTranslation": [
+        6,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 0.30000000000000004
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": 8,
+        "z": -10
+      },
+      "localTranslation": [
+        8,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 0.4
+    },
+    {
+      "sourceKey": "pathStonesMessy",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "district": "residential",
+      "world": {
+        "x": 10,
+        "z": -10
+      },
+      "localTranslation": [
+        10,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 0.5
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": -18
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -22
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": -0.36
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": -16
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -20
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": -0.32
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "residential",
+      "world": {
+        "x": -24,
+        "z": -15.2
+      },
+      "localTranslation": [
+        -24,
+        0,
+        -19.2
+      ],
+      "scale": [
+        1.8,
+        1.8,
+        1.8
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": -14
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -18
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": -0.28
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": -12
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -16
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": -0.24
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "residential",
+      "world": {
+        "x": -24,
+        "z": -11.2
+      },
+      "localTranslation": [
+        -24,
+        0,
+        -15.2
+      ],
+      "scale": [
+        1.8,
+        1.8,
+        1.8
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": -10
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -14
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": -0.2
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": -2
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -6
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": -0.04
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": 0
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -4
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "residential",
+      "world": {
+        "x": -24,
+        "z": 0.8
+      },
+      "localTranslation": [
+        -24,
+        0,
+        -3.2
+      ],
+      "scale": [
+        1.8,
+        1.8,
+        1.8
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": 2
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -2
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0.04
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": 4
+      },
+      "localTranslation": [
+        -26,
+        0,
+        0
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0.08
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "residential",
+      "world": {
+        "x": -24,
+        "z": 4.8
+      },
+      "localTranslation": [
+        -24,
+        0,
+        0.7999999999999998
+      ],
+      "scale": [
+        1.8,
+        1.8,
+        1.8
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": 6
+      },
+      "localTranslation": [
+        -26,
+        0,
+        2
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0.12
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": 8
+      },
+      "localTranslation": [
+        -26,
+        0,
+        4
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0.16
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "residential",
+      "world": {
+        "x": -24,
+        "z": 8.8
+      },
+      "localTranslation": [
+        -24,
+        0,
+        4.800000000000001
+      ],
+      "scale": [
+        1.8,
+        1.8,
+        1.8
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": 10
+      },
+      "localTranslation": [
+        -26,
+        0,
+        6
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0.2
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": 12
+      },
+      "localTranslation": [
+        -26,
+        0,
+        8
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0.24
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "residential",
+      "world": {
+        "x": -24,
+        "z": 12.8
+      },
+      "localTranslation": [
+        -24,
+        0,
+        8.8
+      ],
+      "scale": [
+        1.8,
+        1.8,
+        1.8
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": 14
+      },
+      "localTranslation": [
+        -26,
+        0,
+        10
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0.28
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": 16
+      },
+      "localTranslation": [
+        -26,
+        0,
+        12
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0.32
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "residential",
+      "world": {
+        "x": -24,
+        "z": 16.8
+      },
+      "localTranslation": [
+        -24,
+        0,
+        12.8
+      ],
+      "scale": [
+        1.8,
+        1.8,
+        1.8
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "residential",
+      "world": {
+        "x": -26,
+        "z": 18
+      },
+      "localTranslation": [
+        -26,
+        0,
+        14
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0.36
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -28,
+        "z": 16
+      },
+      "localTranslation": [
+        -28,
+        0,
+        12
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": -0.24
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -27,
+        "z": 16.5
+      },
+      "localTranslation": [
+        -27,
+        0,
+        12.5
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -28,
+        "z": 19.2
+      },
+      "localTranslation": [
+        -28,
+        0,
+        15.2
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": -0.17600000000000002
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -27,
+        "z": 19.7
+      },
+      "localTranslation": [
+        -27,
+        0,
+        15.7
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -28,
+        "z": 22.4
+      },
+      "localTranslation": [
+        -28,
+        0,
+        18.4
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": -0.11200000000000003
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -27,
+        "z": 22.9
+      },
+      "localTranslation": [
+        -27,
+        0,
+        18.9
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -28,
+        "z": 25.599999999999998
+      },
+      "localTranslation": [
+        -28,
+        0,
+        21.599999999999998
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": -0.04800000000000004
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -27,
+        "z": 26.099999999999998
+      },
+      "localTranslation": [
+        -27,
+        0,
+        22.099999999999998
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -24.8,
+        "z": 16
+      },
+      "localTranslation": [
+        -24.8,
+        0,
+        12
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": -0.17600000000000002
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -23.8,
+        "z": 16.5
+      },
+      "localTranslation": [
+        -23.8,
+        0,
+        12.5
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -24.8,
+        "z": 19.2
+      },
+      "localTranslation": [
+        -24.8,
+        0,
+        15.2
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": -0.11200000000000003
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -23.8,
+        "z": 19.7
+      },
+      "localTranslation": [
+        -23.8,
+        0,
+        15.7
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -24.8,
+        "z": 22.4
+      },
+      "localTranslation": [
+        -24.8,
+        0,
+        18.4
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": -0.04800000000000004
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -23.8,
+        "z": 22.9
+      },
+      "localTranslation": [
+        -23.8,
+        0,
+        18.9
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -24.8,
+        "z": 25.599999999999998
+      },
+      "localTranslation": [
+        -24.8,
+        0,
+        21.599999999999998
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.015999999999999945
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -23.8,
+        "z": 26.099999999999998
+      },
+      "localTranslation": [
+        -23.8,
+        0,
+        22.099999999999998
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -21.6,
+        "z": 16
+      },
+      "localTranslation": [
+        -21.6,
+        0,
+        12
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": -0.11200000000000003
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -20.6,
+        "z": 16.5
+      },
+      "localTranslation": [
+        -20.6,
+        0,
+        12.5
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -21.6,
+        "z": 19.2
+      },
+      "localTranslation": [
+        -21.6,
+        0,
+        15.2
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": -0.04800000000000004
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -20.6,
+        "z": 19.7
+      },
+      "localTranslation": [
+        -20.6,
+        0,
+        15.7
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -21.6,
+        "z": 22.4
+      },
+      "localTranslation": [
+        -21.6,
+        0,
+        18.4
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.015999999999999945
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -20.6,
+        "z": 22.9
+      },
+      "localTranslation": [
+        -20.6,
+        0,
+        18.9
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -21.6,
+        "z": 25.599999999999998
+      },
+      "localTranslation": [
+        -21.6,
+        0,
+        21.599999999999998
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.07999999999999993
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -18.400000000000002,
+        "z": 19.2
+      },
+      "localTranslation": [
+        -18.400000000000002,
+        0,
+        15.2
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.015999999999999945
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -17.400000000000002,
+        "z": 19.7
+      },
+      "localTranslation": [
+        -17.400000000000002,
+        0,
+        15.7
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -18.400000000000002,
+        "z": 22.4
+      },
+      "localTranslation": [
+        -18.400000000000002,
+        0,
+        18.4
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.07999999999999993
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -18.400000000000002,
+        "z": 25.599999999999998
+      },
+      "localTranslation": [
+        -18.400000000000002,
+        0,
+        21.599999999999998
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.1439999999999999
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -17.400000000000002,
+        "z": 26.099999999999998
+      },
+      "localTranslation": [
+        -17.400000000000002,
+        0,
+        22.099999999999998
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -15.200000000000003,
+        "z": 19.2
+      },
+      "localTranslation": [
+        -15.200000000000003,
+        0,
+        15.2
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.07999999999999993
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -15.200000000000003,
+        "z": 22.4
+      },
+      "localTranslation": [
+        -15.200000000000003,
+        0,
+        18.4
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.1439999999999999
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -14.200000000000003,
+        "z": 22.9
+      },
+      "localTranslation": [
+        -14.200000000000003,
+        0,
+        18.9
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -15.200000000000003,
+        "z": 25.599999999999998
+      },
+      "localTranslation": [
+        -15.200000000000003,
+        0,
+        21.599999999999998
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.2079999999999999
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -12.000000000000004,
+        "z": 19.2
+      },
+      "localTranslation": [
+        -12.000000000000004,
+        0,
+        15.2
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.1439999999999999
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -11.000000000000004,
+        "z": 19.7
+      },
+      "localTranslation": [
+        -11.000000000000004,
+        0,
+        15.7
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -12.000000000000004,
+        "z": 22.4
+      },
+      "localTranslation": [
+        -12.000000000000004,
+        0,
+        18.4
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.2079999999999999
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -12.000000000000004,
+        "z": 25.599999999999998
+      },
+      "localTranslation": [
+        -12.000000000000004,
+        0,
+        21.599999999999998
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.2719999999999999
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -11.000000000000004,
+        "z": 26.099999999999998
+      },
+      "localTranslation": [
+        -11.000000000000004,
+        0,
+        22.099999999999998
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -7.800000000000004,
+        "z": 16.5
+      },
+      "localTranslation": [
+        -7.800000000000004,
+        0,
+        12.5
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -8.800000000000004,
+        "z": 19.2
+      },
+      "localTranslation": [
+        -8.800000000000004,
+        0,
+        15.2
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.2079999999999999
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -8.800000000000004,
+        "z": 22.4
+      },
+      "localTranslation": [
+        -8.800000000000004,
+        0,
+        18.4
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.2719999999999999
+    },
+    {
+      "sourceKey": "fern1",
+      "sourceUrl": "/assets/gltf/quaternius/Fern_1.gltf",
+      "district": "farm",
+      "world": {
+        "x": -7.800000000000004,
+        "z": 22.9
+      },
+      "localTranslation": [
+        -7.800000000000004,
+        0,
+        18.9
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "farm",
+      "world": {
+        "x": -8.800000000000004,
+        "z": 25.599999999999998
+      },
+      "localTranslation": [
+        -8.800000000000004,
+        0,
+        21.599999999999998
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0.33599999999999985
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "future-lot",
+      "world": {
+        "x": -6,
+        "z": 26
+      },
+      "localTranslation": [
+        -6,
+        0,
+        22
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "future-lot",
+      "world": {
+        "x": -6,
+        "z": 24
+      },
+      "localTranslation": [
+        -6,
+        0,
+        20
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "future-lot",
+      "world": {
+        "x": -4,
+        "z": 26
+      },
+      "localTranslation": [
+        -4,
+        0,
+        22
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "future-lot",
+      "world": {
+        "x": -4,
+        "z": 24
+      },
+      "localTranslation": [
+        -4,
+        0,
+        20
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "future-lot",
+      "world": {
+        "x": -2,
+        "z": 26
+      },
+      "localTranslation": [
+        -2,
+        0,
+        22
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "future-lot",
+      "world": {
+        "x": 0,
+        "z": 26
+      },
+      "localTranslation": [
+        0,
+        0,
+        22
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "future-lot",
+      "world": {
+        "x": 2,
+        "z": 26
+      },
+      "localTranslation": [
+        2,
+        0,
+        22
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "future-lot",
+      "world": {
+        "x": 4,
+        "z": 26
+      },
+      "localTranslation": [
+        4,
+        0,
+        22
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "future-lot",
+      "world": {
+        "x": 4,
+        "z": 24
+      },
+      "localTranslation": [
+        4,
+        0,
+        20
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "fenceLow",
+      "sourceUrl": "/assets/glb/kenney/suburban/fence-low.glb",
+      "district": "future-lot",
+      "world": {
+        "x": 6,
+        "z": 26
+      },
+      "localTranslation": [
+        6,
+        0,
+        22
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "pathStonesShort",
+      "sourceUrl": "/assets/glb/kenney/suburban/path-stones-short.glb",
+      "district": "future-lot",
+      "world": {
+        "x": 6,
+        "z": 24
+      },
+      "localTranslation": [
+        6,
+        0,
+        20
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "future-lot",
+      "world": {
+        "x": -8,
+        "z": 28
+      },
+      "localTranslation": [
+        -8,
+        0,
+        24
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "future-lot",
+      "world": {
+        "x": -4,
+        "z": 28
+      },
+      "localTranslation": [
+        -4,
+        0,
+        24
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "future-lot",
+      "world": {
+        "x": 0,
+        "z": 28
+      },
+      "localTranslation": [
+        0,
+        0,
+        24
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "future-lot",
+      "world": {
+        "x": 4,
+        "z": 28
+      },
+      "localTranslation": [
+        4,
+        0,
+        24
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "planter",
+      "sourceUrl": "/assets/glb/kenney/suburban/planter.glb",
+      "district": "future-lot",
+      "world": {
+        "x": 8,
+        "z": 28
+      },
+      "localTranslation": [
+        8,
+        0,
+        24
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -22
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": -1.2
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -20
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -22
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": -1.12
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -20
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -26,
+        "z": -22
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": -1.04
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -26,
+        "z": -20
+      },
+      "localTranslation": [
+        -26,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -24,
+        "z": -22
+      },
+      "localTranslation": [
+        -24,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": -0.96
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -24,
+        "z": -20
+      },
+      "localTranslation": [
+        -24,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -22,
+        "z": -22
+      },
+      "localTranslation": [
+        -22,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": -0.88
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -22,
+        "z": -20
+      },
+      "localTranslation": [
+        -22,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -20,
+        "z": -22
+      },
+      "localTranslation": [
+        -20,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": -0.8
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -20,
+        "z": -20
+      },
+      "localTranslation": [
+        -20,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -8,
+        "z": -22
+      },
+      "localTranslation": [
+        -8,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": -0.32
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -8,
+        "z": -20
+      },
+      "localTranslation": [
+        -8,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -6,
+        "z": -22
+      },
+      "localTranslation": [
+        -6,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": -0.24
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -6,
+        "z": -20
+      },
+      "localTranslation": [
+        -6,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -4,
+        "z": -22
+      },
+      "localTranslation": [
+        -4,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": -0.16
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -4,
+        "z": -20
+      },
+      "localTranslation": [
+        -4,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 4,
+        "z": -22
+      },
+      "localTranslation": [
+        4,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": 0.16
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 4,
+        "z": -20
+      },
+      "localTranslation": [
+        4,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 6,
+        "z": -22
+      },
+      "localTranslation": [
+        6,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": 0.24
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 6,
+        "z": -20
+      },
+      "localTranslation": [
+        6,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 8,
+        "z": -22
+      },
+      "localTranslation": [
+        8,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": 0.32
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 8,
+        "z": -20
+      },
+      "localTranslation": [
+        8,
+        0,
+        -24
+      ],
+      "scale": [
+        2.2,
+        2.2,
+        2.2
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 10,
+        "z": -22
+      },
+      "localTranslation": [
+        10,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": 0.4
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 12,
+        "z": -22
+      },
+      "localTranslation": [
+        12,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": 0.48
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 14,
+        "z": -22
+      },
+      "localTranslation": [
+        14,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": 0.56
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 16,
+        "z": -22
+      },
+      "localTranslation": [
+        16,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": 0.64
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 18,
+        "z": -22
+      },
+      "localTranslation": [
+        18,
+        0,
+        -26
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ],
+      "rotationY": 0.72
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -18
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -22
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -18
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -22
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -16
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -20
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -16
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -20
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -14
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -18
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -14
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -18
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -12
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -16
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -12
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -16
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -10
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -10
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -14
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -8
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -12
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -8
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -12
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -6
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -10
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -6
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -10
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -4
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -8
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -4
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -8
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": -2
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -6
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": -2
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -6
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": 0
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -4
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": 0
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -4
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": 2
+      },
+      "localTranslation": [
+        -28,
+        0,
+        -2
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": 2
+      },
+      "localTranslation": [
+        -30,
+        0,
+        -2
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": 4
+      },
+      "localTranslation": [
+        -28,
+        0,
+        0
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": 4
+      },
+      "localTranslation": [
+        -30,
+        0,
+        0
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": 6
+      },
+      "localTranslation": [
+        -28,
+        0,
+        2
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": 6
+      },
+      "localTranslation": [
+        -30,
+        0,
+        2
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": 8
+      },
+      "localTranslation": [
+        -28,
+        0,
+        4
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": 8
+      },
+      "localTranslation": [
+        -30,
+        0,
+        4
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": 10
+      },
+      "localTranslation": [
+        -28,
+        0,
+        6
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": 10
+      },
+      "localTranslation": [
+        -30,
+        0,
+        6
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": 12
+      },
+      "localTranslation": [
+        -28,
+        0,
+        8
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": 12
+      },
+      "localTranslation": [
+        -30,
+        0,
+        8
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": 14
+      },
+      "localTranslation": [
+        -28,
+        0,
+        10
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": 14
+      },
+      "localTranslation": [
+        -30,
+        0,
+        10
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": 16
+      },
+      "localTranslation": [
+        -28,
+        0,
+        12
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": 16
+      },
+      "localTranslation": [
+        -30,
+        0,
+        12
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeLarge",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-large.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -28,
+        "z": 18
+      },
+      "localTranslation": [
+        -28,
+        0,
+        14
+      ],
+      "scale": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "rotationY": 1.5707963267948966
+    },
+    {
+      "sourceKey": "commonTree2",
+      "sourceUrl": "/assets/gltf/quaternius/CommonTree_2.gltf",
+      "district": "vegetation",
+      "world": {
+        "x": -30,
+        "z": 18
+      },
+      "localTranslation": [
+        -30,
+        0,
+        14
+      ],
+      "scale": [
+        2.4,
+        2.4,
+        2.4
+      ],
+      "rotationY": 0
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -20,
+        "z": -2
+      },
+      "localTranslation": [
+        -20,
+        0,
+        -6
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.22
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -20,
+        "z": 2
+      },
+      "localTranslation": [
+        -20,
+        0,
+        -2
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.18
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -20,
+        "z": 14
+      },
+      "localTranslation": [
+        -20,
+        0,
+        10
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.06
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -20,
+        "z": 18
+      },
+      "localTranslation": [
+        -20,
+        0,
+        14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.02
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -20,
+        "z": 22
+      },
+      "localTranslation": [
+        -20,
+        0,
+        18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.02
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -16,
+        "z": 2
+      },
+      "localTranslation": [
+        -16,
+        0,
+        -2
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.14
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -16,
+        "z": 22
+      },
+      "localTranslation": [
+        -16,
+        0,
+        18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.06
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -12,
+        "z": -10
+      },
+      "localTranslation": [
+        -12,
+        0,
+        -14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.22
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -12,
+        "z": -2
+      },
+      "localTranslation": [
+        -12,
+        0,
+        -6
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.14
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -12,
+        "z": 2
+      },
+      "localTranslation": [
+        -12,
+        0,
+        -2
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.1
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -12,
+        "z": 22
+      },
+      "localTranslation": [
+        -12,
+        0,
+        18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.1
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -8,
+        "z": -10
+      },
+      "localTranslation": [
+        -8,
+        0,
+        -14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.18
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -8,
+        "z": 2
+      },
+      "localTranslation": [
+        -8,
+        0,
+        -2
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.06
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -8,
+        "z": 14
+      },
+      "localTranslation": [
+        -8,
+        0,
+        10
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.06
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -8,
+        "z": 18
+      },
+      "localTranslation": [
+        -8,
+        0,
+        14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.1
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -8,
+        "z": 22
+      },
+      "localTranslation": [
+        -8,
+        0,
+        18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.14
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -4,
+        "z": -14
+      },
+      "localTranslation": [
+        -4,
+        0,
+        -18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.18
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -4,
+        "z": -10
+      },
+      "localTranslation": [
+        -4,
+        0,
+        -14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.14
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -4,
+        "z": -2
+      },
+      "localTranslation": [
+        -4,
+        0,
+        -6
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.06
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -4,
+        "z": 2
+      },
+      "localTranslation": [
+        -4,
+        0,
+        -2
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.02
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -4,
+        "z": 14
+      },
+      "localTranslation": [
+        -4,
+        0,
+        10
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.1
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -4,
+        "z": 18
+      },
+      "localTranslation": [
+        -4,
+        0,
+        14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.14
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": -4,
+        "z": 22
+      },
+      "localTranslation": [
+        -4,
+        0,
+        18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.18
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 4,
+        "z": -14
+      },
+      "localTranslation": [
+        4,
+        0,
+        -18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.1
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 4,
+        "z": -10
+      },
+      "localTranslation": [
+        4,
+        0,
+        -14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.06
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 4,
+        "z": -2
+      },
+      "localTranslation": [
+        4,
+        0,
+        -6
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.02
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 4,
+        "z": 2
+      },
+      "localTranslation": [
+        4,
+        0,
+        -2
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.06
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 4,
+        "z": 18
+      },
+      "localTranslation": [
+        4,
+        0,
+        14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.22
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 4,
+        "z": 22
+      },
+      "localTranslation": [
+        4,
+        0,
+        18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.26
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 8,
+        "z": -10
+      },
+      "localTranslation": [
+        8,
+        0,
+        -14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.02
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 8,
+        "z": -2
+      },
+      "localTranslation": [
+        8,
+        0,
+        -6
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.06
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 8,
+        "z": 2
+      },
+      "localTranslation": [
+        8,
+        0,
+        -2
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.1
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 8,
+        "z": 18
+      },
+      "localTranslation": [
+        8,
+        0,
+        14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.26
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 8,
+        "z": 22
+      },
+      "localTranslation": [
+        8,
+        0,
+        18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.3
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 12,
+        "z": -14
+      },
+      "localTranslation": [
+        12,
+        0,
+        -18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": -0.02
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 12,
+        "z": -10
+      },
+      "localTranslation": [
+        12,
+        0,
+        -14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.02
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 12,
+        "z": -2
+      },
+      "localTranslation": [
+        12,
+        0,
+        -6
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.1
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 12,
+        "z": 2
+      },
+      "localTranslation": [
+        12,
+        0,
+        -2
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.14
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 12,
+        "z": 14
+      },
+      "localTranslation": [
+        12,
+        0,
+        10
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.26
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 12,
+        "z": 18
+      },
+      "localTranslation": [
+        12,
+        0,
+        14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.3
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 12,
+        "z": 22
+      },
+      "localTranslation": [
+        12,
+        0,
+        18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.34
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 16,
+        "z": 2
+      },
+      "localTranslation": [
+        16,
+        0,
+        -2
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.18
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 16,
+        "z": 18
+      },
+      "localTranslation": [
+        16,
+        0,
+        14
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.34
+    },
+    {
+      "sourceKey": "treeSmall",
+      "sourceUrl": "/assets/glb/kenney/suburban/tree-small.glb",
+      "district": "vegetation",
+      "world": {
+        "x": 16,
+        "z": 22
+      },
+      "localTranslation": [
+        16,
+        0,
+        18
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ],
+      "rotationY": 0.38
+    }
+  ]
+}
