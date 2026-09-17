@@ -16,7 +16,7 @@ function ProofGroundEnvelopeMesh({ envelope }: { envelope: ProofGroundEnvelope }
   );
   const ref = useRef<InstancedMesh>(null);
   const cells = useMemo(
-    () => buildOverlayCells(envelope.minX, envelope.maxX, envelope.minZ, envelope.maxZ, 2.4),
+    () => buildOverlayCells(envelope.minX, envelope.maxX, envelope.minZ, envelope.maxZ, 1.8),
     [envelope.minX, envelope.maxX, envelope.minZ, envelope.maxZ],
   );
 

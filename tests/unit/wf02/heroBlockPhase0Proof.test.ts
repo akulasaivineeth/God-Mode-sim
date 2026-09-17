@@ -12,18 +12,19 @@ describe('WF02 R15 Phase 0 hero-block proof', () => {
     expect(isHeroBlockPhase0ProofActive()).toBe(false);
   });
 
-  it('authors five district ground envelopes', () => {
+  it('authors six district ground envelopes', () => {
     const envelopes = buildProofGroundEnvelopes();
-    expect(envelopes).toHaveLength(5);
+    expect(envelopes).toHaveLength(6);
     expect(envelopes.map((e) => e.id)).toEqual([
       'civic-plaza-mass',
       'commercial-frontage-mass',
       'residential-block-mass',
       'future-lot-frame-mass',
       'park-river-edge-mass',
+      'spine-canopy-belt-mass',
     ]);
     for (const envelope of envelopes) {
-      expect(envelope.opacity).toBeLessThanOrEqual(0.4);
+      expect(envelope.opacity).toBeLessThanOrEqual(0.58);
     }
   });
 

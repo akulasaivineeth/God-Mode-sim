@@ -62,12 +62,12 @@ export function buildProofGroundEnvelopes(): ProofGroundEnvelope[] {
   return [
     {
       id: 'civic-plaza-mass',
-      color: DISTRICT_PALETTE.groundCommercial,
-      minX: sq.center.x - 8,
-      maxX: sq.center.x + 8,
-      minZ: sq.center.z - 8,
-      maxZ: sq.center.z + 4,
-      opacity: 0.34,
+      color: DISTRICT_PALETTE.accentWarm,
+      minX: sq.center.x - 9,
+      maxX: sq.center.x + 9,
+      minZ: sq.center.z - 9,
+      maxZ: sq.center.z + 5,
+      opacity: 0.56,
     },
     {
       id: 'commercial-frontage-mass',
@@ -76,7 +76,7 @@ export function buildProofGroundEnvelopes(): ProofGroundEnvelope[] {
       maxX: 22,
       minZ: 5,
       maxZ: 17,
-      opacity: 0.32,
+      opacity: 0.5,
     },
     {
       id: 'residential-block-mass',
@@ -85,7 +85,7 @@ export function buildProofGroundEnvelopes(): ProofGroundEnvelope[] {
       maxX: 24,
       minZ: -10,
       maxZ: 3,
-      opacity: 0.3,
+      opacity: 0.48,
     },
     {
       id: 'future-lot-frame-mass',
@@ -94,16 +94,25 @@ export function buildProofGroundEnvelopes(): ProofGroundEnvelope[] {
       maxX: plot.center.x + 5,
       minZ: plot.center.z - 4.5,
       maxZ: plot.center.z + 4.5,
-      opacity: 0.36,
+      opacity: 0.54,
     },
     {
       id: 'park-river-edge-mass',
-      color: DISTRICT_PALETTE.groundPark,
-      minX: 22,
-      maxX: 34,
-      minZ: -14,
-      maxZ: 18,
-      opacity: 0.38,
+      color: DISTRICT_PALETTE.canopyLight,
+      minX: 12,
+      maxX: 20,
+      minZ: -16,
+      maxZ: 20,
+      opacity: 0.58,
+    },
+    {
+      id: 'spine-canopy-belt-mass',
+      color: DISTRICT_PALETTE.groundFarm,
+      minX: -28,
+      maxX: 28,
+      minZ: -22,
+      maxZ: -12,
+      opacity: 0.46,
     },
   ];
 }
@@ -242,4 +251,3 @@ export function buildProofGltfPlacements(): ProofGltfPlacement[] {
 }
 
 export const PROOF_GROUND_ENVELOPE_COUNT = buildProofGroundEnvelopes().length;
-export const PROOF_GLTF_PLACEMENT_COUNT = buildProofGltfPlacements().length;

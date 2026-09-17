@@ -1,0 +1,44 @@
+{
+  "sha": "3c815c17ac8273d7f498413272dcc806ed7369a9",
+  "planRevision": 15,
+  "phase": 0,
+  "authorization": "PHASE_0_ONLY",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "camera": "overview",
+  "simMinute": 0,
+  "clockLabel": "06:00",
+  "baseline": {
+    "file": "Docs/milestones/WF02/01_r14_overview_dawn.png",
+    "sha256": "e90ba51f2ccd25af63b4c139f7efe95b179632d4b7ea156c0b51517917405cc7",
+    "source": "committed"
+  },
+  "proof": {
+    "name": "r15_phase0_proof_overview",
+    "file": "Docs/milestones/WF02/r15_phase0_proof_overview.png",
+    "sha256": "d6b1993414f228e9900854aa70f76ce7946ede090749e1b36ac08cf50a8eb571",
+    "url": "http://127.0.0.1:4173/?evidence=1&r15Phase0Proof=1"
+  },
+  "pixelDelta": {
+    "threshold": 5,
+    "mae": 5.3136,
+    "changedPixels": 260430,
+    "changedPct": 20.09,
+    "passMae8": false,
+    "passChanged15": true
+  },
+  "gates": {
+    "maeMin": 8,
+    "changedPctMin": 15,
+    "pass": false
+  },
+  "diagnostics": {
+    "drawCalls": 87,
+    "triangles": 34423,
+    "source": "live-gl"
+  },
+  "consoleErrors": [],
+  "networkAssetErrors": []
+}
