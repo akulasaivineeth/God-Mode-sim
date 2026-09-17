@@ -1,5 +1,5 @@
 {
-  "sha": "02199a4d5da6dbe6d65483236e9e3ef450e8a195",
+  "sha": "85ded0397eb4945b1b36d69cf6dcc4f6e50a7268",
   "planRevision": 15.2,
   "phase": 0,
   "authorization": "CANDIDATE_C_PHASE_0_ONLY",
@@ -18,19 +18,19 @@
   "proof": {
     "name": "r15_replacement_phase0_proof_overview",
     "file": "Docs/milestones/WF02/r15_replacement_phase0_proof_overview.png",
-    "sha256": "e502d61ff5b49d6600a6dddfc58922376c5b9a2cffd2c9ac5e97a4527ded24ac",
+    "sha256": "5e83b1958a6691e1fecb511892e3b401ed2ea6cd7de89cbfc4c204fb6074da2f",
     "url": "http://127.0.0.1:4173/?evidence=1&r15ReplacementPhase0Proof=1"
   },
   "pixelDelta": {
     "threshold": 5,
-    "mae": 6.1855,
-    "changedPixels": 248234,
-    "changedPct": 19.15,
+    "mae": 6.1947,
+    "changedPixels": 248334,
+    "changedPct": 19.16,
     "passMae8": false,
     "passChanged15": true,
     "learningDiagnostics": {
-      "roiMae": 14.1698,
-      "highContrastChangedPct": 15.96,
+      "roiMae": 14.1951,
+      "highContrastChangedPct": 15.97,
       "note": "Learning only — not gate substitutes"
     }
   },
