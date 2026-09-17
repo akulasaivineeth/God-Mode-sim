@@ -1,0 +1,269 @@
+{
+  "generatedAt": "2026-09-17T04:26:03.909Z",
+  "planRevision": "15.3.1",
+  "supersedesPlanRevision": "15.3",
+  "supersedesPlanSha": "b936779c95ceaeb353cff09b93821692c7a55937",
+  "investigationBaseSha": "b936779c95ceaeb353cff09b93821692c7a55937",
+  "seniorDecision": {
+    "decision": "PLAN_CHANGES_REQUIRED",
+    "planSha": "b936779c95ceaeb353cff09b93821692c7a55937",
+    "rejectedFraming": "Candidate D primary — evidence-camera optimization drift",
+    "nextState": "PLAN_R15.3.1_WAITING_FOR_CHATGPT_PLAN_APPROVAL"
+  },
+  "falsificationRecord": {
+    "pathA": {
+      "sha": "c3d073995dc707115433e96e099196b52c9a2468",
+      "changedPct": 20.09,
+      "mae": 5.3082,
+      "overallPass": false
+    },
+    "pathB": {
+      "sha": "babd0fef738b07cf5ec705ab8742aaf28c691da6",
+      "changedPct": 15.79,
+      "mae": 4.5916,
+      "overallPass": false
+    },
+    "pathC": {
+      "sha": "85ded0397eb4945b1b36d69cf6dcc4f6e50a7268",
+      "changedPct": 19.16,
+      "mae": 6.1947,
+      "roiMae": 14.1951,
+      "highContrastChangedPct": 15.97,
+      "heroBlockDrawEstimate": 8,
+      "overallPass": false
+    }
+  },
+  "repeatedRootStrategyFailure": {
+    "experiments": [
+      "A",
+      "B",
+      "C"
+    ],
+    "maeSeries": [
+      5.31,
+      4.59,
+      6.19
+    ],
+    "changedPctSeries": [
+      20.09,
+      15.79,
+      19.16
+    ],
+    "trend": "Local hierarchy can change (C ROI 14.20) while whole-frame gate fails because sparse surround dominates — footprint recomposition required"
+  },
+  "roiSignal": {
+    "candidateCFullFrameMae": 6.1947,
+    "candidateCRoiMae": 14.1951,
+    "interpretation": "ROI MAE >> full-frame MAE: hero region materially changed but live composition outside ROI remains sparse — dilutes whole-frame gate, not unfair MAE",
+    "maeGate": 8,
+    "changedPctGate": 15,
+    "rule": "Do not relax or reinterpret locked A/B/C gates; do not tune Candidate C",
+    "forwardLookingNote": "Whole-frame MAE remains diagnostic for future E/D work — not sole product-acceptance gate (multi-part rubric)"
+  },
+  "frozenOverview": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "camera": {
+      "position": [
+        0,
+        46,
+        36
+      ],
+      "target": [
+        0,
+        0,
+        4
+      ]
+    },
+    "source": "HERO_NEIGHBORHOOD_DEFINITION.cameras.overview",
+    "heroBounds": {
+      "minX": -32,
+      "maxX": 32,
+      "minZ": -24,
+      "maxZ": 30
+    },
+    "note": "Frozen until D secondary approved with independent gameplay-readability justification — not MAE justification"
+  },
+  "frameOccupancyTargets": {
+    "note": "Descriptive design metric — not a pass substitute",
+    "categories": [
+      "builtMass",
+      "vegetation",
+      "roads",
+      "meadowPeriphery",
+      "river",
+      "sky"
+    ],
+    "r14EstimatePct": {
+      "builtMass": "12-15",
+      "vegetation": "8-10",
+      "roads": "18-22",
+      "meadowPeriphery": "45-50",
+      "river": "5-8",
+      "sky": "8-12"
+    },
+    "candidateETargetDirection": {
+      "builtMass": "up to 22-30",
+      "vegetation": "up to 15-20",
+      "roads": "stable 15-18",
+      "meadowPeriphery": "down to 25-35",
+      "river": "stable 6-10",
+      "sky": "stable 8-10"
+    }
+  },
+  "strategyCandidates": [
+    {
+      "id": "E-presentation-footprint-recomposition",
+      "label": "Candidate E — presentation footprint recomposition (sim authority unchanged)",
+      "verdict": "recommend-primary-analytical-then-phase0",
+      "method": "Re-author presentation cluster layout within frozen hero bounds plus bounded district massing inside existing geography. Single presentation-offset/massing authority. Use replacement/shell vocabulary from C lessons — not disposable proof wiring.",
+      "ownership": "presentationFootprintSpec (new) + prototypeShellManifest origins + WorldLabCompositionLayer module roots",
+      "simulationImpact": "none — facilityPoints, HERO_NAV, entrances frozen; presentation offsets only",
+      "visualHypothesis": "Town-scale north-star read requires hero block + district massing to dominate default Overview silhouette — sparse surround is root cause, not unfair MAE",
+      "abortIf": "Composition still reads sparse at default camera; success requires camera crop; door/socket >0.3m; duplicates A/B additive dressing"
+    },
+    {
+      "id": "D-bounded-camera-calibration",
+      "label": "Candidate D — bounded camera calibration (secondary only)",
+      "verdict": "recommend-secondary-after-footprint",
+      "method": "Propose bounded Overview camera adjustment ONLY after analytically composed footprint exists. Justify independently of MAE — default gameplay readability.",
+      "ownership": "HERO_NEIGHBORHOOD_DEFINITION.cameras.* (reference context; secondary in build)",
+      "simulationImpact": "none — presentation camera only",
+      "visualHypothesis": "Camera exposes sparse composition; reframing without footprint fix hides sparsity without fixing product read",
+      "abortIf": "Proposed before footprint complete; evidence-only camera for MAE; degrades Street/M02 portal proofs; crop-only evidence path"
+    },
+    {
+      "id": "D-primary-framing-correction-r15.3",
+      "label": "Candidate D primary (R15.3 — rejected framing)",
+      "verdict": "reject-plan-framing",
+      "reason": "Drifts toward optimizing evidence camera to make local C delta carry more weight; product problem is live composition, not crop score"
+    },
+    {
+      "id": "C-replacement-hero-assembly",
+      "label": "Candidate C — replacement assemblies (R15.2)",
+      "verdict": "reject-falsified",
+      "phase0Result": "changed 19.16% PASS; MAE 6.19 FAIL; ROI MAE 14.20; hero-block DC 8 PASS",
+      "reason": "Strong local delta; insufficient whole-frame town-scale transformation — lessons reusable, wiring not"
+    },
+    {
+      "id": "B1-mass-chunk-plus-shells",
+      "label": "Path B B1 — additive offline chunks",
+      "verdict": "reject-falsified",
+      "phase0Result": "changed 15.79% PASS; MAE 4.59 FAIL; proof DC 206"
+    },
+    {
+      "id": "A-runtime-envelopes",
+      "label": "Path A — runtime declarative envelopes",
+      "verdict": "reject-falsified",
+      "phase0Result": "changed 20.09% PASS; MAE 5.31 FAIL"
+    }
+  ],
+  "multiPartEvidenceRubric": [
+    {
+      "id": "R1",
+      "component": "Qualitative north-star comparison",
+      "role": "product-acceptance",
+      "hardFail": true
+    },
+    {
+      "id": "R2",
+      "component": "District silhouette/massing proof",
+      "role": "product-acceptance",
+      "hardFail": true
+    },
+    {
+      "id": "R3",
+      "component": "Street readability (M02 doors/paths)",
+      "role": "product-acceptance",
+      "hardFail": true
+    },
+    {
+      "id": "R4",
+      "component": "Gameplay camera honesty",
+      "role": "product-acceptance",
+      "hardFail": true
+    },
+    {
+      "id": "R5",
+      "component": "Whole-frame changed % vs R14",
+      "role": "diagnostic",
+      "hardFail": false
+    },
+    {
+      "id": "R6",
+      "component": "Whole-frame MAE vs R14",
+      "role": "diagnostic",
+      "hardFail": false
+    },
+    {
+      "id": "R7",
+      "component": "Frame-occupancy before→proposed",
+      "role": "descriptive-design",
+      "hardFail": false
+    },
+    {
+      "id": "R8",
+      "component": "Performance budget (DC/tris)",
+      "role": "product-acceptance",
+      "hardFail": true
+    },
+    {
+      "id": "R9",
+      "component": "Simulation invariants + zero asset errors",
+      "role": "product-acceptance",
+      "hardFail": true
+    }
+  ],
+  "recommendation": {
+    "primary": "E-presentation-footprint-recomposition",
+    "secondary": "D-bounded-camera-calibration",
+    "rejected": "D-primary-framing-correction-r15.3",
+    "rationale": "Product problem is live town composition/readability, not crop score. Recompose presentation footprint + bounded district massing first; camera calibration only after footprint exists and only for gameplay readability.",
+    "nextGate": "PLAN_R15.3.1 approval → Candidate E analytical audit + footprint spec → E Phase 0; D only if footprint complete and readability still insufficient"
+  },
+  "proposedPhase0EvidenceProtocol": {
+    "baseline": "Docs/milestones/WF02/01_r14_overview_dawn.png",
+    "comparePanels": [
+      "R14",
+      "candidate",
+      "north-star-reference"
+    ],
+    "mandatoryCaptures": [
+      "overview-dawn-1440x900",
+      "civic",
+      "commercial-residential",
+      "river-park",
+      "street-m02-doors",
+      "angled",
+      "diagnostics-dc-tris"
+    ],
+    "antiGamingRules": [
+      "No evidence-only camera preset for MAE",
+      "No crop-only evidence path",
+      "No opacity/tint overlay as primary delta",
+      "Camera change only after footprint composition exists",
+      "Whole-frame MAE/changed% diagnostic — not sole gate for future work",
+      "ROI MAE recorded but cannot substitute product acceptance",
+      "Do not production-wire A/B/C proof layers"
+    ]
+  },
+  "predeclaredProofRequirements": [
+    "presentation-footprint-before-after-with-door-delta",
+    "district-massing-vegetation-rendering-path",
+    "default-camera-values-with-d-secondary-justification",
+    "frame-occupancy-analysis-before-proposed",
+    "same-view-evidence-suite",
+    "deterministic-simulation-invariants",
+    "performance-budget-overview-street-tris",
+    "rollback-abort-if-sparse-or-camera-crop-required"
+  ],
+  "artifactsPresent": {
+    "pathAManifest": true,
+    "pathBManifest": true,
+    "pathCManifest": true,
+    "r14Baseline": true,
+    "planR1531": true
+  }
+}

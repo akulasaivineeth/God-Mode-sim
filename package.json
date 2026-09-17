@@ -39,6 +39,7 @@
     "audit:wf02-r15-path-b": "node scripts/wf02-r15-path-b-audit.mjs",
     "audit:wf02-r15-composition-reset": "node scripts/wf02-r15-composition-reset-audit.mjs",
     "audit:wf02-r15-framing-footprint": "node scripts/wf02-r15-framing-footprint-audit.mjs",
+    "audit:wf02-r15-footprint-recomposition": "node scripts/wf02-r15-footprint-recomposition-audit.mjs",
     "audit:wf02-r15-pathb-chunk": "node scripts/wf02-r15-pathb-chunk-audit.mjs",
     "audit:wf02-r15-pixel-delta": "node scripts/wf02-r15-pixel-delta.mjs",
     "audit:wf02-r14-shell-rollout": "node scripts/wf02-r14-shell-rollout-audit.mjs",
