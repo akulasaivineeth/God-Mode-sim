@@ -1,0 +1,378 @@
+{
+  "generatedAt": "2026-09-17T02:16:50.695Z",
+  "planRevision": "15.1",
+  "investigationBaseSha": "f7c0c57587f963d900c82084ed5f28125d1e12f0",
+  "pathAPhase0Falsification": {
+    "sha": "c3d073995dc707115433e96e099196b52c9a2468",
+    "changedPct": 20.09,
+    "mae": 5.3082,
+    "passChanged15": true,
+    "passMae8": false,
+    "overallPass": false,
+    "proofDiagnostics": {
+      "drawCalls": 87,
+      "triangles": 34423,
+      "source": "live-gl"
+    }
+  },
+  "heroNeighborhoodBounds": {
+    "minX": -32,
+    "maxX": 32,
+    "minZ": -24,
+    "maxZ": 30
+  },
+  "r14Performance": null,
+  "r13ShellInventory": {
+    "shellCount": 4,
+    "totalShellTriangles": 17498,
+    "provenanceLicense": "CC0 1.0 Universal (Kenney kitbash derivatives)"
+  },
+  "integrationModeComparison": [
+    {
+      "id": "B1-mass-chunk-plus-shells",
+      "label": "1–2 offline mass chunks + retained separate R13/R14 shells",
+      "verdict": "recommend",
+      "doorAuthority": "shell doorBindings + frozen HERO_NAV entrances",
+      "shellRelationship": "shells separate; chunks fill ground/canopy/edge mass around shells",
+      "doorDriftRisk": "low",
+      "rollbackGranularity": "high",
+      "visualCoherencePotential": "high-if-chunks-encode-continuous-mass-not-scatter"
+    },
+    {
+      "id": "B2-monolithic-block-with-sockets",
+      "label": "Single offline block GLB with baked shell silhouettes + external door sockets",
+      "verdict": "fallback",
+      "doorAuthority": "socket metadata re-derived from shellManifest + visual re-audit ≤0.3m",
+      "shellRelationship": "shells visually baked/subordinate; semantic doors external",
+      "doorDriftRisk": "high",
+      "rollbackGranularity": "medium",
+      "visualCoherencePotential": "highest"
+    },
+    {
+      "id": "A-runtime-envelopes",
+      "label": "Path A runtime declarative envelopes (Phase 0 falsified)",
+      "verdict": "reject",
+      "phase0Result": "changedPixels 20.09% PASS; MAE 5.31 FAIL (<8.0)",
+      "reason": "breadth without structural mass / low aggregate visual energy"
+    }
+  ],
+  "recommendedIntegrationMode": "B1-mass-chunk-plus-shells",
+  "proposedChunks": [
+    {
+      "id": "hero-block-mass-west",
+      "label": "West/civic-residential mass chunk",
+      "footprint": {
+        "minX": -30,
+        "maxX": 8,
+        "minZ": -22,
+        "maxZ": 30
+      },
+      "encodes": [
+        "civic plaza ground",
+        "residential block framing",
+        "future lot pad edge",
+        "north spine canopy belt"
+      ],
+      "excludes": [
+        "road corridors",
+        "river water envelope",
+        "M02 entrance buffers",
+        "shell door volumes"
+      ],
+      "estimatedTrisBudget": 12000,
+      "estimatedDrawCalls": 1
+    },
+    {
+      "id": "hero-block-mass-east",
+      "label": "East/commercial-park-river mass chunk",
+      "footprint": {
+        "minX": -8,
+        "maxX": 20,
+        "minZ": -16,
+        "maxZ": 22
+      },
+      "encodes": [
+        "commercial frontage ground/canopy",
+        "park-river edge shelf",
+        "east perimeter trees"
+      ],
+      "excludes": [
+        "road corridors",
+        "river water envelope",
+        "commercial shell door sockets"
+      ],
+      "estimatedTrisBudget": 14000,
+      "estimatedDrawCalls": 1
+    }
+  ],
+  "measuredSourceAssets": {
+    "canopy-large": {
+      "missing": true,
+      "path": "/workspace/public/assets/glb/kenney/nature/tree-large.glb"
+    },
+    "canopy-small": {
+      "missing": true,
+      "path": "/workspace/public/assets/glb/kenney/nature/tree-small.glb"
+    },
+    "hedge-fence": {
+      "path": "public/assets/glb/kenney/suburban/fence-low.glb",
+      "bounds": {
+        "min": [
+          -0.6375000476837158,
+          0,
+          -0.4375
+        ],
+        "max": [
+          0.6375000476837158,
+          0.17000000178813934,
+          0.3999999761581421
+        ],
+        "size": [
+          1.2750000953674316,
+          0.17000000178813934,
+          0.8374999761581421
+        ],
+        "triangles": 180
+      },
+      "triangles": 180
+    },
+    "ground-paver-short": {
+      "path": "public/assets/glb/kenney/suburban/path-stones-short.glb",
+      "bounds": {
+        "min": [
+          -0.07000000029802322,
+          0,
+          -0.10000000149011612
+        ],
+        "max": [
+          0.07000000029802322,
+          0.009999999776482582,
+          0.10000000149011612
+        ],
+        "size": [
+          0.14000000059604645,
+          0.009999999776482582,
+          0.20000000298023224
+        ],
+        "triangles": 24
+      },
+      "triangles": 24
+    },
+    "ground-paver-messy": {
+      "path": "public/assets/glb/kenney/suburban/path-stones-messy.glb",
+      "bounds": {
+        "min": [
+          -0.077812060713768,
+          0,
+          -0.1806752234697342
+        ],
+        "max": [
+          0.077812060713768,
+          0.009999999776482582,
+          0.1806752234697342
+        ],
+        "size": [
+          0.155624121427536,
+          0.009999999776482582,
+          0.3613504469394684
+        ],
+        "triangles": 36
+      },
+      "triangles": 36
+    },
+    "ground-path-long": {
+      "path": "public/assets/glb/kenney/suburban/path-long.glb",
+      "bounds": {
+        "min": [
+          -0.10000000149011612,
+          0,
+          -0.20000000298023224
+        ],
+        "max": [
+          0.10000000149011612,
+          0.009999999776482582,
+          0.20000000298023224
+        ],
+        "size": [
+          0.20000000298023224,
+          0.009999999776482582,
+          0.4000000059604645
+        ],
+        "triangles": 12
+      },
+      "triangles": 12
+    },
+    "amenity-planter": {
+      "path": "public/assets/glb/kenney/suburban/planter.glb",
+      "bounds": {
+        "min": [
+          -0.20000000298023224,
+          0,
+          -0.15057337284088135
+        ],
+        "max": [
+          0.20000000298023224,
+          0.17710953950881958,
+          0.1494266241788864
+        ],
+        "size": [
+          0.4000000059604645,
+          0.17710953950881958,
+          0.29999999701976776
+        ],
+        "triangles": 204
+      },
+      "triangles": 204
+    },
+    "shell-civic": {
+      "path": "public/assets/glb/wf02/prototype-shells/wf02-civic-enclosure-shell.glb",
+      "bounds": {
+        "min": [
+          -4.259807616472244,
+          0,
+          -1.905523908138275
+        ],
+        "max": [
+          6.54600006043911,
+          5.644599962234498,
+          1.8000000044703484
+        ],
+        "size": [
+          10.805807676911353,
+          5.644599962234498,
+          3.7055239126086237
+        ],
+        "triangles": 4241
+      },
+      "triangles": 4241
+    },
+    "shell-commercial": {
+      "path": "public/assets/glb/wf02/prototype-shells/wf02-commercial-frontage-shell.glb",
+      "bounds": {
+        "min": [
+          -11.567000022530555,
+          -7.826979199399165e-34,
+          -1.0588999927043914
+        ],
+        "max": [
+          11.6062500923872,
+          3.0820000171661377,
+          1.6222586989402772
+        ],
+        "size": [
+          23.173250114917757,
+          3.0820000171661377,
+          2.6811586916446686
+        ],
+        "triangles": 7132
+      },
+      "triangles": 7132
+    },
+    "shell-cottage": {
+      "path": "public/assets/glb/wf02/prototype-shells/wf02-residential-cottage-shell.glb",
+      "bounds": {
+        "min": [
+          -1.4400000035762786,
+          0,
+          -0.655499991774559
+        ],
+        "max": [
+          1.0511000394821166,
+          1.2512500524520875,
+          1.6100000016391278
+        ],
+        "size": [
+          2.4911000430583954,
+          1.2512500524520875,
+          2.2654999934136866
+        ],
+        "triangles": 1988
+      },
+      "triangles": 1988
+    },
+    "shell-gable": {
+      "path": "public/assets/glb/wf02/prototype-shells/wf02-residential-gable-shell.glb",
+      "bounds": {
+        "min": [
+          -2.9549999833106995,
+          0,
+          -0.6425861269235611
+        ],
+        "max": [
+          1.0075091600418091,
+          2.7402491569519043,
+          1.4348777905106544
+        ],
+        "size": [
+          3.9625091433525084,
+          2.7402491569519043,
+          2.0774639174342155
+        ],
+        "triangles": 4137
+      },
+      "triangles": 4137
+    }
+  },
+  "renderBudgetTargets": {
+    "pathBPhase0ProofOverviewDcMax": 95,
+    "pathBPhase0ProofOverviewTrisMax": 55000,
+    "productionOverviewDcHardCap": 140,
+    "productionOverviewTrisHardCap": 150000,
+    "preserveM03HeadroomDc": 5,
+    "preserveM03HeadroomTris": 8000
+  },
+  "phase0Gates": {
+    "baseline": "Docs/milestones/WF02/01_r14_overview_dawn.png",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "camera": "overview @ HERO_NEIGHBORHOOD_DEFINITION.cameras.overview",
+    "maeMin": 8,
+    "changedPctMin": 15,
+    "threshold": 5,
+    "note": "Gates unchanged from R15 Path A Phase 0; metrics necessary not sufficient"
+  },
+  "phase0PathADiscardMatrix": [
+    {
+      "component": "heroBlockPhase0ProofMode.ts",
+      "disposition": "discard",
+      "reason": "Path A proof gate only"
+    },
+    {
+      "component": "heroBlockPhase0ProofSpec.ts",
+      "disposition": "discard",
+      "reason": "runtime envelope scatter falsified"
+    },
+    {
+      "component": "HeroBlockPhase0ProofLayer.tsx",
+      "disposition": "discard",
+      "reason": "not production composition authority"
+    },
+    {
+      "component": "compositionMask clipping helpers",
+      "disposition": "retain-neutral",
+      "reason": "reusable for chunk road/water exclusions"
+    },
+    {
+      "component": "wf02-r15-phase0-proof.mjs",
+      "disposition": "retain-neutral",
+      "reason": "reuse capture/compare harness for Path B Phase 0"
+    },
+    {
+      "component": "wf02-r15-pixel-delta.mjs",
+      "disposition": "retain-neutral",
+      "reason": "metric utility unchanged"
+    },
+    {
+      "component": "r15_phase0_proof_manifest.json",
+      "disposition": "retain-diagnostic",
+      "reason": "Path A falsification record"
+    }
+  ],
+  "recommendation": {
+    "selectedPath": "B1-mass-chunk-plus-shells",
+    "rationale": "Path A Phase 0 proved runtime envelopes increase pixel breadth (20.09%) but not aggregate visual energy (MAE 5.31). Extend proven R13 offline kitbash to 1–2 neighborhood mass chunks while retaining separate R13 shells for M02 door authority and rollback granularity.",
+    "nextGate": "PLAN_R15.1 approval → Path B Phase 0 disposable prototype only"
+  }
+}
