@@ -5,6 +5,7 @@ import { isWorldLabActive } from '@/world/resolver/worldResolver';
 import { WORLD_LAB_PROTOTYPE_SHELL } from '@/world/worldLabModularMode';
 
 const SHELL_SUPPRESSED_BUILDINGS = new Set([
+  'community-hall',
   'house-1',
   'house-2',
   'store',

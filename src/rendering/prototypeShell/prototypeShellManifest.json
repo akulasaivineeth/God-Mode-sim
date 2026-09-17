@@ -5,12 +5,14 @@
     "origin": {
       "x": -14,
       "y": 0,
-      "z": -3.5
+      "z": -18
     },
     "rotY": 0,
     "targetWidth": 18,
     "doorBindings": [],
-    "replacesBuildingIds": [],
+    "replacesBuildingIds": [
+      "community-hall"
+    ],
     "assetUrl": "/assets/glb/wf02/prototype-shells/wf02-civic-enclosure-shell.glb",
     "bounds": {
       "min": [
@@ -35,22 +37,22 @@
     "shellId": "commercial-frontage-shell",
     "fileName": "wf02-commercial-frontage-shell.glb",
     "origin": {
-      "x": -17,
+      "x": 1,
       "y": 0,
-      "z": 11
+      "z": 13
     },
     "rotY": 0,
     "targetWidth": 34,
     "doorBindings": [
       {
         "label": "store-door",
-        "localX": 3.5,
-        "localZ": 0.5
+        "localX": -15,
+        "localZ": -2.2
       },
       {
         "label": "workshop-door",
-        "localX": 21.5,
-        "localZ": 0.5
+        "localX": 3,
+        "localZ": -2.2
       }
     ],
     "replacesBuildingIds": [
@@ -82,17 +84,17 @@
     "shellId": "residential-cottage-shell",
     "fileName": "wf02-residential-cottage-shell.glb",
     "origin": {
-      "x": 13,
+      "x": 16,
       "y": 0,
-      "z": -6.5
+      "z": -4
     },
     "rotY": 0,
     "targetWidth": 6,
     "doorBindings": [
       {
         "label": "home-door",
-        "localX": 2.5,
-        "localZ": 0.5
+        "localX": 0,
+        "localZ": -2.4
       }
     ],
     "replacesBuildingIds": [
@@ -122,9 +124,9 @@
     "shellId": "residential-gable-shell",
     "fileName": "wf02-residential-gable-shell.glb",
     "origin": {
-      "x": -19,
+      "x": -16,
       "y": 0,
-      "z": -6.5
+      "z": -4
     },
     "rotY": 0,
     "targetWidth": 7,

@@ -2,6 +2,7 @@
  * WF02 R10 — civic plaza enclosure (colonnade + radial paving + center amenity).
  */
 import { Suspense, useMemo } from 'react';
+import { isPrototypeShellActive } from '@/rendering/prototypeShell/prototypeShellMode';
 import { buildCivicEnclosureSpec } from '@/world/worldLab/districtCompositionSpec';
 import { KENNEY_ASSETS } from '../../assets/EnvironmentAssetRegistry';
 import {
@@ -30,10 +31,16 @@ function toPlacements(
 }
 
 export function CivicEnclosure() {
+  const shellActive = isPrototypeShellActive();
   const spec = useMemo(() => buildCivicEnclosureSpec(), []);
   const placements = useMemo(
-    () => toPlacements([...spec.pavers, ...spec.colonnade, ...spec.center]),
-    [spec],
+    () =>
+      toPlacements([
+        ...spec.pavers,
+        ...(shellActive ? [] : spec.colonnade),
+        ...spec.center,
+      ]),
+    [spec, shellActive],
   );
 
   return (

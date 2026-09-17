@@ -1,8 +1,10 @@
 /**
- * WF02 R13 — finished-architecture shell prototype evidence capture.
+ * WF02 R14 — hero neighborhood shell rollout evidence capture.
+ *
+ * Writes PNGs to Docs/milestones/WF02 first, then hashes committed paths.
  *
  * Usage: npm run build && npm run preview -- --host 127.0.0.1 --port 4173 &
- *        npm run capture:wf02-r13-prototype
+ *        npm run capture:wf02-r14-rollout
  */
 import { chromium } from '@playwright/test';
 import sharp from 'sharp';
@@ -21,33 +23,27 @@ function clockLabel(simMinute) {
   return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 }
 
-const OUT = '/opt/cursor/artifacts/wf02_r13_prototype';
+const ARTIFACTS = '/opt/cursor/artifacts/wf02_r14_rollout';
 const DOCS_OUT = 'Docs/milestones/WF02';
 const BASE = 'http://127.0.0.1:4173/?evidence=1';
 const NORTH_STAR = 'Docs/art-direction/references/god-mode-town-north-star.png';
-const R11_BEFORE = 'Docs/milestones/WF02/01_r11_overview_dawn.png';
-const R12_BEFORE = 'Docs/milestones/WF02/01_r12_overview_dawn.png';
-const RELEASE_TAG_PREFIX = 'review-evidence-wf02-r13';
+const R13_BEFORE = 'Docs/milestones/WF02/01_r13_overview_dawn.png';
+const RELEASE_TAG_PREFIX = 'review-evidence-wf02-r14';
 
 const SHOTS = [
-  { name: '01_r13_overview_dawn', cam: 'overview', simMinute: 0, waitMs: 3200, diagnostics: true },
-  { name: '01b_r13_overview_noon', cam: 'overview', simMinute: 360, waitMs: 3200, diagnostics: true },
-  { name: '02_r13_angled', cam: 'angled', simMinute: 360, waitMs: 3000, diagnostics: true },
-  { name: '03_r13_civic_closeup', cam: 'civic', simMinute: 360, waitMs: 2800 },
-  { name: '04_r13_commercial_closeup', cam: 'commercial', simMinute: 360, waitMs: 2800 },
-  { name: '05_r13_residential_closeup', cam: 'residential', simMinute: 360, waitMs: 2800 },
-  { name: '06_r13_street_portal', cam: 'street', simMinute: 360, waitMs: 2800, diagnostics: true },
-  { name: '07_r13_home_street', cam: 'home-street', simMinute: 420, waitMs: 3200 },
-  { name: '08_r13_store_street', cam: 'store-street', simMinute: 420, waitMs: 3200 },
-  { name: '09_r13_workshop_street', cam: 'workshop-street', simMinute: 420, waitMs: 3200 },
-  { name: '10_r13_street_scale_proof', cam: 'street', simMinute: 420, waitMs: 3400, diagnostics: true },
-  { name: '11_r13_night', cam: 'overview', simMinute: 870, waitMs: 2800 },
-];
-
-const SILHOUETTE_CROPS = [
-  { name: 'silhouette_r13_civic', source: '03_r13_civic_closeup', width: 128, height: 128 },
-  { name: 'silhouette_r13_commercial', source: '04_r13_commercial_closeup', width: 128, height: 128 },
-  { name: 'silhouette_r13_residential', source: '05_r13_residential_closeup', width: 128, height: 128 },
+  { name: '01_r14_overview_dawn', cam: 'overview', simMinute: 0, waitMs: 3200, diagnostics: true },
+  { name: '01b_r14_overview_noon', cam: 'overview', simMinute: 360, waitMs: 3200, diagnostics: true },
+  { name: '02_r14_angled', cam: 'angled', simMinute: 360, waitMs: 3000, diagnostics: true },
+  { name: '03_r14_civic_square', cam: 'civic', simMinute: 360, waitMs: 2800 },
+  { name: '04_r14_commercial_frontage', cam: 'commercial', simMinute: 360, waitMs: 2800 },
+  { name: '05_r14_residential_future_lot', preset: { position: [0, 12, 32], target: [0, 1, 26] }, simMinute: 360, waitMs: 2800 },
+  { name: '06_r14_park_river', cam: 'river', simMinute: 360, waitMs: 2800 },
+  { name: '07_r14_street_portal', cam: 'street', simMinute: 360, waitMs: 2800, diagnostics: true },
+  { name: '08_r14_home_street', cam: 'home-street', simMinute: 420, waitMs: 3200 },
+  { name: '09_r14_store_street', cam: 'store-street', simMinute: 420, waitMs: 3200 },
+  { name: '10_r14_workshop_street', cam: 'workshop-street', simMinute: 420, waitMs: 3200 },
+  { name: '11_r14_street_scale_proof', cam: 'street', simMinute: 420, waitMs: 3400, diagnostics: true },
+  { name: '12_r14_night', cam: 'overview', simMinute: 870, waitMs: 2800 },
 ];
 
 function hashFile(file) {
@@ -56,6 +52,10 @@ function hashFile(file) {
 
 function gitSha() {
   return execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+}
+
+function docsRel(name) {
+  return `${DOCS_OUT}/${name}.png`;
 }
 
 function createAssetWatchers(page) {
@@ -96,7 +96,14 @@ async function waitFrames(page, count = 10) {
 }
 
 async function applyShotCamera(page, shot) {
-  await page.evaluate((cam) => window.__GODMODE_EVIDENCE__?.applyPreset(cam), shot.cam);
+  if (shot.cam) {
+    await page.evaluate((cam) => window.__GODMODE_EVIDENCE__?.applyPreset(cam), shot.cam);
+  } else if (shot.preset) {
+    await page.evaluate(
+      ({ position, target }) => window.__GODMODE_EVIDENCE__?.setCamera(position, target),
+      shot.preset,
+    );
+  }
 }
 
 async function buildCompareStrip(panels, outFile, panelWidth = 360) {
@@ -138,7 +145,7 @@ async function buildCompareStrip(panels, outFile, panelWidth = 360) {
 
 async function main() {
   const sha = gitSha();
-  await mkdir(OUT, { recursive: true });
+  await mkdir(ARTIFACTS, { recursive: true });
   await mkdir(DOCS_OUT, { recursive: true });
 
   const provenance = JSON.parse(readFileSync('Docs/milestones/WF02/r13_shell_provenance.json', 'utf8'));
@@ -153,11 +160,10 @@ async function main() {
     sha,
     worldLab: true,
     prototypeShell: true,
-    planRevision: 13,
-    worldId: 'hero-neighborhood-r13-shells',
+    planRevision: 14,
+    worldId: 'hero-neighborhood-r14-rollout',
     shellProvenance: provenance,
     shots: [],
-    silhouettes: [],
     consoleErrors: [],
     networkAssetErrors: [],
   };
@@ -169,13 +175,13 @@ async function main() {
     await waitFrames(page, 15);
     const docsPath = path.join(DOCS_OUT, `${shot.name}.png`);
     await page.screenshot({ path: docsPath, fullPage: false });
-    await copyFile(docsPath, path.join(OUT, `${shot.name}.png`)).catch(() => {});
+    await copyFile(docsPath, path.join(ARTIFACTS, `${shot.name}.png`)).catch(() => {});
     const entry = {
       name: shot.name,
-      cam: shot.cam,
+      cam: shot.cam ?? 'custom',
       simMinute: shot.simMinute,
       clockLabel: clockLabel(shot.simMinute),
-      file: `${DOCS_OUT}/${shot.name}.png`,
+      file: docsRel(shot.name),
       sha256: hashFile(docsPath),
     };
     if (shot.diagnostics) {
@@ -191,50 +197,29 @@ async function main() {
   manifest.consoleErrors = watchers.consoleErrors;
   manifest.networkAssetErrors = watchers.networkAssetErrors;
 
-  for (const crop of SILHOUETTE_CROPS) {
-    const src = path.join(DOCS_OUT, `${crop.source}.png`);
-    const docsPath = path.join(DOCS_OUT, `${crop.name}.png`);
-    await sharp(src)
-      .resize(crop.width, crop.height, { fit: 'cover', position: 'centre' })
-      .png()
-      .toFile(docsPath);
-    await copyFile(docsPath, path.join(OUT, `${crop.name}.png`)).catch(() => {});
-    manifest.silhouettes.push({
-      name: crop.name,
-      file: `${DOCS_OUT}/${crop.name}.png`,
-      sha256: hashFile(docsPath),
-    });
-    console.log(`Silhouette ${crop.name}`);
-  }
-
-  const comparePath = path.join(DOCS_OUT, 'compare_r11_r12_r13_northstar.png');
+  const compareDocs = path.join(DOCS_OUT, 'compare_r13_r14_northstar.png');
+  const compareArtifacts = path.join(ARTIFACTS, 'compare_r13_r14_northstar.png');
   await buildCompareStrip(
     [
-      { label: 'R11 (modular grid)', file: R11_BEFORE },
-      { label: 'R12 (authored depth)', file: R12_BEFORE },
-      { label: 'R13 (shell prototype)', file: path.join(DOCS_OUT, '01_r13_overview_dawn.png') },
+      { label: 'R13 (prototype)', file: R13_BEFORE },
+      { label: 'R14 (rollout)', file: path.join(DOCS_OUT, '01_r14_overview_dawn.png') },
       { label: 'NORTH STAR', file: NORTH_STAR },
     ],
-    comparePath,
+    compareDocs,
     360,
   );
-  await copyFile(comparePath, path.join(OUT, 'compare_r11_r12_r13_northstar.png')).catch(() => {});
+  await copyFile(compareDocs, compareArtifacts).catch(() => {});
 
-  const manifestPath = path.join(DOCS_OUT, 'r13_prototype_manifest.json');
-  await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
-  await copyFile(manifestPath, path.join(OUT, 'r13_prototype_manifest.json')).catch(() => {});
-  await copyFile('Docs/milestones/WF02/r13_shell_provenance.json', path.join(DOCS_OUT, 'r13_shell_provenance.json')).catch(() => {});
+  const manifestDocs = path.join(DOCS_OUT, 'r14_rollout_manifest.json');
+  await writeFile(manifestDocs, JSON.stringify(manifest, null, 2));
+  await copyFile(manifestDocs, path.join(ARTIFACTS, 'r14_rollout_manifest.json'));
 
   await browser.close();
 
   const tag = `${RELEASE_TAG_PREFIX}-${sha.slice(0, 7)}`;
   console.log(`\nEvidence complete @ ${sha}`);
-  console.log(`Manifest: ${manifestPath}`);
+  console.log(`Manifest: ${manifestDocs}`);
   console.log(`Suggested release tag: ${tag}`);
-}
-
-function provenancePathSafe() {
-  return 'Docs/milestones/WF02/r13_shell_provenance.json';
 }
 
 main().catch((err) => {

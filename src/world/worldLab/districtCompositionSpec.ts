@@ -283,3 +283,42 @@ export function buildFrameTreeSpec(): GltfPlacementSpec[] {
     rotY: ((tree.position.x * 17 + tree.position.z * 13) % 8) * (Math.PI / 4),
   }));
 }
+
+/** Park edge + river bank framing (R14 — shell-aware district polish). */
+export function buildParkRiverFrameSpec(): GltfPlacementSpec[] {
+  const trees: GltfPlacementSpec[] = [];
+  const park = CANONICAL_TOWN.park;
+  if (park && park.width > 0) {
+    const halfD = park.depth * 0.45;
+    for (let z = park.center.z - halfD; z <= park.center.z + halfD; z += 4.5) {
+      trees.push({
+        urlKey: 'treeLarge',
+        x: park.center.x - 1.5,
+        z,
+        scale: 1.28,
+        rotY: 0.15 + (z % 3) * 0.2,
+      });
+      trees.push({
+        urlKey: 'treeSmall',
+        x: park.center.x + 2.2,
+        z: z + 1.8,
+        scale: 1.12,
+        rotY: -0.25,
+      });
+    }
+  }
+  const river = CANONICAL_TOWN.river;
+  if (river) {
+    for (let i = 0; i < river.points.length; i += 1) {
+      const pt = river.points[i];
+      trees.push({
+        urlKey: i % 2 === 0 ? 'treeSmall' : 'treeLarge',
+        x: pt.x - 3.8,
+        z: pt.z,
+        scale: 1.1 + (i % 3) * 0.08,
+        rotY: 0.4 + i * 0.3,
+      });
+    }
+  }
+  return trees;
+}

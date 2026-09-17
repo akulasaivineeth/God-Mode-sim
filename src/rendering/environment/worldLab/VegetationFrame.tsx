@@ -2,7 +2,7 @@
  * WF02 R10 — perimeter frame trees (vegetation belt).
  */
 import { Suspense, useMemo } from 'react';
-import { buildFrameTreeSpec } from '@/world/worldLab/districtCompositionSpec';
+import { buildFrameTreeSpec, buildParkRiverFrameSpec } from '@/world/worldLab/districtCompositionSpec';
 import { KENNEY_ASSETS } from '../../assets/EnvironmentAssetRegistry';
 import {
   InstancedGltfPlacements,
@@ -12,7 +12,7 @@ import {
 export function VegetationFrame() {
   const placements = useMemo<GltfInstancePlacement[]>(
     () =>
-      buildFrameTreeSpec().map((p) => ({
+      [...buildFrameTreeSpec(), ...buildParkRiverFrameSpec()].map((p) => ({
         url: p.urlKey === 'treeLarge' ? KENNEY_ASSETS.treeLarge : KENNEY_ASSETS.treeSmall,
         x: p.x,
         z: p.z,
