@@ -1,5 +1,5 @@
 {
-  "sha": "3c815c17ac8273d7f498413272dcc806ed7369a9",
+  "sha": "c3d073995dc707115433e96e099196b52c9a2468",
   "planRevision": 15,
   "phase": 0,
   "authorization": "PHASE_0_ONLY",
@@ -18,13 +18,13 @@
   "proof": {
     "name": "r15_phase0_proof_overview",
     "file": "Docs/milestones/WF02/r15_phase0_proof_overview.png",
-    "sha256": "d6b1993414f228e9900854aa70f76ce7946ede090749e1b36ac08cf50a8eb571",
+    "sha256": "b36557cdaa6b99146c77eadf776a11d2266a055d0260c9c703edea91d6a06a18",
     "url": "http://127.0.0.1:4173/?evidence=1&r15Phase0Proof=1"
   },
   "pixelDelta": {
     "threshold": 5,
-    "mae": 5.3136,
-    "changedPixels": 260430,
+    "mae": 5.3082,
+    "changedPixels": 260304,
     "changedPct": 20.09,
     "passMae8": false,
     "passChanged15": true
