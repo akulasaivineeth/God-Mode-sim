@@ -24,7 +24,7 @@ const URL_BY_KEY: Record<string, string> = {
 };
 
 export function HeroBlockPhase0ProofLayer() {
-  if (!isHeroBlockPhase0ProofActive()) return null;
+  const active = isHeroBlockPhase0ProofActive();
 
   const gltfPlacements = useMemo<GltfInstancePlacement[]>(
     () =>
@@ -37,6 +37,8 @@ export function HeroBlockPhase0ProofLayer() {
       })),
     [],
   );
+
+  if (!active) return null;
 
   return (
     <group name="r15-hero-block-phase0-proof">
