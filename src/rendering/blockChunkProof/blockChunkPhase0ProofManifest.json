@@ -1,0 +1,66 @@
+{
+  "planRevision": 15.1,
+  "phase": 0,
+  "authorization": "PATH_B_PHASE_0_ONLY",
+  "integrationMode": "B1-mass-chunk-plus-shells",
+  "chunks": [
+    {
+      "chunkId": "hero-block-mass-west",
+      "fileName": "wf02-hero-block-mass-west.glb",
+      "assetUrl": "/assets/glb/wf02/block-chunks/wf02-hero-block-mass-west.glb",
+      "anchor": {
+        "x": 0,
+        "y": 0,
+        "z": 4
+      },
+      "bounds": {
+        "min": [
+          -28.315899981558324,
+          0,
+          -24.444970251469652
+        ],
+        "max": [
+          6.592567864341459,
+          2.1475998878479,
+          26.85432914864865
+        ],
+        "size": [
+          34.908467845899786,
+          2.1475998878479,
+          51.2992994001183
+        ],
+        "triangles": 4584
+      },
+      "partCount": 82
+    },
+    {
+      "chunkId": "hero-block-mass-east",
+      "fileName": "wf02-hero-block-mass-east.glb",
+      "assetUrl": "/assets/glb/wf02/block-chunks/wf02-hero-block-mass-east.glb",
+      "anchor": {
+        "x": 8,
+        "y": 0,
+        "z": 6
+      },
+      "bounds": {
+        "min": [
+          -15.24533497446592,
+          0,
+          -20.396295509253203
+        ],
+        "max": [
+          9.088790118708484,
+          2.1475998878479,
+          13.74549266523207
+        ],
+        "size": [
+          24.334125093174404,
+          2.1475998878479,
+          34.14178817448527
+        ],
+        "triangles": 2070
+      },
+      "partCount": 58
+    }
+  ]
+}

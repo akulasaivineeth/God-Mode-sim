@@ -1,0 +1,219 @@
+{
+  "generatedAt": "2026-09-17T02:58:05.366Z",
+  "planRevision": "15.2",
+  "investigationBaseSha": "b7f491dab00dd6367ae7186b8b6c51b6298aad7e",
+  "seniorDecision": {
+    "decision": "FIX_REQUIRED",
+    "nextState": "PLAN_R15.2_REQUIRED",
+    "headSha": "b7f491dab00dd6367ae7186b8b6c51b6298aad7e"
+  },
+  "falsificationRecord": {
+    "pathA": {
+      "sha": "c3d073995dc707115433e96e099196b52c9a2468",
+      "changedPct": 20.09,
+      "mae": 5.3082,
+      "passChanged15": true,
+      "passMae8": false,
+      "overallPass": false,
+      "proofDiagnostics": {
+        "drawCalls": 87,
+        "triangles": 34423,
+        "source": "live-gl"
+      }
+    },
+    "pathB": {
+      "sha": "babd0fef738b07cf5ec705ab8742aaf28c691da6",
+      "changedPct": 15.79,
+      "mae": 4.5916,
+      "passChanged15": true,
+      "passMae8": false,
+      "overallPass": false,
+      "proofDiagnostics": {
+        "drawCalls": 206,
+        "triangles": 29245,
+        "source": "live-gl"
+      },
+      "chunkMeshCounts": {
+        "west": {
+          "meshCount": 82,
+          "materialCount": 1,
+          "triangles": 4584
+        },
+        "east": {
+          "meshCount": 58,
+          "materialCount": 1,
+          "triangles": 2070
+        }
+      }
+    }
+  },
+  "metricAnalysis": {
+    "frozenGates": {
+      "maeMin": 8,
+      "changedPctMin": 15,
+      "perPixelThreshold": 5
+    },
+    "patternObserved": "Both experiments pass changed-pixel breadth while failing MAE magnitude — low-amplitude displacement on many pixels, dominant R14 anchors unchanged",
+    "maeCorrelationNote": "Global MAE averages over all pixels; ~80% unchanged pixels dilute aggregate. Changed-pixel % alone rewards distributed faint deltas, not decisive hierarchy shifts.",
+    "illustrativeMath": {
+      "pathA": {
+        "impliedAvgDeltaOnChangedPixels": 26.42
+      },
+      "pathB": {
+        "impliedAvgDeltaOnChangedPixels": 29.08
+      },
+      "mae8At15PctChangedRequiresAvgDeltaOnChanged": 53.33
+    },
+    "proposedSupplementaryMetrics": [
+      {
+        "id": "roi-mae",
+        "label": "Hero-block ROI MAE (central 60% crop)",
+        "purpose": "Weight pixels where neighborhood hierarchy should change",
+        "retroactiveRescore": false
+      },
+      {
+        "id": "high-contrast-changed-pct",
+        "label": "Changed pixels at threshold ≥20",
+        "purpose": "Detect decisive contrast shifts vs faint tint/scatter",
+        "retroactiveRescore": false
+      },
+      {
+        "id": "silhouette-edge-delta",
+        "label": "Edge-map occupancy delta vs north-star reference",
+        "purpose": "Perceptual mass/shape change independent of color wash",
+        "retroactiveRescore": false
+      }
+    ],
+    "rule": "Existing MAE≥8 + changed≥15% gates remain locked for A/B comparison; new metrics require plan approval before next experiment"
+  },
+  "drawCallDiagnosis": {
+    "r14ProductionApprox": {
+      "overviewDc": 90,
+      "overviewTris": 34000
+    },
+    "pathAProof": {
+      "drawCalls": 87,
+      "triangles": 34423,
+      "source": "live-gl"
+    },
+    "pathBProof": {
+      "drawCalls": 206,
+      "triangles": 29245,
+      "source": "live-gl"
+    },
+    "pathBChunkMeshMultiplication": {
+      "westMeshes": 82,
+      "eastMeshes": 58,
+      "shellDraws": 4,
+      "explanation": "B1 kitbash merge retained one mesh per instanced part (82+58) — additive scatter authored offline but still multi-draw at runtime"
+    },
+    "productionBudgetBeforeNextExperiment": {
+      "overviewDcPreferred": 140,
+      "overviewDcHeroBlockTarget": 110,
+      "heroBlockAssemblyDcMax": 8,
+      "streetDcPreferred": 100,
+      "overviewTrisHardCap": 150000,
+      "preserveM03HeadroomDc": 5,
+      "preserveM03HeadroomTris": 8000
+    }
+  },
+  "layerOwnership": {
+    "dominantHeroBlockMassingToday": [
+      "PrototypeShellLayer (4 shell GLBs — visual centroid + roofline hierarchy)",
+      "WorldLabGroundTint / VegetationFrame / ResidentialGardens / FutureLotFrame / CivicEnclosure (parallel scatter modules)"
+    ],
+    "proofModeBranches": [
+      "HeroBlockPhase0ProofLayer (?r15Phase0Proof=1) — additive runtime scatter",
+      "BlockChunkPhase0ProofLayer (?r15PathBPhase0Proof=1) — additive offline chunk scatter"
+    ],
+    "replacementBoundary": "Candidate C must suppress parallel scatter modules AND replace shell visual read with batched assemblies while preserving semantic door/socket authority separately",
+    "mustNotReplace": [
+      "facilityPoints.ts / HERO_NAV / simulation/**",
+      "terrain / roads / river carve truth",
+      "M02 entrance coordinates"
+    ]
+  },
+  "strategyCandidates": [
+    {
+      "id": "C-replacement-hero-assembly",
+      "label": "Replacement-based hero-block assembly (offline batched mass replaces dominant presentation)",
+      "verdict": "recommend-phase0",
+      "method": "Author 1–3 offline merged assemblies that REPLACE (not surround) R14 scatter + shell visual mass in hero neighborhood; retain thin semantic door/socket layer only",
+      "doorAuthority": "Separate socket markers + frozen HERO_NAV; shells optional hidden in proof",
+      "drawCallStrategy": "gltf-transform flatten/join/palette → ≤3 materials, ≤1 mesh per assembly",
+      "productionDcTarget": "hero block ≤8 DC total (assemblies + door sockets)",
+      "visualHypothesis": "Changes block silhouette, roofline hierarchy, and street-wall rhythm because macro mass authority shifts",
+      "abortIf": "Phase 0 MAE <8 AND qualitative hierarchy unchanged OR hero block DC >12 in proof mode"
+    },
+    {
+      "id": "D-framing-feasibility-audit",
+      "label": "Framing feasibility audit + bounded gameplay framing correction",
+      "verdict": "recommend-analytical-phase0",
+      "method": "Analytically test whether frozen Overview [0,46,36]→[0,0,4] at 64×54 m hero bounds makes north-star perceptual delta unreachable without replacing macro mass",
+      "doorAuthority": "Unchanged — framing only if gameplay benefit proven",
+      "drawCallStrategy": "No new geometry required for audit phase",
+      "productionDcTarget": "unchanged until framing approved",
+      "visualHypothesis": "May reveal metric/camera mismatch rather than composition technique gap; correction must improve normal gameplay not metric gaming",
+      "abortIf": "Framing change improves MAE but not ordinary-viewer north-star read OR degrades Street/M02 portal proofs"
+    },
+    {
+      "id": "B1-mass-chunk-plus-shells",
+      "label": "Path B B1 — additive mass chunks + separate shells (R15.1)",
+      "verdict": "reject-falsified",
+      "phase0Result": "changedPct 15.79% PASS; MAE 4.59 FAIL; proof DC 206",
+      "reason": "Additive dressing around unchanged shells; draw multiplication from 82+58 chunk meshes"
+    },
+    {
+      "id": "A-runtime-envelopes",
+      "label": "Path A — runtime declarative envelopes (R15)",
+      "verdict": "reject-falsified",
+      "phase0Result": "changedPct 20.09% PASS; MAE 5.31 FAIL; proof DC 87",
+      "reason": "Breadth without decisive hierarchy shift; low-amplitude distributed dressing"
+    },
+    {
+      "id": "B2-monolithic-block-with-sockets",
+      "label": "Path B B2 — monolithic block with baked shells + external sockets",
+      "verdict": "hold-pending-C-fail",
+      "reason": "High door drift risk; only if Candidate C Phase 0 fails with qualitative improvement"
+    }
+  ],
+  "recommendation": {
+    "primary": "C-replacement-hero-assembly",
+    "secondary": "D-framing-feasibility-audit",
+    "rationale": "A and B1 falsified additive dressing around unchanged macro hierarchy. Next experiment must replace dominant presentation authority or prove framing/metric mismatch analytically before any new geometry.",
+    "nextGate": "PLAN_R15.2 approval → Candidate C Phase 0 disposable prototype OR Candidate D analytical audit first"
+  },
+  "phase0ProofRequirements": {
+    "baseline": "Docs/milestones/WF02/01_r14_overview_dawn.png",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "camera": "overview @ HERO_NEIGHBORHOOD_DEFINITION.cameras.overview",
+    "unchangedQuantitativeGates": {
+      "maeMin": 8,
+      "changedPctMin": 15,
+      "threshold": 5
+    },
+    "mandatoryEvidence": [
+      "BEFORE→candidate→north-star same-view strip",
+      "Hero-block close + Street door/road proof",
+      "Silhouette/ROI diagnostic (approved metric)",
+      "Live draw/triangle measurements",
+      "Zero asset/network errors",
+      "Rollback flag proof"
+    ],
+    "abortCriteria": [
+      "MAE <8 OR changed <15% without approved metric substitution",
+      "Qualitative hierarchy unchanged (ordinary viewer cannot distinguish from R14)",
+      "Hero-block proof DC >12 OR production path cannot meet ≤140 Overview DC",
+      "Door/socket drift >0.3 m"
+    ]
+  },
+  "artifactsPresent": {
+    "r14Baseline": true,
+    "pathAManifest": true,
+    "pathBManifest": true,
+    "chunkGlbs": true
+  }
+}

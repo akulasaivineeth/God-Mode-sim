@@ -7,21 +7,33 @@
 import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { PerspectiveCamera, Vector3 } from 'three';
 import { CAMERA_PRESETS, type CameraView } from './cameraPresets';
+import { isWorldLabActive } from '@/world/resolver/worldResolver';
+
+const LEGACY_TARGET_BOUNDS = {
+  minX: -22,
+  maxX: 56,
+  minY: 0,
+  maxY: 14,
+  minZ: -32,
+  maxZ: 42,
+} as const;
+
+const WORLD_LAB_TARGET_BOUNDS = {
+  minX: -28,
+  maxX: 28,
+  minY: 0,
+  maxY: 14,
+  minZ: -28,
+  maxZ: 32,
+} as const;
 
 export const PLAYER_CAMERA_LIMITS = {
   minDistance: 6,
   /** WF01 overview preset ≈133 m; block fly-away speck views (was 180). */
-  maxDistance: 136,
+  maxDistance: isWorldLabActive() ? 90 : 136,
   minPolarAngle: 0.18,
   maxPolarAngle: Math.PI * 0.48,
-  targetBounds: {
-    minX: -22,
-    maxX: 56,
-    minY: 0,
-    maxY: 14,
-    minZ: -32,
-    maxZ: 42,
-  },
+  targetBounds: isWorldLabActive() ? WORLD_LAB_TARGET_BOUNDS : LEGACY_TARGET_BOUNDS,
   evidenceMinDistance: 1.2,
   dampingFactor: 0.085,
   rotateSpeed: 0.55,
@@ -97,15 +109,33 @@ export function dollyPlayerCamera(factor: number): boolean {
   return true;
 }
 
+type OrbitDampingInternals = OrbitControls & {
+  _sphericalDelta?: { set: (x: number, y: number, z: number) => void };
+  _panOffset?: { set: (x: number, y: number, z: number) => void };
+};
+
+/** Hard-snap orbit controls; clears damping momentum so preset survives the next frame. */
+export function snapOrbitControlsToPreset(
+  controls: OrbitControls,
+  preset: { position: [number, number, number]; target: [number, number, number] },
+): void {
+  const camera = controls.object as PerspectiveCamera;
+  const damping = controls.enableDamping;
+  controls.enableDamping = false;
+  camera.position.set(...preset.position);
+  controls.target.set(...preset.target);
+  clampOrbitTarget(controls.target);
+  const internals = controls as OrbitDampingInternals;
+  internals._sphericalDelta?.set(0, 0, 0);
+  internals._panOffset?.set(0, 0, 0);
+  controls.update();
+  controls.enableDamping = damping;
+}
+
 export function applyPresetToControls(view: CameraView): boolean {
   if (!controlsRef) return false;
-  const preset = CAMERA_PRESETS[view];
-  const camera = controlsRef.object as PerspectiveCamera;
   applyPlayerCameraLimits(controlsRef, false);
-  camera.position.set(...preset.position);
-  controlsRef.target.set(...preset.target);
-  clampOrbitTarget(controlsRef.target);
-  controlsRef.update();
+  snapOrbitControlsToPreset(controlsRef, CAMERA_PRESETS[view]);
   return true;
 }
 

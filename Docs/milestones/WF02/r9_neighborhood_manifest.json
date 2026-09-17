@@ -1,0 +1,141 @@
+{
+  "sha": "923769ad5bfde300e2c8258684003e5d2445b2c9",
+  "worldLab": true,
+  "worldId": "hero-neighborhood-r9",
+  "shots": [
+    {
+      "name": "01_r9_overview_dawn",
+      "cam": "overview",
+      "simMinute": 0,
+      "clockLabel": "06:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/01_r9_overview_dawn.png",
+      "sha256": "17cece48929d82fe66dc07ceab0f028861ebe141e9cfad035edf69af854bcfb1",
+      "diagnostics": {
+        "drawCalls": 119,
+        "triangles": 18358,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "01b_r9_overview_noon",
+      "cam": "overview",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/01b_r9_overview_noon.png",
+      "sha256": "25f68842da48efe32dbd12b1000c53e3234742b3a705853e58c93a728a4bc9fa",
+      "diagnostics": {
+        "drawCalls": 116,
+        "triangles": 18022,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "02_r9_angled",
+      "cam": "angled",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/02_r9_angled.png",
+      "sha256": "6848902154908a650cc742b0c7486724598897605477cd7f0185d81ebd6f1393",
+      "diagnostics": {
+        "drawCalls": 108,
+        "triangles": 17676,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "03_r9_street",
+      "cam": "street",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/03_r9_street.png",
+      "sha256": "9e7495e74dd2911a0a909e7a7168231cfebe5c783fb97b56b3cd659abdf4801f",
+      "diagnostics": {
+        "drawCalls": 85,
+        "triangles": 61575,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "04_r9_civic",
+      "cam": "civic",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/04_r9_civic.png",
+      "sha256": "c5c4e1095a9555cf12420bf8bd378bef9091682b586d9c890acc7f941243a18c"
+    },
+    {
+      "name": "05_r9_residential",
+      "cam": "residential",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/05_r9_residential.png",
+      "sha256": "694dce5587453f97ba617df4938d2c476e74786348347e9cb511ddbafba474f6"
+    },
+    {
+      "name": "06_r9_commercial",
+      "cam": "commercial",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/06_r9_commercial.png",
+      "sha256": "e59a4b14d79fd2e1795a6cfb1f3f48835484bd3df469e4f8c96d51d610697068"
+    },
+    {
+      "name": "07_r9_store_workshop",
+      "cam": "store-workshop",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/07_r9_store_workshop.png",
+      "sha256": "8877c0cdf5dacc593798f4f88acc9f6c7334a69f8e78013b38a065e29b4a217e"
+    },
+    {
+      "name": "08_r9_home_street",
+      "cam": "home-street",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/08_r9_home_street.png",
+      "sha256": "1936e6e06d9d86e590bb5ff265b66714018c05eb11e4d940666640405db3b6bf"
+    },
+    {
+      "name": "09_r9_store_street",
+      "cam": "store-street",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/09_r9_store_street.png",
+      "sha256": "7c2be2feb5da916484da80be285de64a33ad095cb354e48a532e3f8fb14dd4f6"
+    },
+    {
+      "name": "10_r9_workshop_street",
+      "cam": "workshop-street",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/10_r9_workshop_street.png",
+      "sha256": "d5f3e87f1dcb391b3813e20ce26eb0fd9b7bdb2a41de1b869ae2fe50ae61e313"
+    },
+    {
+      "name": "11_r9_river_edge",
+      "cam": "river",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/11_r9_river_edge.png",
+      "sha256": "c35e3e10637390150bbdcfae8936b8ce3f636d012fab9fad78e385031d051dd8"
+    },
+    {
+      "name": "12_r9_future_lot",
+      "cam": "custom",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/12_r9_future_lot.png",
+      "sha256": "104561b3d9144057ae8be9671c6b75e9d8087b17b65426c17481d4b636bcb904"
+    },
+    {
+      "name": "13_r9_night",
+      "cam": "overview",
+      "simMinute": 870,
+      "clockLabel": "20:30",
+      "file": "/opt/cursor/artifacts/wf02_r9_neighborhood/13_r9_night.png",
+      "sha256": "57a69e7f67f12634043556961445b3b03dcd3dd5146cad0b5bebab9e07dc7bc5"
+    }
+  ],
+  "consoleErrors": [],
+  "networkAssetErrors": []
+}

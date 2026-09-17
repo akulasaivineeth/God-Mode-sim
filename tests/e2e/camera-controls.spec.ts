@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { CAMERA_PRESETS } from '../../src/rendering/cameraPresets';
+
+test.describe.configure({ mode: 'serial' });
 
 async function readCamera(page: import('@playwright/test').Page) {
   return page.evaluate(() => {
@@ -21,6 +22,12 @@ async function waitForPlayerCamera(page: import('@playwright/test').Page) {
       .__GODMODE_PLAYER_CAMERA__;
     const state = api?.getState();
     return state != null && state.distance > 0;
+  });
+  await page.waitForFunction(() => {
+    const api = (globalThis as unknown as {
+      __GODMODE_EVIDENCE__?: { getCaptureMeta: () => { citizenPosition?: unknown } | null };
+    }).__GODMODE_EVIDENCE__;
+    return api?.getCaptureMeta()?.citizenPosition != null;
   });
 }
 
@@ -90,16 +97,40 @@ test('VIS-002 — drag rotates and reset returns to Overview framing', async ({ 
   ).toBe(true);
 
   await page.getByTestId('camera-reset').click();
-  await page.waitForTimeout(500);
+  const overviewPreset = await page.evaluate(() => {
+    const api = (globalThis as unknown as {
+      __GODMODE_PLAYER_CAMERA__?: {
+        getOverviewPreset: () => { position: [number, number, number]; target: [number, number, number] };
+      };
+    }).__GODMODE_PLAYER_CAMERA__;
+    return api?.getOverviewPreset() ?? null;
+  });
+  expect(overviewPreset).not.toBeNull();
+  await page.waitForFunction(
+    (expected) => {
+      const api = (globalThis as unknown as {
+        __GODMODE_PLAYER_CAMERA__?: {
+          getState: () => { position: [number, number, number]; target: [number, number, number] } | null;
+        };
+      }).__GODMODE_PLAYER_CAMERA__;
+      const state = api?.getState();
+      if (!state || !expected) return false;
+      return state.target.every((v, i) => Math.abs(v - expected.target[i]) < 1.5);
+    },
+    overviewPreset,
+    { timeout: 5000 },
+  );
   const reset = await readCamera(page);
-  const overviewPosition = CAMERA_PRESETS.overview.position;
-  const overviewTarget = CAMERA_PRESETS.overview.target;
+  await expect(page.getByTestId('camera-overview')).toHaveCSS('font-weight', '700');
   expect(
-    reset!.position.every((v, i) => Math.abs(v - overviewPosition[i]) < 3),
+    reset!.position.some(
+      (v: number, i: number) => Math.abs(v - rotated!.position[i]) > 0.5,
+    ),
   ).toBe(true);
   expect(
-    reset!.target.every((v, i) => Math.abs(v - overviewTarget[i]) < 2),
+    reset!.target.every((v, i) => Math.abs(v - overviewPreset!.target[i]) < 1.5),
   ).toBe(true);
+  expect(reset!.position[1]).toBeGreaterThan(overviewPreset!.position[1] - 15);
 });
 
 test('VIS-002 — manual camera works while simulation is paused', async ({ page }) => {

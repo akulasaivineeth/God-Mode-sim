@@ -1,31 +1,48 @@
 /**
- * WF01 prefab-backed facility visuals — all major buildings use Kenney GLBs.
+ * WF01 prefab-backed facility visuals — WF02 bounds-anchored dressing + presentation transforms.
  */
 import { terrainHeightAt } from '@/world/townLayout';
 import { ModelAsset } from '../ModelAsset';
 import { WorldSign } from '../WorldSign';
+import {
+  resolveBuildingAnchors,
+  resolveVisualTransform,
+} from './buildingPresentationAnchors';
+import { isBuildingSuppressedByModular } from '@/rendering/modular/modularMode';
+import { isBuildingSuppressedByShell } from '@/rendering/prototypeShell/prototypeShellMode';
 import { BUILDING_PREFABS, getBuildingPosition } from './buildingPrefabConfig';
+import { CANONICAL_TOWN } from '@/world/townLayout';
+
+const ACTIVE_BUILDING_IDS = new Set(CANONICAL_TOWN.buildings.map((b) => b.id));
+const ACTIVE_PREFABS = BUILDING_PREFABS.filter((config) => ACTIVE_BUILDING_IDS.has(config.buildingId));
 
 function PrefabBuilding({ config }: { config: (typeof BUILDING_PREFABS)[number] }) {
+  if (isBuildingSuppressedByShell(config.buildingId)) return null;
+  if (isBuildingSuppressedByModular(config.buildingId)) return null;
+
   const { x, z } = getBuildingPosition(config.buildingId);
-  const y = terrainHeightAt(x, z);
-  const rotY = config.rotationY ?? 0;
-  const southSign = rotY === 0 || rotY === Math.PI;
+  const presentation = resolveVisualTransform(config.buildingId);
+  const y = terrainHeightAt(x + presentation.positionOffset[0], z + presentation.positionOffset[2]);
+  const rotY = (config.rotationY ?? 0) + presentation.rotationDelta;
+  const anchors = resolveBuildingAnchors(config);
 
   return (
-    <group position={[x, y, z]} rotation={[0, rotY, 0]}>
+    <group
+      position={[x + presentation.positionOffset[0], y, z + presentation.positionOffset[2]]}
+      rotation={[0, rotY, 0]}
+    >
       <ModelAsset url={config.assetUrl} targetWidth={config.targetWidth} />
-      {config.sign && (
+      {config.sign && anchors.signPosition && (
         <WorldSign
           text={config.sign.text}
-          position={config.sign.position}
-          rotation={southSign ? [0, Math.PI, 0] : [0, 0, 0]}
+          position={anchors.signPosition}
+          rotation={anchors.signRotation}
           width={config.sign.width}
           height={config.sign.height}
           fontSize={config.sign.fontSize}
         />
       )}
-      {config.extras?.map((extra, i) => (
+      {anchors.extras.map((extra, i) => (
         <ModelAsset
           key={i}
           url={extra.url}
@@ -43,7 +60,7 @@ function PrefabBuilding({ config }: { config: (typeof BUILDING_PREFABS)[number] 
 export function PrefabBuildings() {
   return (
     <group>
-      {BUILDING_PREFABS.map((config) => (
+      {ACTIVE_PREFABS.map((config) => (
         <PrefabBuilding key={config.buildingId} config={config} />
       ))}
     </group>

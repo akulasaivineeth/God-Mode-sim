@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" width="1440" height="900">
+  <image href="prototype_overview_r71.png" width="1440" height="900" opacity="0.85"/>
+  <text x="720" y="40" text-anchor="middle" fill="#ff6666" font-size="20" font-weight="bold">R6 failure diagnosis @ 743a259</text>
+  <text x="200" y="520" fill="#ffcc00" font-size="14">Orchard: dispersed dots → solid block</text>
+  <text x="350" y="380" fill="#ffcc00" font-size="14">Civic: empty plaza → warm pad + ring</text>
+  <text x="550" y="450" fill="#ffcc00" font-size="14">Residential: islands → cluster bands</text>
+  <text x="150" y="350" fill="#ffcc00" font-size="14">Commercial: float → frontage band</text>
+  <text x="450" y="280" fill="#ffcc00" font-size="14">240m board reads unused → hero core</text>
+</svg>

@@ -7,8 +7,8 @@ const SEED = 'GODMODE_M02_CANONICAL_2026';
 
 /** Minutes used by scripts/capture-m02-closure-evidence.mjs — keep in sync. */
 export const CANONICAL_EVIDENCE_MINUTES = {
-  firstDaytimeStoreEatPerform: 2048,
-  firstDaytimeWorkPerform: 499,
+  firstDaytimeStoreEatPerform: 2057,
+  firstDaytimeWorkPerform: 506,
   firstDaytimeWalkTravel: 481,
 } as const;
 

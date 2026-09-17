@@ -1,0 +1,77 @@
+{
+  "generatedAt": "2026-09-17T06:19:03.200Z",
+  "planRevision": "15.4",
+  "authorization": "STRATEGY_A_PHASE0_ONLY",
+  "license": "CC0 1.0 Universal (Kenney + Quaternius derivatives)",
+  "sourceUrl": "https://kenney.nl/assets",
+  "flattenPipeline": "merge → flatten → join → flatten",
+  "partCount": 223,
+  "sourceMeshes": [
+    "/assets/glb/kenney/commercial/school.glb",
+    "/assets/glb/kenney/commercial/detail-parasol-a.glb",
+    "/assets/glb/kenney/suburban/home-type-a.glb",
+    "/assets/glb/kenney/suburban/home-type-d.glb",
+    "/assets/glb/kenney/suburban/farmhouse.glb",
+    "/assets/glb/kenney/suburban/path-stones-short.glb",
+    "/assets/glb/kenney/commercial/detail-awning.glb",
+    "/assets/glb/kenney/suburban/path-stones-messy.glb",
+    "/assets/glb/kenney/suburban/fence-low.glb",
+    "/assets/glb/kenney/suburban/planter.glb",
+    "/assets/glb/kenney/suburban/tree-small.glb",
+    "/assets/gltf/quaternius/Fern_1.gltf",
+    "/assets/glb/kenney/suburban/tree-large.glb",
+    "/assets/gltf/quaternius/CommonTree_2.gltf"
+  ],
+  "measuredBounds": {
+    "min": [
+      -38.64505770705905,
+      -0.5826528310775757,
+      -34.81174614911959
+    ],
+    "max": [
+      24.120941541664,
+      17.76053695678711,
+      29.56468947124953
+    ],
+    "size": [
+      62.76599924872305,
+      18.343189787864684,
+      64.37643562036912
+    ],
+    "triangles": 130486,
+    "meshCount": 8,
+    "materialCount": 4
+  },
+  "doorValidation": [
+    {
+      "label": "home-door",
+      "facilityId": "house-1",
+      "worldX": 16,
+      "worldZ": -6.4,
+      "frozenX": 16,
+      "frozenZ": -6.4,
+      "deltaM": 0,
+      "pass": true
+    },
+    {
+      "label": "store-door",
+      "facilityId": "store",
+      "worldX": -14,
+      "worldZ": 10.8,
+      "frozenX": -14,
+      "frozenZ": 10.8,
+      "deltaM": 0,
+      "pass": true
+    },
+    {
+      "label": "workshop-door",
+      "facilityId": "workshop",
+      "worldX": 4,
+      "worldZ": 10.8,
+      "frozenX": 4,
+      "frozenZ": 10.8,
+      "deltaM": 0,
+      "pass": true
+    }
+  ]
+}

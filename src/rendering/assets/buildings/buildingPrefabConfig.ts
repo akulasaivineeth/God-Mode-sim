@@ -1,17 +1,16 @@
 /**
- * WF01 prefab-backed facility presentation config.
+ * WF02 prefab-backed facility presentation config.
  * Positions read from CANONICAL_TOWN; simulation IDs unchanged.
+ * Attached dressing uses anchor kinds resolved via buildingPresentationAnchors.ts.
  */
 import { CANONICAL_TOWN } from '@/world/townLayout';
 import { KENNEY_ASSETS } from '../EnvironmentAssetRegistry';
+import type { AnchorExtraKind } from './buildingPresentationAnchors';
 
 export interface PrefabExtra {
-  url: string;
-  position: [number, number, number];
-  rotation?: [number, number, number];
-  scale?: number;
-  targetWidth?: number;
-  castShadow?: boolean;
+  kind: AnchorExtraKind;
+  /** Optional multiplier on anchor-derived scale. */
+  scaleMultiplier?: number;
 }
 
 export interface BuildingPrefabConfig {
@@ -20,7 +19,7 @@ export interface BuildingPrefabConfig {
   targetWidth: number;
   /** Y rotation for south-facing (-Z) facade toward public realm. */
   rotationY?: number;
-  sign?: { text: string; position: [number, number, number]; width: number; height: number; fontSize: number };
+  sign?: { text: string; width: number; height: number; fontSize: number };
   extras?: PrefabExtra[];
 }
 
@@ -37,120 +36,123 @@ export const BUILDING_PREFABS: readonly BuildingPrefabConfig[] = [
   {
     buildingId: 'house-1',
     assetUrl: KENNEY_ASSETS.homeCottage,
-    targetWidth: 7.8,
+    targetWidth: 11.8,
     rotationY: -Math.PI / 2,
-    sign: { text: '11 Riverside Lane', position: [0, 4.1, 4.5], width: 3.0, height: 0.55, fontSize: 36 },
+    sign: { text: '11 Riverside Lane', width: 3.0, height: 0.55, fontSize: 36 },
     extras: [
-      { url: KENNEY_ASSETS.pathShort, position: [0, 0.02, 6.2], scale: 2.8, castShadow: false },
-      { url: KENNEY_ASSETS.fenceLow, position: [-2.4, 0, 4.8], rotation: [0, Math.PI / 2, 0], scale: 2.2, castShadow: false },
-      { url: KENNEY_ASSETS.fenceLow, position: [2.4, 0, 4.8], rotation: [0, Math.PI / 2, 0], scale: 2.2, castShadow: false },
+      { kind: 'fence-front' },
+      { kind: 'path-short' },
     ],
   },
   {
     buildingId: 'house-2',
     assetUrl: KENNEY_ASSETS.homeTypeA,
-    targetWidth: 7.5,
+    targetWidth: 10.4,
     rotationY: -Math.PI / 2,
     extras: [
-      { url: KENNEY_ASSETS.drivewayShort, position: [0, 0.02, 5.5], scale: 2.0, castShadow: false },
-      { url: KENNEY_ASSETS.fenceLow, position: [-2.2, 0, 4.2], rotation: [0, Math.PI / 2, 0], scale: 2.0, castShadow: false },
+      { kind: 'fence-front' },
+      { kind: 'path-short' },
     ],
   },
   {
     buildingId: 'house-3',
     assetUrl: KENNEY_ASSETS.homeTypeC,
-    targetWidth: 7.5,
+    targetWidth: 11.0,
     rotationY: 0,
-    extras: [{ url: KENNEY_ASSETS.pathShort, position: [0, 0.02, 5.8], scale: 2.6, castShadow: false }],
+    extras: [{ kind: 'path-short' }],
   },
   {
     buildingId: 'house-4',
     assetUrl: KENNEY_ASSETS.homeTypeD,
-    targetWidth: 7.8,
+    targetWidth: 11.2,
     rotationY: -Math.PI / 2,
-    extras: [{ url: KENNEY_ASSETS.drivewayShort, position: [0, 0.02, 5.5], scale: 2.0, castShadow: false }],
+    extras: [{ kind: 'driveway-short' }],
   },
   {
     buildingId: 'apartment',
     assetUrl: KENNEY_ASSETS.apartmentBlock,
-    targetWidth: 11.5,
+    targetWidth: 16.0,
     rotationY: -Math.PI / 2,
-    sign: { text: 'RIVERSIDE APARTMENTS', position: [0, 8.5, 5.8], width: 4.5, height: 0.65, fontSize: 34 },
+    sign: { text: 'RIVERSIDE APARTMENTS', width: 4.5, height: 0.65, fontSize: 34 },
   },
   {
     buildingId: 'community-hall',
     assetUrl: KENNEY_ASSETS.communityHall,
-    targetWidth: 11.5,
+    targetWidth: 16.0,
     rotationY: SOUTH,
-    sign: { text: 'COMMUNITY HALL', position: [0, 5.8, -5.5], width: 4.2, height: 0.7, fontSize: 38 },
+    sign: { text: 'COMMUNITY HALL', width: 4.2, height: 0.7, fontSize: 38 },
   },
   {
     buildingId: 'clinic',
     assetUrl: KENNEY_ASSETS.clinic,
-    targetWidth: 9.5,
+    targetWidth: 13.5,
     rotationY: SOUTH,
-    sign: { text: 'CLINIC', position: [0, 4.8, -4.8], width: 2.8, height: 0.6, fontSize: 40 },
+    sign: { text: 'CLINIC', width: 2.8, height: 0.6, fontSize: 40 },
   },
   {
     buildingId: 'school',
     assetUrl: KENNEY_ASSETS.school,
-    targetWidth: 12.5,
+    targetWidth: 17.5,
     rotationY: SOUTH,
-    sign: { text: 'RIVERSIDE SCHOOL', position: [0, 5.5, -5.8], width: 4.8, height: 0.7, fontSize: 36 },
+    sign: { text: 'RIVERSIDE SCHOOL', width: 4.8, height: 0.7, fontSize: 36 },
   },
   {
     buildingId: 'store',
     assetUrl: KENNEY_ASSETS.storeGeneral,
-    targetWidth: 9.5,
+    targetWidth: 13.5,
     rotationY: 0,
-    sign: { text: 'GENERAL STORE', position: [0, 5.2, -5.2], width: 4.2, height: 0.75, fontSize: 44 },
+    sign: { text: 'GENERAL STORE', width: 4.2, height: 0.75, fontSize: 44 },
     extras: [
-      { url: KENNEY_ASSETS.storeAwning, position: [0, 3.1, -4.2], scale: 2.45, castShadow: false },
-      { url: KENNEY_ASSETS.pathShort, position: [0, 0.02, -6.2], scale: 3.2, castShadow: false },
-      { url: KENNEY_ASSETS.drivewayShort, position: [0, 0.02, -7.4], scale: 1.4, castShadow: false },
+      { kind: 'awning' },
+      { kind: 'path-short', scaleMultiplier: 1.15 },
+      { kind: 'driveway-short', scaleMultiplier: 0.7 },
     ],
   },
   {
     buildingId: 'cafe',
     assetUrl: KENNEY_ASSETS.cafeBistro,
-    targetWidth: 8.5,
+    targetWidth: 11.6,
     rotationY: SOUTH,
-    sign: { text: 'RIVERSIDE CAFE', position: [0, 4.6, -4.8], width: 3.6, height: 0.65, fontSize: 38 },
+    sign: { text: 'RIVERSIDE CAFE', width: 3.6, height: 0.65, fontSize: 38 },
     extras: [
-      { url: KENNEY_ASSETS.cafeParasol, position: [2.2, 0, -5.2], scale: 1.8, castShadow: false },
-      { url: KENNEY_ASSETS.pathShort, position: [0, 0.02, -5.8], scale: 2.8, castShadow: false },
+      { kind: 'parasol-right' },
+      { kind: 'path-short' },
+      { kind: 'awning', scaleMultiplier: 0.85 },
     ],
   },
   {
     buildingId: 'workshop',
     assetUrl: KENNEY_ASSETS.workshopIndustrial,
-    targetWidth: 11.5,
+    targetWidth: 14.2,
     rotationY: 0,
-    sign: { text: 'RIVERSIDE WORKSHOP', position: [0, 5.4, -5.4], width: 4.4, height: 0.75, fontSize: 38 },
-    extras: [{ url: KENNEY_ASSETS.roadDriveway, position: [0, 0.02, -6.8], scale: 1.85, castShadow: false }],
+    sign: { text: 'RIVERSIDE WORKSHOP', width: 4.4, height: 0.75, fontSize: 38 },
+    extras: [
+      { kind: 'road-driveway' },
+      { kind: 'awning', scaleMultiplier: 0.9 },
+    ],
   },
   {
     buildingId: 'warehouse',
     assetUrl: KENNEY_ASSETS.warehouse,
-    targetWidth: 13.5,
+    targetWidth: 19.0,
     rotationY: SOUTH,
-    sign: { text: 'WAREHOUSE', position: [0, 6.2, -6.2], width: 3.6, height: 0.65, fontSize: 40 },
-    extras: [{ url: KENNEY_ASSETS.roadDriveway, position: [0, 0.02, -7.5], scale: 2.2, castShadow: false }],
+    sign: { text: 'WAREHOUSE', width: 3.6, height: 0.65, fontSize: 40 },
+    extras: [{ kind: 'road-driveway', scaleMultiplier: 1.2 }],
   },
   {
     buildingId: 'utility',
     assetUrl: KENNEY_ASSETS.utilityStation,
-    targetWidth: 9.5,
+    targetWidth: 13.5,
     rotationY: SOUTH,
-    sign: { text: 'UTILITY', position: [0, 4.5, -4.8], width: 2.8, height: 0.6, fontSize: 40 },
+    sign: { text: 'UTILITY', width: 2.8, height: 0.6, fontSize: 40 },
   },
   {
     buildingId: 'farmhouse',
     assetUrl: KENNEY_ASSETS.farmhouse,
-    targetWidth: 8.5,
+    targetWidth: 12.5,
     rotationY: -Math.PI / 2,
-    sign: { text: 'RIVERSIDE FARM', position: [0, 4.2, 4.8], width: 3.4, height: 0.6, fontSize: 36 },
-    extras: [{ url: KENNEY_ASSETS.pathLong, position: [0, 0.02, 6.5], scale: 3.0, castShadow: false }],
+    sign: { text: 'RIVERSIDE FARM', width: 3.4, height: 0.6, fontSize: 36 },
+    extras: [{ kind: 'path-long' }],
   },
 ];
 

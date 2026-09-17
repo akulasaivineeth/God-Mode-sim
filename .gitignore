@@ -11,3 +11,4 @@ test-results/
 generated/
 review-bundle/
 *.tsbuildinfo
+.cache/wf02-r13-shell-parts/

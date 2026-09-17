@@ -16,7 +16,10 @@ import { useDiagnosticsStore } from '@/ui/stores/diagnosticsStore';
 import { terrainHeightAt } from '@/world/townLayout';
 import { MAT } from '../sharedMaterials';
 import type { CitizenPose } from '../citizenPresentation';
-import { layoutCitizenModelFromObject } from '../citizenModelScale';
+import {
+  layoutCitizenModelFromObject,
+  PRESENTATION_CITIZEN_HEIGHT,
+} from '../citizenModelScale';
 import {
   registerCitizenBody,
   registerPresentationControls,
@@ -74,7 +77,7 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
 
   const { scene, mixer, actions, clipNames, modelScale, footOffsetY } = useMemo(() => {
     const { scene: cloned } = prepareSkinnedCitizenRoot(gltf.scene, gltf.animations);
-    const layout = layoutCitizenModelFromObject(cloned);
+    const layout = layoutCitizenModelFromObject(cloned, PRESENTATION_CITIZEN_HEIGHT);
     const mix = new AnimationMixer(cloned);
     const acts: Record<string, AnimationAction> = {};
     for (const clip of gltf.animations) {
@@ -186,7 +189,7 @@ export function CitizenVisual({ citizen, selected, animationsSuppressed, onSelec
     >
       {selected && !evidencePortraitMode && (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.04, 0]}>
-          <ringGeometry args={[0.42, 0.58, 32]} />
+          <ringGeometry args={[0.54, 0.75, 32]} />
           <primitive object={MAT.selectRing} attach="material" />
         </mesh>
       )}

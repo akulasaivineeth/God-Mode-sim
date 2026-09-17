@@ -1,0 +1,182 @@
+{
+  "generatedAt": "2026-09-17T06:11:44.385Z",
+  "planRevision": "15.4",
+  "supersedesPlanRevision": "15.3.1",
+  "supersedesReviewSha": "bc1d41a55b8e03dc4a07d9e6e802fe0cb3563e6f",
+  "investigationBaseSha": "bc1d41a55b8e03dc4a07d9e6e802fe0cb3563e6f",
+  "seniorDecision": {
+    "decision": "FIX_REQUIRED",
+    "review": "WF02-R15-SENIOR",
+    "reviewSha": "bc1d41a55b8e03dc4a07d9e6e802fe0cb3563e6f",
+    "nextState": "PLAN_R15.4_WAITING_FOR_CHATGPT_PLAN_APPROVAL",
+    "rootCause": "Authored environment composition at neighborhood scale — not coordinate optimizer/metric/camera"
+  },
+  "falsificationRecord": {
+    "pathA": {
+      "sha": "c3d073995dc707115433e96e099196b52c9a2468",
+      "changedPct": 20.09,
+      "mae": 5.3082,
+      "overallPass": false
+    },
+    "pathB": {
+      "sha": "babd0fef738b07cf5ec705ab8742aaf28c691da6",
+      "changedPct": 15.79,
+      "mae": 4.5916,
+      "proofDc": 206,
+      "overallPass": false
+    },
+    "pathC": {
+      "sha": "85ded0397eb4945b1b36d69cf6dcc4f6e50a7268",
+      "changedPct": 19.16,
+      "mae": 6.1947,
+      "roiMae": 14.1951,
+      "overallPass": false
+    },
+    "pathE": {
+      "sha": "e4b59ab9e52476fe2db50af5f1c8e16f41832208",
+      "changedPct": 19.02,
+      "mae": 6.387,
+      "roiMae": 13.7655,
+      "frameOccupancyDelta": {
+        "builtMassPct": 0,
+        "vegetationPct": -0.8,
+        "meadowPeripheryPct": 1.1
+      },
+      "engineeringPass": true,
+      "overallPass": false,
+      "seniorVerdict": "FIX_REQUIRED — footprint hypothesis falsified; occupancy flat"
+    }
+  },
+  "candidateEOccupancyFailure": {
+    "builtMassDeltaPct": 0,
+    "vegetationDeltaPct": -0.8,
+    "meadowPeripheryDeltaPct": 1.1,
+    "interpretation": "Footprint offset changed coordinates but not screen-space mass — hierarchy unchanged"
+  },
+  "rejectedApproaches": [
+    "procedural scatter/tint (R4.1)",
+    "runtime envelopes (Path A)",
+    "additive chunks (Path B)",
+    "local replacement only (Candidate C)",
+    "footprint coordinate optimization (Candidate E)",
+    "standalone camera calibration (Candidate D)",
+    "R15.5/R15.6 micro-patches without authored scene"
+  ],
+  "strategies": [
+    {
+      "id": "A-offline-authored-hero-neighborhood-scene",
+      "label": "Strategy A — offline authored hero-neighborhood scene/chunk",
+      "verdict": "recommend-primary-phase0",
+      "method": "One deliberately authored presentation chunk from registered R13/Kenney/Quaternius vocabulary. Offline recipe + flatten/join pipeline. Semantic door sockets; sim not render authority.",
+      "license": "CC0 Kenney + Quaternius derivatives (already registered)",
+      "visualHypothesis": "R13 kitbash + C flatten proved at building/block scale; E proved placement alone cannot add screen-space mass — author scene as unit",
+      "abortIf": "Qualitative north-star unchanged at frozen camera; occupancy flat like E"
+    },
+    {
+      "id": "B-external-cc0-source-audit",
+      "label": "Strategy B — audit stronger finished CC0 environment source",
+      "verdict": "recommend-audit-only-fallback",
+      "method": "File-level audit of one external CC0 neighborhood/environment source (KayKit reconfirm, OpenGameArt screening). Disposable import proof plan only — no import in plan gate.",
+      "license": "Must verify LICENSE file — no ambiguous Sketchfab",
+      "visualHypothesis": "Unknown until audit — may supply pre-composed neighborhood read",
+      "abortIf": "Repeats R10/R11 monolith failure; insufficient civic/commercial/residential/park vocabulary"
+    },
+    {
+      "id": "C-stop-wf02-visual-rebuild",
+      "label": "Strategy C — stop WF02 visual rebuild / change north-star requirement",
+      "verdict": "recommend-explicit-product-tradeoff",
+      "method": "Stop iteration loop at R14 best; document north-star as aspirational reference not mechanical gate. Requires explicit Product Owner decision.",
+      "license": "N/A",
+      "visualHypothesis": "Accept current readable town; defer densification",
+      "abortIf": "Chosen silently without Product Owner — forbidden"
+    },
+    {
+      "id": "E-presentation-footprint-recomposition",
+      "label": "Candidate E — footprint recomposition (R15.3.1)",
+      "verdict": "reject-falsified",
+      "phase0Result": "changed 19.02%; MAE 6.39; built mass occupancy Δ0%; engineering PASS; visual FAIL",
+      "disposition": "presentationFootprintSpec.ts — disposable research only; do not production-wire"
+    },
+    {
+      "id": "D-bounded-camera-calibration",
+      "label": "Candidate D — camera calibration",
+      "verdict": "forbidden-until-composition-passes",
+      "reason": "E proved under-authored composition; camera would crop sparse scene without creating mass"
+    }
+  ],
+  "externalSourceAudit": [
+    {
+      "id": "kenney-registered-inventory",
+      "license": "CC0 1.0",
+      "verdict": "insufficient-alone",
+      "note": "Parts not composed neighborhood scenes — Strategy A composes them offline"
+    },
+    {
+      "id": "quaternius-stylized-nature-megakit",
+      "sourceUrl": "https://opengameart.org/content/stylized-nature-megakit",
+      "license": "CC0 1.0",
+      "verdict": "nature-only",
+      "note": "Vegetation/rocks — no civic/commercial/residential building vocabulary"
+    },
+    {
+      "id": "kaykit-city-builder-bits",
+      "sourceUrl": "https://kaylousberg.itch.io/city-builder-bits",
+      "license": "CC0 1.0 (verify LICENSE file)",
+      "verdict": "prior-reject-r11",
+      "note": "Pre-assembled monoliths — R10/R11 failure class; audit-only reconfirmation"
+    }
+  ],
+  "recommendation": {
+    "primary": "A-offline-authored-hero-neighborhood-scene",
+    "fallback": "B-external-cc0-source-audit",
+    "stopAlternative": "C-stop-wf02-visual-rebuild",
+    "rejected": [
+      "E-production",
+      "D-standalone",
+      "procedural-iteration"
+    ],
+    "rationale": "Offline authored scene from proven kitbash/flatten pipeline is highest-credibility path within registered CC0 vocabulary. E falsified placement-only hypothesis.",
+    "stopRecommendation": "If Strategy A Phase 0 fails qualitative gate AND Strategy B finds no credible source, recommend Strategy C (explicit Product Owner tradeoff) — not R15.5 micro-patches",
+    "nextGate": "PLAN_R15.4 approval → Strategy A scene recipe + import + disposable Phase 0 proof"
+  },
+  "compositionProofPrecommit": {
+    "camera": {
+      "position": [
+        0,
+        46,
+        36
+      ],
+      "target": [
+        0,
+        0,
+        4
+      ]
+    },
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "qualitativeDecisive": true,
+    "occupancyDiagnosticOnly": true,
+    "candidateDForbiddenUntilPass": true,
+    "noCropGaming": true
+  },
+  "performanceBudget": {
+    "overviewDrawCallsMax": 135,
+    "overviewDrawCallsHardCap": 140,
+    "streetDrawCallsMax": 100,
+    "overviewTrianglesMax": 150000,
+    "reserveDrawCallsMin": 5,
+    "reserveTrianglesMin": 8000,
+    "heroSceneMeshHardStop": 12
+  },
+  "artifactsPresent": {
+    "pathAManifest": true,
+    "pathBManifest": true,
+    "pathCManifest": true,
+    "pathEManifest": true,
+    "planR154": true,
+    "r14Baseline": true,
+    "northStarReference": true
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "sha": "7f968784a3dcaba4f13c6c3c27033f249443c787",
+  "worldLab": true,
+  "modularPrototype": true,
+  "worldId": "hero-neighborhood-r11-modular",
+  "measuredGridUnit": {
+    "widthM": 1,
+    "depthM": 1,
+    "storyHeightM": 0.625
+  },
+  "moduleCount": 18,
+  "shots": [
+    {
+      "name": "01_r11_overview_dawn",
+      "cam": "overview",
+      "simMinute": 0,
+      "clockLabel": "06:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/01_r11_overview_dawn.png",
+      "sha256": "74913845e9ced49cd10c3cbb1500b61289069cfafa78c2753f4e3028e46a48fe",
+      "diagnostics": {
+        "drawCalls": 89,
+        "triangles": 42372,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "01b_r11_overview_noon",
+      "cam": "overview",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/01b_r11_overview_noon.png",
+      "sha256": "c05ad7e0269e3872ac111eb305d8f229b9c084d2f801041596534485c144170a",
+      "diagnostics": {
+        "drawCalls": 86,
+        "triangles": 42036,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "02_r11_angled",
+      "cam": "angled",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/02_r11_angled.png",
+      "sha256": "2519dd0a730d6b1aa2e1514bf2f342fe3f38ac1d78f56b1527d745f12b46ef2c",
+      "diagnostics": {
+        "drawCalls": 87,
+        "triangles": 42038,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "03_r11_civic_closeup",
+      "cam": "civic",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/03_r11_civic_closeup.png",
+      "sha256": "1a166bee7b1a9e104012fe07052a9ddaf060968e8329d05980d12c515d58a2f1"
+    },
+    {
+      "name": "04_r11_commercial_closeup",
+      "cam": "commercial",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/04_r11_commercial_closeup.png",
+      "sha256": "fa898bf8a56e9c057e8da4d366c9947f985d605fc39e598720b813681e0de2e2"
+    },
+    {
+      "name": "05_r11_residential_closeup",
+      "cam": "residential",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/05_r11_residential_closeup.png",
+      "sha256": "f330202184f1ab4f04b80749fc0bee54f4699a50f55f761a1e20706d035b64b2"
+    },
+    {
+      "name": "06_r11_street_portal",
+      "cam": "street",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/06_r11_street_portal.png",
+      "sha256": "d71a40a368b2d5b67406a22cf6815402e3f0f1a56262190d57b541f360dd3ad9",
+      "diagnostics": {
+        "drawCalls": 62,
+        "triangles": 81385,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "07_r11_home_street",
+      "cam": "home-street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/07_r11_home_street.png",
+      "sha256": "254eddb12fcfc19a1124bde4702331a42c0d939540930ce06cd91807adebb5a5"
+    },
+    {
+      "name": "08_r11_store_street",
+      "cam": "store-street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/08_r11_store_street.png",
+      "sha256": "7a86789da7251891e56a67244912ec17e5fcc2cf0ff73b82ce70aab08f5c585d"
+    },
+    {
+      "name": "09_r11_workshop_street",
+      "cam": "workshop-street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/09_r11_workshop_street.png",
+      "sha256": "6b15547b24b676604a8941b3341895c202e480725b18c5956ad38b81635d74cf"
+    },
+    {
+      "name": "10_r11_street_scale_proof",
+      "cam": "street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/10_r11_street_scale_proof.png",
+      "sha256": "421810bcfae723b772ca30fd4030c2cb5f937517518fbe586d4bfef170150d50",
+      "diagnostics": {
+        "drawCalls": 62,
+        "triangles": 81385,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "11_r11_night",
+      "cam": "overview",
+      "simMinute": 870,
+      "clockLabel": "20:30",
+      "file": "/opt/cursor/artifacts/wf02_r11_prototype/11_r11_night.png",
+      "sha256": "debff445d91b30543fd069cf334ea9b183b3174aa796ed05db15708903c4dbb5"
+    }
+  ],
+  "consoleErrors": [],
+  "networkAssetErrors": []
+}

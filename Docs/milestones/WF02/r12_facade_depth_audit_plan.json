@@ -1,0 +1,535 @@
+{
+  "generatedAt": "2026-09-16T10:33:49.659Z",
+  "planRevision": 12,
+  "sourceUrl": "https://kenney.nl/assets/modular-buildings",
+  "license": "CC0 1.0 Universal",
+  "r11ImportedCount": 18,
+  "r11CoplanarCount": 11,
+  "r11DepthCapableImported": [
+    {
+      "moduleId": "building-window-sill",
+      "depthClass": "moderate-projection",
+      "facadeDepthM": 1.050000011920929,
+      "triangles": 40
+    },
+    {
+      "moduleId": "building-window-awnings",
+      "depthClass": "moderate-projection",
+      "facadeDepthM": 1.128250002861023,
+      "triangles": 116
+    },
+    {
+      "moduleId": "building-steps-wide",
+      "depthClass": "strong-projection",
+      "facadeDepthM": 1.2000000476837158,
+      "triangles": 82
+    },
+    {
+      "moduleId": "roof-flat-top",
+      "depthClass": "moderate-projection",
+      "facadeDepthM": 1.100000023841858,
+      "triangles": 28
+    },
+    {
+      "moduleId": "roof-flat-awning-a",
+      "depthClass": "moderate-projection",
+      "facadeDepthM": 1.110000193119049,
+      "triangles": 28
+    },
+    {
+      "moduleId": "roof-slanted",
+      "depthClass": "moderate-projection",
+      "facadeDepthM": 1.139176607131958,
+      "triangles": 28
+    },
+    {
+      "moduleId": "roof-gable-corner",
+      "depthClass": "shallow-projection",
+      "facadeDepthM": 1.0456427335739136,
+      "triangles": 18
+    }
+  ],
+  "r12CandidateModules": {
+    "building-window-balcony": {
+      "moduleId": "building-window-balcony",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          0,
+          -0.574999988079071
+        ],
+        "max": [
+          0.5,
+          0.625,
+          0.574999988079071
+        ],
+        "size": [
+          1,
+          0.625,
+          1.149999976158142
+        ],
+        "triangles": 72
+      },
+      "depthClass": "moderate-projection",
+      "facadeDepthM": 1.149999976158142,
+      "triangles": 72
+    },
+    "building-window-large-left": {
+      "moduleId": "building-window-large-left",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          0,
+          -0.5
+        ],
+        "max": [
+          0.5,
+          0.625,
+          0.5
+        ],
+        "size": [
+          1,
+          0.625,
+          1
+        ],
+        "triangles": 24
+      },
+      "depthClass": "coplanar",
+      "facadeDepthM": 1,
+      "triangles": 24
+    },
+    "building-window-large-middle": {
+      "moduleId": "building-window-large-middle",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          0,
+          -0.5
+        ],
+        "max": [
+          0.5,
+          0.625,
+          0.5
+        ],
+        "size": [
+          1,
+          0.625,
+          1
+        ],
+        "triangles": 20
+      },
+      "depthClass": "coplanar",
+      "facadeDepthM": 1,
+      "triangles": 20
+    },
+    "building-window-large-right": {
+      "moduleId": "building-window-large-right",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          0,
+          -0.5
+        ],
+        "max": [
+          0.5,
+          0.625,
+          0.5
+        ],
+        "size": [
+          1,
+          0.625,
+          1
+        ],
+        "triangles": 24
+      },
+      "depthClass": "coplanar",
+      "facadeDepthM": 1,
+      "triangles": 24
+    },
+    "building-steps-narrow-windows": {
+      "moduleId": "building-steps-narrow-windows",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          0,
+          -0.5
+        ],
+        "max": [
+          0.5,
+          0.8374999761581421,
+          0.7000000476837158
+        ],
+        "size": [
+          1,
+          0.8374999761581421,
+          1.2000000476837158
+        ],
+        "triangles": 106
+      },
+      "depthClass": "strong-projection",
+      "facadeDepthM": 1.2000000476837158,
+      "triangles": 106
+    },
+    "building-steps-narrow-windows-round": {
+      "moduleId": "building-steps-narrow-windows-round",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          -2.255973158774445e-17,
+          -0.6000000238418579
+        ],
+        "max": [
+          0.5,
+          0.8374999761581421,
+          0.6000000238418579
+        ],
+        "size": [
+          1,
+          0.8374999761581421,
+          1.2000000476837158
+        ],
+        "triangles": 130
+      },
+      "depthClass": "strong-projection",
+      "facadeDepthM": 1.2000000476837158,
+      "triangles": 130
+    },
+    "building-corner-window-top-round": {
+      "moduleId": "building-corner-window-top-round",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          0,
+          -0.5
+        ],
+        "max": [
+          0.5,
+          0.625,
+          0.5
+        ],
+        "size": [
+          1,
+          0.625,
+          1
+        ],
+        "triangles": 44
+      },
+      "depthClass": "coplanar",
+      "facadeDepthM": 1,
+      "triangles": 44
+    },
+    "building-windows-high-middle": {
+      "moduleId": "building-windows-high-middle",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5000001192092896,
+          0,
+          -0.5000001192092896
+        ],
+        "max": [
+          0.5000001192092896,
+          0.625,
+          0.5000001192092896
+        ],
+        "size": [
+          1.000000238418579,
+          0.625,
+          1.000000238418579
+        ],
+        "triangles": 44
+      },
+      "depthClass": "coplanar",
+      "facadeDepthM": 1.000000238418579,
+      "triangles": 44
+    },
+    "building-windows-high-top-round": {
+      "moduleId": "building-windows-high-top-round",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          0,
+          -0.5
+        ],
+        "max": [
+          0.5,
+          0.625,
+          0.5
+        ],
+        "size": [
+          1,
+          0.625,
+          1
+        ],
+        "triangles": 68
+      },
+      "depthClass": "coplanar",
+      "facadeDepthM": 1,
+      "triangles": 68
+    },
+    "roof-flat-detail-a": {
+      "moduleId": "roof-flat-detail-a",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          0,
+          -0.5
+        ],
+        "max": [
+          0.5,
+          0.21249999105930328,
+          0.5
+        ],
+        "size": [
+          1,
+          0.21249999105930328,
+          1
+        ],
+        "triangles": 50
+      },
+      "depthClass": "coplanar",
+      "facadeDepthM": 1,
+      "triangles": 50
+    },
+    "roof-flat-detail-b": {
+      "moduleId": "roof-flat-detail-b",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          0,
+          -0.5
+        ],
+        "max": [
+          0.5,
+          0.21249999105930328,
+          0.5
+        ],
+        "size": [
+          1,
+          0.21249999105930328,
+          1
+        ],
+        "triangles": 48
+      },
+      "depthClass": "coplanar",
+      "facadeDepthM": 1,
+      "triangles": 48
+    },
+    "roof-slanted-detail": {
+      "moduleId": "roof-slanted-detail",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          -0.05703957751393318,
+          -0.5
+        ],
+        "max": [
+          0.5,
+          0.7250000238418579,
+          0.639176607131958
+        ],
+        "size": [
+          1,
+          0.7820396013557911,
+          1.139176607131958
+        ],
+        "triangles": 42
+      },
+      "depthClass": "moderate-projection",
+      "facadeDepthM": 1.139176607131958,
+      "triangles": 42
+    },
+    "roof-slanted-window": {
+      "moduleId": "roof-slanted-window",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.5,
+          -0.05703957751393318,
+          -0.5
+        ],
+        "max": [
+          0.5,
+          0.7249999642372131,
+          0.639176607131958
+        ],
+        "size": [
+          1,
+          0.7820395417511463,
+          1.139176607131958
+        ],
+        "triangles": 80
+      },
+      "depthClass": "moderate-projection",
+      "facadeDepthM": 1.139176607131958,
+      "triangles": 80
+    },
+    "detail-ac-a": {
+      "moduleId": "detail-ac-a",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.12000000476837158,
+          0,
+          -0.12000000476837158
+        ],
+        "max": [
+          0.12000000476837158,
+          0.10624999552965164,
+          0.12000000476837158
+        ],
+        "size": [
+          0.24000000953674316,
+          0.10624999552965164,
+          0.24000000953674316
+        ],
+        "triangles": 60
+      },
+      "depthClass": "coplanar",
+      "facadeDepthM": 0.24000000953674316,
+      "triangles": 60
+    },
+    "detail-ac-b": {
+      "moduleId": "detail-ac-b",
+      "alreadyImported": false,
+      "bounds": {
+        "min": [
+          -0.1550000011920929,
+          -0.02500000037252903,
+          -0.05000000074505806
+        ],
+        "max": [
+          0.1550000011920929,
+          0.20000000298023224,
+          0.07500000298023224
+        ],
+        "size": [
+          0.3100000023841858,
+          0.22500000335276127,
+          0.1250000037252903
+        ],
+        "triangles": 84
+      },
+      "depthClass": "coplanar",
+      "facadeDepthM": 0.1250000037252903,
+      "triangles": 84
+    }
+  },
+  "r12CandidateTriangleBudget": 896,
+  "r12RecommendedImportCap": 12,
+  "referenceSamples": {
+    "building-sample-house-a": {
+      "bounds": {
+        "min": [
+          -0.5478213429450989,
+          0,
+          -1.0000001192092896
+        ],
+        "max": [
+          0.5478214621543884,
+          1.1437499523162842,
+          1
+        ],
+        "size": [
+          1.0956428050994873,
+          1.1437499523162842,
+          2.0000001192092896
+        ],
+        "triangles": 312
+      },
+      "triangles": 312,
+      "note": "Disassembly reference only — do not import as runtime monolith in R12"
+    },
+    "building-sample-house-b": {
+      "bounds": {
+        "min": [
+          -0.5456427335739136,
+          0,
+          -1.100000023841858
+        ],
+        "max": [
+          0.5456427335739136,
+          1.9812500476837158,
+          1.100000023841858
+        ],
+        "size": [
+          1.0912854671478271,
+          1.9812500476837158,
+          2.200000047683716
+        ],
+        "triangles": 374
+      },
+      "triangles": 374,
+      "note": "Disassembly reference only — do not import as runtime monolith in R12"
+    },
+    "building-sample-house-c": {
+      "bounds": {
+        "min": [
+          -1.0000001192092896,
+          0,
+          -1.100000023841858
+        ],
+        "max": [
+          1.0000001192092896,
+          1.9812500476837158,
+          1.100000023841858
+        ],
+        "size": [
+          2.000000238418579,
+          1.9812500476837158,
+          2.200000047683716
+        ],
+        "triangles": 322
+      },
+      "triangles": 322,
+      "note": "Disassembly reference only — do not import as runtime monolith in R12"
+    },
+    "building-sample-tower-a": {
+      "bounds": {
+        "min": [
+          -0.550000011920929,
+          0,
+          -0.550000011920929
+        ],
+        "max": [
+          0.550000011920929,
+          2.5,
+          0.7000000476837158
+        ],
+        "size": [
+          1.100000023841858,
+          2.5,
+          1.2500000596046448
+        ],
+        "triangles": 398
+      },
+      "triangles": 398,
+      "note": "Disassembly reference only — do not import as runtime monolith in R12"
+    }
+  },
+  "missingForms": [
+    "continuous storefront triple-window bay (requires window-large L/M/R)",
+    "second-floor balcony rhythm (requires building-window-balcony)",
+    "porch/stoop with side windows (requires building-steps-narrow-windows*)",
+    "civic corner tower cap (requires corner-window-top-round + tower sample disassembly)",
+    "roof parapet/AC silhouette (requires roof-flat-detail-* + detail-ac-*)",
+    "dormer/window-on-roof mass (requires roof-slanted-window)"
+  ],
+  "complementaryFamilyFallback": {
+    "required": false,
+    "condition": "Only if Kenney pack candidates fail visual DoD after authored assembly rewrite",
+    "proposal": "Reversible offline kitbash: merge ≤4 Kenney depth modules into 2 authored porch/bay GLBs with warm colormap — no new license",
+    "externalCc0Family": "Hold — Kenney same-pack expansion preferred first"
+  }
+}

@@ -18,6 +18,7 @@ import { Town } from './Town';
 import { DedicatedBuildings } from './assets/BuildingVisualRegistry';
 import { CitizenVisual } from './assets/CitizenVisual';
 import { CorridorPresentation } from './environment/CorridorPresentation';
+import { OverviewCompositionLayer } from './environment/OverviewCompositionLayer';
 import { RoadNetwork } from './environment/RoadNetwork';
 import { PracticalLighting } from './environment/PracticalLighting';
 import { TownAmenities } from './environment/TownAmenities';
@@ -74,9 +75,10 @@ function SceneContent({
       <RoadNetwork />
       <Town />
       <CorridorPresentation />
+      <OverviewCompositionLayer cameraView={cameraView} />
       <TownAmenities />
       <DedicatedBuildings />
-      <VegetationLayer />
+      <VegetationLayer cameraView={cameraView} />
       <FacilityInteractionSpots />
       {citizens.map((citizen) => (
         <CitizenVisual

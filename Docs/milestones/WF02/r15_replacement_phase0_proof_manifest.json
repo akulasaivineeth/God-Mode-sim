@@ -1,0 +1,83 @@
+{
+  "sha": "85ded0397eb4945b1b36d69cf6dcc4f6e50a7268",
+  "planRevision": 15.2,
+  "phase": 0,
+  "authorization": "CANDIDATE_C_PHASE_0_ONLY",
+  "integrationMode": "C-replacement-hero-assembly",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "camera": "overview",
+  "simMinute": 0,
+  "clockLabel": "06:00",
+  "baseline": {
+    "file": "Docs/milestones/WF02/01_r14_overview_dawn.png",
+    "sha256": "e90ba51f2ccd25af63b4c139f7efe95b179632d4b7ea156c0b51517917405cc7"
+  },
+  "proof": {
+    "name": "r15_replacement_phase0_proof_overview",
+    "file": "Docs/milestones/WF02/r15_replacement_phase0_proof_overview.png",
+    "sha256": "5e83b1958a6691e1fecb511892e3b401ed2ea6cd7de89cbfc4c204fb6074da2f",
+    "url": "http://127.0.0.1:4173/?evidence=1&r15ReplacementPhase0Proof=1"
+  },
+  "pixelDelta": {
+    "threshold": 5,
+    "mae": 6.1947,
+    "changedPixels": 248334,
+    "changedPct": 19.16,
+    "passMae8": false,
+    "passChanged15": true,
+    "learningDiagnostics": {
+      "roiMae": 14.1951,
+      "highContrastChangedPct": 15.97,
+      "note": "Learning only — not gate substitutes"
+    }
+  },
+  "gates": {
+    "maeMin": 8,
+    "changedPctMin": 15,
+    "pass": false
+  },
+  "abortCriteria": {
+    "passMae8": false,
+    "passChanged15": true,
+    "heroBlockDrawWithinHardStop": true,
+    "shellDoorBindings": true,
+    "zeroAssetErrors": true
+  },
+  "assemblyProvenance": {
+    "file": "Docs/milestones/WF02/r15_replacement_assembly_provenance.json",
+    "totalAssemblyTriangles": 11302,
+    "totalAssemblyMeshes": 5,
+    "heroBlockDrawEstimate": 8,
+    "heroBlockDrawHardStop": 12,
+    "assemblies": [
+      {
+        "assemblyId": "hero-replacement-west",
+        "meshCount": 4,
+        "materialCount": 1,
+        "triangles": 9448,
+        "assetUrl": "/assets/glb/wf02/hero-assemblies/wf02-hero-replacement-west.glb"
+      },
+      {
+        "assemblyId": "hero-replacement-east",
+        "meshCount": 1,
+        "materialCount": 1,
+        "triangles": 1854,
+        "assetUrl": "/assets/glb/wf02/hero-assemblies/wf02-hero-replacement-east.glb"
+      }
+    ]
+  },
+  "audits": {
+    "assemblyProvenance": "PASS",
+    "shellDoorBindings": "PASS"
+  },
+  "diagnostics": {
+    "drawCalls": 60,
+    "triangles": 17127,
+    "source": "live-gl"
+  },
+  "consoleErrors": [],
+  "networkAssetErrors": []
+}

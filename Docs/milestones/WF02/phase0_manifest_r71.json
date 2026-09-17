@@ -1,0 +1,275 @@
+{
+  "phase": "0b",
+  "baseSha": "743a2599409bfa0531807f2dc574aa25c475bc1b",
+  "cameras": {
+    "overview": {
+      "position": [
+        10,
+        93,
+        54
+      ],
+      "target": [
+        30,
+        2,
+        4
+      ]
+    },
+    "angled": {
+      "position": [
+        68,
+        53,
+        37
+      ],
+      "target": [
+        28,
+        3,
+        2
+      ]
+    }
+  },
+  "visualMappings": [
+    {
+      "id": "community-hall",
+      "auth": [
+        -18,
+        -18
+      ],
+      "visual": [
+        -16,
+        -14
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": 0,
+      "maxM": 6
+    },
+    {
+      "id": "clinic",
+      "auth": [
+        -42,
+        -14
+      ],
+      "visual": [
+        -38,
+        -12
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": -0.03,
+      "maxM": 6
+    },
+    {
+      "id": "school",
+      "auth": [
+        -24,
+        -48
+      ],
+      "visual": [
+        -22,
+        -44
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": 0,
+      "maxM": 6
+    },
+    {
+      "id": "house-1",
+      "auth": [
+        11,
+        -10
+      ],
+      "visual": [
+        14,
+        -8
+      ],
+      "rotY": -1.5707963267948966,
+      "rotD": 0,
+      "maxM": 4
+    },
+    {
+      "id": "house-2",
+      "auth": [
+        30,
+        -12
+      ],
+      "visual": [
+        28,
+        -10
+      ],
+      "rotY": -1.5707963267948966,
+      "rotD": 0.06,
+      "maxM": 4
+    },
+    {
+      "id": "house-3",
+      "auth": [
+        11,
+        -30
+      ],
+      "visual": [
+        14,
+        -28
+      ],
+      "rotY": 0,
+      "rotD": 0,
+      "maxM": 4
+    },
+    {
+      "id": "house-4",
+      "auth": [
+        30,
+        -30
+      ],
+      "visual": [
+        28,
+        -28
+      ],
+      "rotY": -1.5707963267948966,
+      "rotD": -0.04,
+      "maxM": 4
+    },
+    {
+      "id": "apartment",
+      "auth": [
+        52,
+        -22
+      ],
+      "visual": [
+        46,
+        -20
+      ],
+      "rotY": -1.5707963267948966,
+      "rotD": 0.04,
+      "maxM": 8
+    },
+    {
+      "id": "store",
+      "auth": [
+        -11,
+        11
+      ],
+      "visual": [
+        -10,
+        6
+      ],
+      "rotY": 0,
+      "rotD": 0,
+      "maxM": 5.5
+    },
+    {
+      "id": "cafe",
+      "auth": [
+        -30,
+        12
+      ],
+      "visual": [
+        -28,
+        10
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": 0.05,
+      "maxM": 5
+    },
+    {
+      "id": "workshop",
+      "auth": [
+        -11,
+        23
+      ],
+      "visual": [
+        -10,
+        20
+      ],
+      "rotY": 0,
+      "rotD": -0.03,
+      "maxM": 5
+    },
+    {
+      "id": "warehouse",
+      "auth": [
+        -38,
+        48
+      ],
+      "visual": [
+        -36,
+        42
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": 0,
+      "maxM": 8
+    },
+    {
+      "id": "utility",
+      "auth": [
+        -52,
+        30
+      ],
+      "visual": [
+        -48,
+        28
+      ],
+      "rotY": 3.141592653589793,
+      "rotD": -0.05,
+      "maxM": 6
+    },
+    {
+      "id": "farmhouse",
+      "auth": [
+        28,
+        82
+      ],
+      "visual": [
+        32,
+        68
+      ],
+      "rotY": -1.5707963267948966,
+      "rotD": 0,
+      "maxM": 16
+    }
+  ],
+  "verticalLayerDecision": {
+    "selected": true,
+    "mechanism": "PresentationTerrainLayer embankment skirts + CVP retaining edges",
+    "maxHeightM": 0.8,
+    "rollback": "Remove PresentationTerrainLayer from OverviewCompositionLayer; revert envelopeFillBuilders heights",
+    "simTerrainUnchanged": true
+  },
+  "review": "WF02-R71-PHASE0",
+  "phase0EvidenceSha": "107df225ee70d4358a06462e1dbc2dfe797b4f30",
+  "branch": "cursor/wf02-scale-calibration-754a",
+  "state": "PHASE_0_COMPLETE_STOP",
+  "networkErrors": 0,
+  "assetImports": {
+    "phase0": 0,
+    "proposedPhase2": 5
+  },
+  "artifactManifest": [
+    {
+      "path": "Docs/milestones/WF02/compare_r6_prototype_northstar_r71.png",
+      "sha256": "8cf7e9ec7f8a76835a86d7a897d54ffe7aeab64b980b7492a35f482ff62e6e55"
+    },
+    {
+      "path": "Docs/milestones/WF02/composition_map_r71.svg",
+      "sha256": "115cc8cd8987cff5464bf7dfeda8d208e740471d7f512a5fab5c28027d4b2cde"
+    },
+    {
+      "path": "Docs/milestones/WF02/prototype_angled_r71.png",
+      "sha256": "533d8b9107d18a45929180b88366432f0d5875bc1a0680cffccfc79d599b7ee6"
+    },
+    {
+      "path": "Docs/milestones/WF02/prototype_overview_r71.png",
+      "sha256": "642cd91d9fdbcbbfa48229a2f0249f5e91744cbdb2e46d6cee87cbeaa3f104d0"
+    },
+    {
+      "path": "Docs/milestones/WF02/r6_failure_overlay_r71.svg",
+      "sha256": "b661ea100b381ec8a2f43bffa0c6a0aac4c2e193a58987d6caf062cfbb56880b"
+    },
+    {
+      "path": "Docs/milestones/WF02/visual_layout_audit_r71.json",
+      "sha256": "70dbdb987090c23c8bbf71b81f8dcb35b9f9a15cadf4ffb7e5f3b67c9ab1ccd5"
+    }
+  ],
+  "verify": {
+    "command": "git rev-parse HEAD",
+    "note": "[GOD-MODE:BUILDER] must cite the full 40-char output as authoritative PR head."
+  },
+  "generatedAt": "2026-09-16T00:10:43.664Z"
+}

@@ -4,6 +4,60 @@ Status: M02 visual foundation + WF01 Riverside World Foundation curated imports 
 
 Kenney GLBs reference `Textures/colormap.png` relative to each pack directory. **Repackaged per-pack** so atlases do not collide. No mesh edits; scale normalization via `ModelAsset.targetWidth` at placement time.
 
+## WF02 R5.1 warm atlas derivatives
+
+Offline hue normalization from approved Kenney pack `colormap.png` sources (512×512 PNG). Original GLBs archived at `public/assets/glb/kenney/_archive/pre-r5/`. Geometry/UVs unchanged; GLB JSON texture URI patched only.
+
+| Derived texture | Source pack | Role | Facilities |
+|---|---|---|---|
+| `suburban/Textures/colormap_warm_residential.png` | Suburban colormap | warm_residential | house-1–4, apartment |
+| `suburban/Textures/colormap_farm_straw.png` | Suburban colormap | farm_straw | farmhouse |
+| `commercial/Textures/colormap_warm_commercial.png` | Commercial colormap | warm_commercial | store, cafe, clinic |
+| `commercial/Textures/colormap_civic_cream.png` | Commercial colormap | civic_cream | community-hall, school |
+| `industrial/Textures/colormap_warm_industrial.png` | Industrial colormap | warm_industrial | workshop, warehouse, utility |
+
+Script: `npm run repack:wf02-atlas` (`scripts/wf02-r51-repack-atlas.mjs`).
+
+## WF02 R11 + R12 Kenney Modular Buildings (curated subset)
+
+Source pack: [Kenney Modular Buildings 2.1](https://kenney.nl/assets/modular-buildings) — **CC0 1.0 Universal**. R11 import: `npm run import:wf02-r11-modular`. R12 expansion (+12 modules): `npm run import:wf02-r12-modular`. Measured grid unit: **1.0 m × 0.625 m story × 1.0 m depth**.
+
+| Local path | Original identifier | License | Role |
+|---|---|---|---|
+| `public/assets/glb/kenney/modular/building-block.glb` | `building-block.glb` | CC0 1.0 | Wall/floor module |
+| `public/assets/glb/kenney/modular/building-corner.glb` | `building-corner.glb` | CC0 1.0 | Corner module |
+| `public/assets/glb/kenney/modular/building-window*.glb` | various | CC0 1.0 | Facade rhythm / storefront / balcony |
+| `public/assets/glb/kenney/modular/building-door-window*.glb` | various | CC0 1.0 | Shopfront doors |
+| `public/assets/glb/kenney/modular/building-steps-*.glb` | various | CC0 1.0 | Porch / stoop depth |
+| `public/assets/glb/kenney/modular/roof-*.glb` | various | CC0 1.0 | Roof caps / dormers / parapet |
+| `public/assets/glb/kenney/modular/door-white.glb` | `door-white.glb` | CC0 1.0 | Door detail |
+| `public/assets/glb/kenney/modular/Textures/colormap_warm_modular.png` | `colormap.png` | CC0 1.0 | Warm atlas (repacked) |
+
+Full curated list (**30 modules**): see `Docs/milestones/WF02/r12_modular_audit.json`. Rollback: `WORLD_LAB_MODULAR_PROTOTYPE = false` in `src/world/worldLabModularMode.ts`.
+
+## WF02 R13 Prototype Shells (offline kitbash)
+
+Source: CC0 Kenney City Kit + Suburban + Industrial prefabs merged offline — **not** runtime modular cell assembly. Import: `npm run import:wf02-r13-shells`. Provenance: `Docs/milestones/WF02/r13_shell_provenance.json`.
+
+| Path | Role | License |
+|---|---|---|
+| `public/assets/glb/wf02/prototype-shells/wf02-civic-enclosure-shell.glb` | S1 civic landmark shell | CC0 1.0 derivative |
+| `public/assets/glb/wf02/prototype-shells/wf02-commercial-frontage-shell.glb` | S2 3-bay storefront shell | CC0 1.0 derivative |
+| `public/assets/glb/wf02/prototype-shells/wf02-residential-cottage-shell.glb` | S3 M02 home cottage shell | CC0 1.0 derivative |
+| `public/assets/glb/wf02/prototype-shells/wf02-residential-gable-shell.glb` | S4 taller gable home shell | CC0 1.0 derivative |
+
+Rollback: `WORLD_LAB_PROTOTYPE_SHELL = false` → R12 modular (`WORLD_LAB_MODULAR_PROTOTYPE = true`) or both false → R10 prefabs.
+
+## WF02 R15.4 Strategy A Hero Scene (offline authored — Phase 0 proof only)
+
+Source: CC0 Kenney + Quaternius parts merged offline into one bounded hero-neighborhood chunk. Import: `npm run import:wf02-r15-hero-neighborhood-scene`. Provenance: `Docs/milestones/WF02/r15_hero_scene_provenance.json`. Recipe: `Docs/milestones/WF02/r15_hero_neighborhood_scene_recipe.json`. **Disposable proof only** via `?r15ScenePhase0Proof=1` — not production-wired until senior PASS.
+
+| Path | Role | License |
+|---|---|---|
+| `public/assets/glb/wf02/hero-scenes/wf02-hero-neighborhood-scene.glb` | Bounded ~64×54 m authored hero neighborhood (223 parts → 8 meshes / 130k tris) | CC0 1.0 derivative |
+
+Rollback: remove `?r15ScenePhase0Proof=1` URL param — R14 `WorldLabCompositionLayer` unchanged.
+
 ## WF01 curated imports — full provenance
 
 | Local renamed path | Original Kenney identifier | Pack | Source URL | License | Download | Modifications |
@@ -37,6 +91,9 @@ Kenney GLBs reference `Textures/colormap.png` relative to each pack directory. *
 | `roads/road-curve-pavement.glb` | `road-curve-pavement.glb` | City Kit Roads 2.1 | https://kenney.nl/assets/city-kit-roads | CC0 1.0 | 2026-09-13 | T-junction transitions |
 | `roads/road-driveway-double.glb` | `road-driveway-double.glb` | City Kit Roads 2.1 | https://kenney.nl/assets/city-kit-roads | CC0 1.0 | 2026-09-13 | Facility aprons |
 | Suburban props | various | City Kit Suburban | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-13 | Paths, fences, trees |
+| `suburban/planter.glb` | `planter.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-16 | R8 Phase 0b civic anchor + garden bands |
+| `suburban/path-stones-short.glb` | `path-stones-short.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-16 | R8 Phase 0b plaza radial paths |
+| `suburban/path-stones-messy.glb` | `path-stones-messy.glb` | City Kit Suburban 2.0 | https://kenney.nl/assets/city-kit-suburban | CC0 1.0 | 2026-09-16 | R8 Phase 0b commercial apron |
 | `gltf/quaternius/*` | Stylized Nature MegaKit | Quaternius | https://opengameart.org/content/stylized-nature-megakit | CC0 1.0 | 2026-09-13 | Instanced vegetation |
 
 ## Character animation (R7)
@@ -49,4 +106,4 @@ Kenney Mini Characters `alex-character.glb` — 32 skeletal clips via `Animation
 
 ## Performance note (WF01 R2)
 
-Overview ~116 draw calls / ~147k triangles with instanced roads + vegetation. See `Docs/milestones/WF01/M03_HEADROOM.md` for M03 citizen scaling estimate.
+Overview **127** draw calls / **140,305** triangles (WF02 R3 measured). See `Docs/milestones/WF01/M03_HEADROOM.md` for M03 citizen scaling estimate.

@@ -19,8 +19,8 @@ const DAY_SKY = new Color('#8fc0f0');
 
 const SUN_DISTANCE = 60;
 
-/** Readable daylight floor during the sun-up arc (~06:00–18:00). */
-const DAWN_DAYLIGHT_FLOOR = 0.46;
+/** Readable daylight floor during the sun-up arc (~06:00–18:00). WF02 R3: warmer dawn. */
+const DAWN_DAYLIGHT_FLOOR = 0.62;
 
 export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
   const { sunPosition, dirIntensity, ambientIntensity, hemiIntensity, skyColor } = useMemo(() => {
@@ -43,8 +43,8 @@ export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
 
     return {
       sunPosition: sunPos,
-      dirIntensity: 0.42 + dayFactor * 1.1,
-      ambientIntensity: 0.52 + dayFactor * 0.4,
+      dirIntensity: 0.48 + dayFactor * 1.15,
+      ambientIntensity: 0.56 + dayFactor * 0.42,
       hemiIntensity: 0.46 + dayFactor * 0.46,
       skyColor: `#${sky.getHexString()}`,
     };
@@ -53,7 +53,7 @@ export function DayNightLighting({ timeOfDay }: DayNightLightingProps) {
   return (
     <group>
       <color attach="background" args={[skyColor]} />
-      <hemisphereLight args={['#cfe0f2', '#4a4a33', hemiIntensity]} />
+      <hemisphereLight args={['#f0e8d8', '#b89868', hemiIntensity]} />
       <ambientLight intensity={ambientIntensity} />
       <directionalLight
         position={sunPosition}

@@ -1,9 +1,10 @@
 /**
- * Cached GLTF/GLB loader — shared presentation pipeline (Foundation Hardening).
+ * Cached GLTF/GLB loader — shared presentation pipeline (Foundation Hardening + WF02 layout authority).
  */
 import { useMemo } from 'react';
 import { useLoader } from '@react-three/fiber';
-import { Box3, Object3D, Vector3 } from 'three';
+import type { Object3D } from 'three';
+import { resolveNormalizedLayout, resolveUniformScale } from './modelLayout';
 import { GLTFLoader, prepareStaticGltfRoot } from './gltfPipeline';
 
 export interface ModelAssetProps {
@@ -14,14 +15,6 @@ export interface ModelAssetProps {
   targetWidth?: number;
   castShadow?: boolean;
   receiveShadow?: boolean;
-}
-
-function normalizeScale(scene: Object3D, targetWidth?: number): number {
-  if (!targetWidth) return 1;
-  const box = new Box3().setFromObject(scene);
-  const size = box.getSize(new Vector3());
-  const width = Math.max(size.x, size.z, 0.001);
-  return targetWidth / width;
 }
 
 export function ModelAsset({
@@ -40,14 +33,25 @@ export function ModelAsset({
   }, [gltf, castShadow, receiveShadow]);
 
   const resolvedScale = useMemo(() => {
-    const base = normalizeScale(prepared, targetWidth);
+    const base = resolveUniformScale(url, targetWidth);
     if (typeof scale === 'number') return base * scale;
     return [scale[0] * base, scale[1] * base, scale[2] * base] as [number, number, number];
-  }, [prepared, scale, targetWidth]);
+  }, [url, scale, targetWidth]);
 
   return (
     <group position={position} rotation={rotation} scale={resolvedScale}>
       <primitive object={prepared} />
     </group>
   );
+}
+
+/** Exported for tests and anchor consumers — same authority as rendered scale. */
+export function getModelPresentationLayout(url: string, targetWidth?: number) {
+  return resolveNormalizedLayout(url, targetWidth);
+}
+
+/** Runtime AABB from manifest (deterministic fallback, no post-load recompute). */
+export function getPreparedObjectFootprint(scene: Object3D, url: string, targetWidth?: number) {
+  void scene;
+  return resolveNormalizedLayout(url, targetWidth);
 }

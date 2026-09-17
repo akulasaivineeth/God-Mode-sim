@@ -1,0 +1,184 @@
+{
+  "planRevision": "15.4",
+  "phase": 0,
+  "authorization": "STRATEGY_A_PHASE0_ONLY",
+  "integrationMode": "A-offline-authored-hero-neighborhood-scene",
+  "sceneId": "wf02-hero-neighborhood-scene",
+  "assetUrl": "/assets/glb/wf02/hero-scenes/wf02-hero-neighborhood-scene.glb",
+  "anchor": {
+    "x": 0,
+    "y": 0,
+    "z": 4
+  },
+  "heroBounds": {
+    "minX": -32,
+    "maxX": 32,
+    "minZ": -24,
+    "maxZ": 30
+  },
+  "bounds": {
+    "min": [
+      -38.64505770705905,
+      -0.5826528310775757,
+      -34.81174614911959
+    ],
+    "max": [
+      24.120941541664,
+      17.76053695678711,
+      29.56468947124953
+    ],
+    "size": [
+      62.76599924872305,
+      18.343189787864684,
+      64.37643562036912
+    ],
+    "triangles": 130486,
+    "meshCount": 8,
+    "materialCount": 4
+  },
+  "doorSockets": [
+    {
+      "label": "home-door",
+      "facilityId": "house-1",
+      "localX": 16,
+      "localY": 0,
+      "localZ": -10.4,
+      "frozenEntrance": {
+        "x": 16,
+        "z": -6.4
+      }
+    },
+    {
+      "label": "store-door",
+      "facilityId": "store",
+      "localX": -14,
+      "localY": 0,
+      "localZ": 6.8,
+      "frozenEntrance": {
+        "x": -14,
+        "z": 10.8
+      }
+    },
+    {
+      "label": "workshop-door",
+      "facilityId": "workshop",
+      "localX": 4,
+      "localY": 0,
+      "localZ": 6.8,
+      "frozenEntrance": {
+        "x": 4,
+        "z": 10.8
+      }
+    }
+  ],
+  "doorValidation": [
+    {
+      "label": "home-door",
+      "facilityId": "house-1",
+      "worldX": 16,
+      "worldZ": -6.4,
+      "frozenX": 16,
+      "frozenZ": -6.4,
+      "deltaM": 0,
+      "pass": true
+    },
+    {
+      "label": "store-door",
+      "facilityId": "store",
+      "worldX": -14,
+      "worldZ": 10.8,
+      "frozenX": -14,
+      "frozenZ": 10.8,
+      "deltaM": 0,
+      "pass": true
+    },
+    {
+      "label": "workshop-door",
+      "facilityId": "workshop",
+      "worldX": 4,
+      "worldZ": 10.8,
+      "frozenX": 4,
+      "frozenZ": 10.8,
+      "deltaM": 0,
+      "pass": true
+    }
+  ],
+  "districtZones": [
+    {
+      "id": "civic",
+      "minX": -28,
+      "maxX": 6,
+      "minZ": -22,
+      "maxZ": -2
+    },
+    {
+      "id": "commercial",
+      "minX": -18,
+      "maxX": 20,
+      "minZ": 6,
+      "maxZ": 20
+    },
+    {
+      "id": "residential",
+      "minX": -28,
+      "maxX": 24,
+      "minZ": -10,
+      "maxZ": 6
+    },
+    {
+      "id": "future-lot",
+      "minX": -10,
+      "maxX": 10,
+      "minZ": 22,
+      "maxZ": 30
+    },
+    {
+      "id": "park-river",
+      "minX": 22,
+      "maxX": 32,
+      "minZ": -22,
+      "maxZ": 26
+    },
+    {
+      "id": "farm",
+      "minX": -30,
+      "maxX": -6,
+      "minZ": 14,
+      "maxZ": 30
+    }
+  ],
+  "partCount": 223,
+  "meshCount": 8,
+  "materialCount": 4,
+  "suppressLayers": [
+    "PrototypeShellLayer",
+    "WorldLabGroundTint",
+    "VegetationFrame",
+    "ResidentialGardens",
+    "FutureLotFrame",
+    "CivicEnclosure",
+    "CommercialFrontage",
+    "ModularAssemblyLayer",
+    "FootprintPhase0ProofLayer",
+    "ReplacementPhase0ProofLayer",
+    "BlockChunkPhase0ProofLayer",
+    "HeroBlockPhase0ProofLayer"
+  ],
+  "heroSceneDrawBudget": {
+    "hardStop": 12,
+    "target": 6
+  },
+  "performanceBudget": {
+    "overviewDrawCallsMax": 140,
+    "overviewTrianglesMax": 150000,
+    "streetDrawCallsMax": 100,
+    "headroomDrawCallsMin": 5,
+    "headroomTrianglesMin": 8000
+  },
+  "cameraPolicy": "frozen-default — Candidate D forbidden in Phase 0",
+  "provenance": {
+    "license": "CC0 1.0 Universal (Kenney + Quaternius derivatives)",
+    "flattenPipeline": "merge → flatten → join → flatten",
+    "sourceMeshCount": 14
+  }
+}

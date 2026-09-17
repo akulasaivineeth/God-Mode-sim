@@ -1,0 +1,263 @@
+{
+  "sha": "f9be001d0cfc69eafeedc6c40e76d6f961c9fff7",
+  "worldLab": true,
+  "prototypeShell": true,
+  "planRevision": 14,
+  "worldId": "hero-neighborhood-r14-rollout",
+  "shellProvenance": {
+    "generatedAt": "2026-09-16T21:26:13.269Z",
+    "planRevision": 13,
+    "license": "CC0 1.0 Universal (Kenney kitbash derivatives)",
+    "shellCount": 4,
+    "totalShellTriangles": 17498,
+    "shells": {
+      "civic-enclosure-shell": {
+        "license": "CC0 1.0 Universal (Kenney derivative)",
+        "sourceUrl": "https://kenney.nl/assets",
+        "sourceMeshes": [
+          "/assets/glb/kenney/commercial/community-hall.glb",
+          "/assets/glb/kenney/commercial/school.glb",
+          "/assets/glb/kenney/commercial/clinic.glb",
+          "/assets/glb/kenney/commercial/detail-parasol-a.glb",
+          "/assets/glb/kenney/suburban/path-stones-short.glb"
+        ],
+        "measuredBounds": {
+          "min": [
+            -4.259807616472244,
+            0,
+            -1.905523908138275
+          ],
+          "max": [
+            6.54600006043911,
+            5.644599962234498,
+            1.8000000044703484
+          ],
+          "size": [
+            10.805807676911353,
+            5.644599962234498,
+            3.7055239126086237
+          ],
+          "triangles": 4241
+        }
+      },
+      "commercial-frontage-shell": {
+        "license": "CC0 1.0 Universal (Kenney derivative)",
+        "sourceUrl": "https://kenney.nl/assets",
+        "sourceMeshes": [
+          "/assets/glb/kenney/commercial/store-general.glb",
+          "/assets/glb/kenney/industrial/workshop-industrial.glb",
+          "/assets/glb/kenney/commercial/cafe-bistro.glb",
+          "/assets/glb/kenney/commercial/detail-awning.glb",
+          "/assets/glb/kenney/industrial/warehouse.glb"
+        ],
+        "measuredBounds": {
+          "min": [
+            -11.567000022530555,
+            -7.826979199399165e-34,
+            -1.0588999927043914
+          ],
+          "max": [
+            11.6062500923872,
+            3.0820000171661377,
+            1.6222586989402772
+          ],
+          "size": [
+            23.173250114917757,
+            3.0820000171661377,
+            2.6811586916446686
+          ],
+          "triangles": 7132
+        }
+      },
+      "residential-cottage-shell": {
+        "license": "CC0 1.0 Universal (Kenney derivative)",
+        "sourceUrl": "https://kenney.nl/assets",
+        "sourceMeshes": [
+          "/assets/glb/kenney/suburban/home-cottage.glb",
+          "/assets/glb/kenney/suburban/path-stones-short.glb",
+          "/assets/glb/kenney/suburban/planter.glb",
+          "/assets/glb/kenney/suburban/path-short.glb"
+        ],
+        "measuredBounds": {
+          "min": [
+            -1.4400000035762786,
+            0,
+            -0.655499991774559
+          ],
+          "max": [
+            1.0511000394821166,
+            1.2512500524520875,
+            1.6100000016391278
+          ],
+          "size": [
+            2.4911000430583954,
+            1.2512500524520875,
+            2.2654999934136866
+          ],
+          "triangles": 1988
+        }
+      },
+      "residential-gable-shell": {
+        "license": "CC0 1.0 Universal (Kenney derivative)",
+        "sourceUrl": "https://kenney.nl/assets",
+        "sourceMeshes": [
+          "/assets/glb/kenney/suburban/home-type-a.glb",
+          "/assets/glb/kenney/suburban/home-type-c.glb",
+          "/assets/glb/kenney/suburban/apartment-block.glb",
+          "/assets/glb/kenney/suburban/path-stones-messy.glb"
+        ],
+        "measuredBounds": {
+          "min": [
+            -2.9549999833106995,
+            0,
+            -0.6425861269235611
+          ],
+          "max": [
+            1.0075091600418091,
+            2.7402491569519043,
+            1.4348777905106544
+          ],
+          "size": [
+            3.9625091433525084,
+            2.7402491569519043,
+            2.0774639174342155
+          ],
+          "triangles": 4137
+        }
+      }
+    }
+  },
+  "shots": [
+    {
+      "name": "01_r14_overview_dawn",
+      "cam": "overview",
+      "simMinute": 0,
+      "clockLabel": "06:00",
+      "file": "Docs/milestones/WF02/01_r14_overview_dawn.png",
+      "sha256": "e90ba51f2ccd25af63b4c139f7efe95b179632d4b7ea156c0b51517917405cc7",
+      "diagnostics": {
+        "drawCalls": 90,
+        "triangles": 34459,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "01b_r14_overview_noon",
+      "cam": "overview",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "Docs/milestones/WF02/01b_r14_overview_noon.png",
+      "sha256": "266b4903fd93a926d6a4af27741f03f565aac30375a0a817407adea1ad3566fc",
+      "diagnostics": {
+        "drawCalls": 87,
+        "triangles": 34123,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "02_r14_angled",
+      "cam": "angled",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "Docs/milestones/WF02/02_r14_angled.png",
+      "sha256": "ace499d5207d414408164477c0a2991ebd52e64a23deae24eb238984322fd65f",
+      "diagnostics": {
+        "drawCalls": 88,
+        "triangles": 34125,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "03_r14_civic_square",
+      "cam": "civic",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "Docs/milestones/WF02/03_r14_civic_square.png",
+      "sha256": "cd635ffcdd9069a4fbdda0b81b31b69245b0e81b8de99f2b33b4b2fd3c84c58f"
+    },
+    {
+      "name": "04_r14_commercial_frontage",
+      "cam": "commercial",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "Docs/milestones/WF02/04_r14_commercial_frontage.png",
+      "sha256": "fd537065cfd089083c48cc93daafc4d8505dd3ccf41b13961ce37fbcc163d97d"
+    },
+    {
+      "name": "05_r14_residential_future_lot",
+      "cam": "custom",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "Docs/milestones/WF02/05_r14_residential_future_lot.png",
+      "sha256": "fb23af6aa8eb6a7aa6b393ba37c13fe7c9bbe1a7e5b56c739ca01017256b3fd4"
+    },
+    {
+      "name": "06_r14_park_river",
+      "cam": "river",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "Docs/milestones/WF02/06_r14_park_river.png",
+      "sha256": "12f40460606c7179809f315de5beddea88a4ba21c7cd02fd0c26889d22c6fa66"
+    },
+    {
+      "name": "07_r14_street_portal",
+      "cam": "street",
+      "simMinute": 360,
+      "clockLabel": "12:00",
+      "file": "Docs/milestones/WF02/07_r14_street_portal.png",
+      "sha256": "4a3c444e4de4f3f3f740b4c9cc6626374ab778741a35cbf6579f304b44ee0f47",
+      "diagnostics": {
+        "drawCalls": 54,
+        "triangles": 65395,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "08_r14_home_street",
+      "cam": "home-street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "Docs/milestones/WF02/08_r14_home_street.png",
+      "sha256": "f61ece7a16d7eeef0b7d2a3b56bf62dc76086ea07c0b220a5c0960efcfb7fb5d"
+    },
+    {
+      "name": "09_r14_store_street",
+      "cam": "store-street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "Docs/milestones/WF02/09_r14_store_street.png",
+      "sha256": "c6ba879e453dd964caea42c901512665c8576ed3f0d52b6ac29f6ba8674e3428"
+    },
+    {
+      "name": "10_r14_workshop_street",
+      "cam": "workshop-street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "Docs/milestones/WF02/10_r14_workshop_street.png",
+      "sha256": "54cb5a3bb226c1179d07c4eedcea115a9de273fa96bdf603a6dc4c50fa880e97"
+    },
+    {
+      "name": "11_r14_street_scale_proof",
+      "cam": "street",
+      "simMinute": 420,
+      "clockLabel": "13:00",
+      "file": "Docs/milestones/WF02/11_r14_street_scale_proof.png",
+      "sha256": "f0bc276e36667203ff6a48b8c1561c00f54b4186bbc13041c3d00e8b7df030e4",
+      "diagnostics": {
+        "drawCalls": 54,
+        "triangles": 65395,
+        "source": "live-gl"
+      }
+    },
+    {
+      "name": "12_r14_night",
+      "cam": "overview",
+      "simMinute": 870,
+      "clockLabel": "20:30",
+      "file": "Docs/milestones/WF02/12_r14_night.png",
+      "sha256": "72604d653a99c2634db5a66cd593045bfa1797ad29b7fe34821130187eb47924"
+    }
+  ],
+  "consoleErrors": [],
+  "networkAssetErrors": []
+}

@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { CANONICAL_TOWN } from '@/world/townLayout';
+import { LEGACY_CANONICAL_TOWN } from '@/world/townLayout';
 import {
   buildRiverRibbonGeometry,
   R5_RIVER_CROSS_SECTION,
 } from '@/rendering/environment/riverGeometry';
 
 describe('WF01 R5 river ribbon geometry', () => {
-  const { points, color, bankColor } = CANONICAL_TOWN.river;
+  const { points, color, bankColor } = LEGACY_CANONICAL_TOWN.river;
 
   it('builds water and bank meshes from cross-section authority', () => {
     const { water, bank } = buildRiverRibbonGeometry(points, R5_RIVER_CROSS_SECTION, {

@@ -1,0 +1,157 @@
+[
+  {
+    "shellId": "civic-enclosure-shell",
+    "fileName": "wf02-civic-enclosure-shell.glb",
+    "origin": {
+      "x": -14,
+      "y": 0,
+      "z": -18
+    },
+    "rotY": 0,
+    "targetWidth": 18,
+    "doorBindings": [],
+    "replacesBuildingIds": [
+      "community-hall"
+    ],
+    "assetUrl": "/assets/glb/wf02/prototype-shells/wf02-civic-enclosure-shell.glb",
+    "bounds": {
+      "min": [
+        -4.259807616472244,
+        0,
+        -1.905523908138275
+      ],
+      "max": [
+        6.54600006043911,
+        5.644599962234498,
+        1.8000000044703484
+      ],
+      "size": [
+        10.805807676911353,
+        5.644599962234498,
+        3.7055239126086237
+      ],
+      "triangles": 4241
+    }
+  },
+  {
+    "shellId": "commercial-frontage-shell",
+    "fileName": "wf02-commercial-frontage-shell.glb",
+    "origin": {
+      "x": 1,
+      "y": 0,
+      "z": 13
+    },
+    "rotY": 0,
+    "targetWidth": 34,
+    "doorBindings": [
+      {
+        "label": "store-door",
+        "localX": -15,
+        "localZ": -2.2
+      },
+      {
+        "label": "workshop-door",
+        "localX": 3,
+        "localZ": -2.2
+      }
+    ],
+    "replacesBuildingIds": [
+      "store",
+      "workshop",
+      "cafe"
+    ],
+    "assetUrl": "/assets/glb/wf02/prototype-shells/wf02-commercial-frontage-shell.glb",
+    "bounds": {
+      "min": [
+        -11.567000022530555,
+        -7.826979199399165e-34,
+        -1.0588999927043914
+      ],
+      "max": [
+        11.6062500923872,
+        3.0820000171661377,
+        1.6222586989402772
+      ],
+      "size": [
+        23.173250114917757,
+        3.0820000171661377,
+        2.6811586916446686
+      ],
+      "triangles": 7132
+    }
+  },
+  {
+    "shellId": "residential-cottage-shell",
+    "fileName": "wf02-residential-cottage-shell.glb",
+    "origin": {
+      "x": 16,
+      "y": 0,
+      "z": -4
+    },
+    "rotY": 0,
+    "targetWidth": 6,
+    "doorBindings": [
+      {
+        "label": "home-door",
+        "localX": 0,
+        "localZ": -2.4
+      }
+    ],
+    "replacesBuildingIds": [
+      "house-1"
+    ],
+    "assetUrl": "/assets/glb/wf02/prototype-shells/wf02-residential-cottage-shell.glb",
+    "bounds": {
+      "min": [
+        -1.4400000035762786,
+        0,
+        -0.655499991774559
+      ],
+      "max": [
+        1.0511000394821166,
+        1.2512500524520875,
+        1.6100000016391278
+      ],
+      "size": [
+        2.4911000430583954,
+        1.2512500524520875,
+        2.2654999934136866
+      ],
+      "triangles": 1988
+    }
+  },
+  {
+    "shellId": "residential-gable-shell",
+    "fileName": "wf02-residential-gable-shell.glb",
+    "origin": {
+      "x": -16,
+      "y": 0,
+      "z": -4
+    },
+    "rotY": 0,
+    "targetWidth": 7,
+    "doorBindings": [],
+    "replacesBuildingIds": [
+      "house-2"
+    ],
+    "assetUrl": "/assets/glb/wf02/prototype-shells/wf02-residential-gable-shell.glb",
+    "bounds": {
+      "min": [
+        -2.9549999833106995,
+        0,
+        -0.6425861269235611
+      ],
+      "max": [
+        1.0075091600418091,
+        2.7402491569519043,
+        1.4348777905106544
+      ],
+      "size": [
+        3.9625091433525084,
+        2.7402491569519043,
+        2.0774639174342155
+      ],
+      "triangles": 4137
+    }
+  }
+]
