@@ -14,11 +14,23 @@ import { ModularAssemblyLayer } from '@/rendering/modular/ModularAssemblyLayer';
 import { PrototypeShellLayer } from '@/rendering/prototypeShell/PrototypeShellLayer';
 import { BlockChunkPhase0ProofLayer } from '@/rendering/blockChunkProof/BlockChunkPhase0ProofLayer';
 import { isBlockChunkPhase0ProofActive } from '@/rendering/blockChunkProof/blockChunkPhase0ProofMode';
+import { ReplacementPhase0ProofLayer } from '@/rendering/replacementProof/ReplacementPhase0ProofLayer';
+import { isReplacementPhase0ProofActive } from '@/rendering/replacementProof/replacementPhase0ProofMode';
 import { HeroBlockPhase0ProofLayer } from './heroBlockProof/HeroBlockPhase0ProofLayer';
 import { isHeroBlockPhase0ProofActive } from './heroBlockProof/heroBlockPhase0ProofMode';
 
 export function WorldLabCompositionLayer() {
   if (!isWorldLabActive()) return null;
+
+  if (isReplacementPhase0ProofActive()) {
+    return (
+      <group name="world-lab-r15-candidate-c-replacement-proof">
+        <Suspense fallback={null}>
+          <ReplacementPhase0ProofLayer />
+        </Suspense>
+      </group>
+    );
+  }
 
   if (isBlockChunkPhase0ProofActive()) {
     return (

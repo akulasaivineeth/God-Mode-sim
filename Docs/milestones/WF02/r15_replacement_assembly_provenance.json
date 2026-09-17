@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-09-17T03:47:00.606Z",
+  "planRevision": 15.2,
+  "authorization": "CANDIDATE_C_PHASE_0_ONLY",
+  "integrationMode": "C-replacement-hero-assembly",
+  "assemblyCount": 2,
+  "totalAssemblyTriangles": 11302,
+  "totalMeshCount": 5,
+  "assemblies": {
+    "hero-replacement-west": {
+      "license": "CC0 1.0 Universal (Kenney derivative)",
+      "sourceUrl": "https://kenney.nl/assets",
+      "sourceMeshes": [
+        "/assets/glb/kenney/commercial/school.glb",
+        "/assets/glb/kenney/commercial/detail-parasol-a.glb",
+        "/assets/glb/kenney/suburban/home-type-a.glb",
+        "/assets/glb/kenney/suburban/path-stones-messy.glb",
+        "/assets/glb/kenney/suburban/tree-large.glb",
+        "/assets/glb/kenney/suburban/tree-small.glb",
+        "/assets/glb/kenney/suburban/fence-low.glb",
+        "/assets/glb/kenney/suburban/planter.glb"
+      ],
+      "partCount": 84,
+      "measuredBounds": {
+        "min": [
+          -38.156104310224194,
+          0,
+          -33.848188548797935
+        ],
+        "max": [
+          16.62181376661279,
+          2.327399969100952,
+          15.466727156493118
+        ],
+        "size": [
+          54.77791807683698,
+          2.327399969100952,
+          49.31491570529106
+        ],
+        "triangles": 9448,
+        "meshCount": 4,
+        "materialCount": 1
+      },
+      "flattenPipeline": "merge → flatten → join"
+    },
+    "hero-replacement-east": {
+      "license": "CC0 1.0 Universal (Kenney derivative)",
+      "sourceUrl": "https://kenney.nl/assets",
+      "sourceMeshes": [
+        "/assets/glb/kenney/suburban/tree-large.glb",
+        "/assets/glb/kenney/suburban/tree-small.glb",
+        "/assets/glb/kenney/suburban/fence-low.glb",
+        "/assets/glb/kenney/suburban/path-stones-short.glb"
+      ],
+      "partCount": 27,
+      "measuredBounds": {
+        "min": [
+          -20.56636744078951,
+          0,
+          -7.5863536657466675
+        ],
+        "max": [
+          10.666126645849793,
+          2.070899891853333,
+          20.163182849595717
+        ],
+        "size": [
+          31.232494086639303,
+          2.070899891853333,
+          27.749536515342385
+        ],
+        "triangles": 1854,
+        "meshCount": 1,
+        "materialCount": 1
+      },
+      "flattenPipeline": "merge → flatten → join"
+    }
+  }
+}
