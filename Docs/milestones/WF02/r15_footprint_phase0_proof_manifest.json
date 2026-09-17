@@ -1,0 +1,316 @@
+{
+  "sha": "d314c7118077aa35dbb96e035af08c7d4e3cbca4",
+  "planRevision": "15.3.1",
+  "phase": 0,
+  "authorization": "CANDIDATE_E_PHASE0_ONLY",
+  "integrationMode": "E-presentation-footprint-recomposition",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "camera": {
+    "policy": "frozen-default",
+    "overview": {
+      "position": [
+        0,
+        46,
+        36
+      ],
+      "target": [
+        0,
+        0,
+        4
+      ]
+    },
+    "note": "Candidate D not authorized — unchanged gameplay/evidence cameras"
+  },
+  "simMinute": 0,
+  "clockLabel": "06:00",
+  "baseline": {
+    "file": "Docs/milestones/WF02/01_r14_overview_dawn.png",
+    "sha256": "e90ba51f2ccd25af63b4c139f7efe95b179632d4b7ea156c0b51517917405cc7"
+  },
+  "proof": {
+    "url": "http://127.0.0.1:4173/?evidence=1&r15FootprintPhase0Proof=1",
+    "overview": {
+      "file": "Docs/milestones/WF02/r15_footprint_phase0_overview.png",
+      "sha256": "caa8d2b459723b9dbfb7c800ba0f7b2f74ea105a0a46fc889c6128eedd9647de"
+    }
+  },
+  "captures": [
+    {
+      "name": "r15_footprint_phase0_overview",
+      "file": "Docs/milestones/WF02/r15_footprint_phase0_overview.png",
+      "sha256": "caa8d2b459723b9dbfb7c800ba0f7b2f74ea105a0a46fc889c6128eedd9647de",
+      "camera": "overview"
+    },
+    {
+      "name": "r15_footprint_phase0_civic",
+      "file": "Docs/milestones/WF02/r15_footprint_phase0_civic.png",
+      "sha256": "bd808a63cbf4289d4545119c1a85cd928d3ea881d5f31e4256de2c51ba4c840a",
+      "camera": "civic"
+    },
+    {
+      "name": "r15_footprint_phase0_commercial",
+      "file": "Docs/milestones/WF02/r15_footprint_phase0_commercial.png",
+      "sha256": "00cda8df461ca0a57e047bd8ab406efb8acb5648e5e3be9681c6ab35d91b47ba",
+      "camera": "commercial"
+    },
+    {
+      "name": "r15_footprint_phase0_residential",
+      "file": "Docs/milestones/WF02/r15_footprint_phase0_residential.png",
+      "sha256": "ef1fb5a949c6571ac245504b66b65626a2141fd541cb5de321d433023af644ce",
+      "camera": "custom"
+    },
+    {
+      "name": "r15_footprint_phase0_river",
+      "file": "Docs/milestones/WF02/r15_footprint_phase0_river.png",
+      "sha256": "b7e130f09a4f8dbf67579b099881bb30f631127efb31dbfca48d545497459744",
+      "camera": "river"
+    },
+    {
+      "name": "r15_footprint_phase0_street",
+      "file": "Docs/milestones/WF02/r15_footprint_phase0_street.png",
+      "sha256": "4b34b2411c96a49e304ad32fc46f7376f755dd72deac5d0dd1b294e5e76559e2",
+      "camera": "store-workshop"
+    },
+    {
+      "name": "r15_footprint_phase0_angled",
+      "file": "Docs/milestones/WF02/r15_footprint_phase0_angled.png",
+      "sha256": "32e38ad3b064d6b1f1cae08abc9d7e6a5827c96aeaf9d591ace8d1bb28d519d9",
+      "camera": "angled"
+    }
+  ],
+  "pixelDelta": {
+    "threshold": 5,
+    "mae": 6.3936,
+    "changedPixels": 246549,
+    "changedPct": 19.02,
+    "learningDiagnostics": {
+      "roiMae": 13.7837,
+      "highContrastChangedPct": 14.46,
+      "note": "Diagnostic only — not automatic PASS for Candidate E"
+    }
+  },
+  "frameOccupancy": {
+    "r14Baseline": {
+      "note": "Descriptive design metric — not a pass substitute",
+      "builtMassPct": 11.1,
+      "vegetationPct": 41.9,
+      "roadsPct": 9,
+      "meadowPeripheryPct": 28.7,
+      "riverPct": 7.2,
+      "skyPct": 2.1,
+      "hierarchyNote": "Candidate E shifts mass toward central built/vegetated read vs R14 sparse meadow dominance"
+    },
+    "candidateE": {
+      "note": "Descriptive design metric — not a pass substitute",
+      "builtMassPct": 11.1,
+      "vegetationPct": 41.1,
+      "roadsPct": 8.7,
+      "meadowPeripheryPct": 29.8,
+      "riverPct": 7.2,
+      "skyPct": 2.1,
+      "hierarchyNote": "Candidate E shifts mass toward central built/vegetated read vs R14 sparse meadow dominance"
+    },
+    "delta": {
+      "builtMassPct": 0,
+      "vegetationPct": -0.8,
+      "meadowPeripheryPct": 1.1
+    }
+  },
+  "multiPartRubric": [
+    {
+      "id": "R1",
+      "component": "Qualitative north-star comparison",
+      "hardFail": true,
+      "status": "pending-senior-review"
+    },
+    {
+      "id": "R2",
+      "component": "District silhouette/massing proof",
+      "hardFail": true,
+      "status": "pending-senior-review"
+    },
+    {
+      "id": "R3",
+      "component": "Street readability (M02 doors/paths)",
+      "hardFail": true,
+      "status": "pending-senior-review"
+    },
+    {
+      "id": "R4",
+      "component": "Gameplay camera honesty",
+      "hardFail": true,
+      "status": "pending-senior-review"
+    },
+    {
+      "id": "R5",
+      "component": "Whole-frame changed % vs R14",
+      "hardFail": false,
+      "role": "diagnostic",
+      "status": "recorded-diagnostic"
+    },
+    {
+      "id": "R6",
+      "component": "Whole-frame MAE vs R14",
+      "hardFail": false,
+      "role": "diagnostic",
+      "status": "recorded-diagnostic"
+    },
+    {
+      "id": "R7",
+      "component": "Frame-occupancy before→proposed",
+      "hardFail": false,
+      "role": "descriptive",
+      "status": "recorded-descriptive"
+    },
+    {
+      "id": "R8",
+      "component": "Performance budget (DC/tris)",
+      "hardFail": true,
+      "status": "pass-engineering"
+    },
+    {
+      "id": "R9",
+      "component": "Simulation invariants + zero asset errors",
+      "hardFail": true,
+      "status": "pass-engineering"
+    }
+  ],
+  "productSignals": {
+    "changedPctDiagnostic": 19.02,
+    "maeDiagnostic": 6.3936,
+    "roiMaeDiagnostic": 13.7837,
+    "builtMassDeltaPct": 0,
+    "vegetationDeltaPct": -0.8,
+    "meadowPeripheryDeltaPct": 1.1,
+    "requiresSeniorQualitativeReview": true,
+    "note": "Ordinary-viewer north-star gate (R1) requires senior review — not auto-scored here"
+  },
+  "hardAbort": {
+    "feasibilityAudit": true,
+    "doorDeltaWithin03": true,
+    "boundsWithinHero": true,
+    "zeroAssetErrors": true,
+    "overviewDrawCalls": true,
+    "overviewTriangles": true,
+    "streetDrawCalls": true,
+    "headroomDrawCalls": true,
+    "headroomTriangles": true
+  },
+  "engineeringPass": true,
+  "footprintBeforeAfter": [
+    {
+      "clusterId": "civic",
+      "shellId": "civic-enclosure-shell",
+      "beforeOrigin": {
+        "x": -14,
+        "z": -18
+      },
+      "afterOrigin": {
+        "x": -8,
+        "z": -12
+      },
+      "boundsNote": "Δ(6, 6) within hero bounds"
+    },
+    {
+      "clusterId": "commercial",
+      "shellId": "commercial-frontage-shell",
+      "beforeOrigin": {
+        "x": 1,
+        "z": 13
+      },
+      "afterOrigin": {
+        "x": -4,
+        "z": 8
+      },
+      "boundsNote": "Δ(-5, -5) within hero bounds"
+    },
+    {
+      "clusterId": "residential",
+      "shellId": "residential-cottage-shell",
+      "beforeOrigin": {
+        "x": 16,
+        "z": -4
+      },
+      "afterOrigin": {
+        "x": 10,
+        "z": -1
+      },
+      "boundsNote": "Δ(-6, 3) within hero bounds"
+    },
+    {
+      "clusterId": "residential",
+      "shellId": "residential-gable-shell",
+      "beforeOrigin": {
+        "x": -16,
+        "z": -4
+      },
+      "afterOrigin": {
+        "x": -10,
+        "z": -1
+      },
+      "boundsNote": "Δ(6, 3) within hero bounds"
+    }
+  ],
+  "doorDeltas": [
+    {
+      "label": "store-door",
+      "facilityId": "store",
+      "simEntrance": {
+        "x": -14,
+        "z": 10.8
+      },
+      "presentationDoor": {
+        "x": -14,
+        "z": 10.8
+      },
+      "deltaM": 0
+    },
+    {
+      "label": "workshop-door",
+      "facilityId": "workshop",
+      "simEntrance": {
+        "x": 4,
+        "z": 10.8
+      },
+      "presentationDoor": {
+        "x": 4,
+        "z": 10.8
+      },
+      "deltaM": 0
+    },
+    {
+      "label": "home-door",
+      "facilityId": "house-1",
+      "simEntrance": {
+        "x": 16,
+        "z": -6.4
+      },
+      "presentationDoor": {
+        "x": 16,
+        "z": -6.4
+      },
+      "deltaM": 0
+    }
+  ],
+  "diagnostics": {
+    "overview": {
+      "drawCalls": 98,
+      "triangles": 35439,
+      "source": "live-gl"
+    },
+    "street": {
+      "drawCalls": 90,
+      "triangles": 74110,
+      "source": "live-gl"
+    }
+  },
+  "audits": {
+    "footprintFeasibility": "PASS"
+  },
+  "consoleErrors": [],
+  "networkAssetErrors": [],
+  "compareStrip": "Docs/milestones/WF02/compare_r14_footprint_e_northstar.png"
+}

@@ -1,0 +1,109 @@
+{
+  "generatedAt": "2026-09-17T05:22:04.441Z",
+  "planRevision": "15.3.1",
+  "authorization": "CANDIDATE_E_PHASE0_ONLY",
+  "sha": "d314c7118077aa35dbb96e035af08c7d4e3cbca4",
+  "footprintAuthority": "src/world/worldLab/presentationFootprintSpec.ts",
+  "beforeAfterTable": [
+    {
+      "clusterId": "civic",
+      "shellId": "civic-enclosure-shell",
+      "beforeOrigin": {
+        "x": -14,
+        "z": -18
+      },
+      "afterOrigin": {
+        "x": -8,
+        "z": -12
+      },
+      "boundsNote": "Δ(6, 6) within hero bounds"
+    },
+    {
+      "clusterId": "commercial",
+      "shellId": "commercial-frontage-shell",
+      "beforeOrigin": {
+        "x": 1,
+        "z": 13
+      },
+      "afterOrigin": {
+        "x": -4,
+        "z": 8
+      },
+      "boundsNote": "Δ(-5, -5) within hero bounds"
+    },
+    {
+      "clusterId": "residential",
+      "shellId": "residential-cottage-shell",
+      "beforeOrigin": {
+        "x": 16,
+        "z": -4
+      },
+      "afterOrigin": {
+        "x": 10,
+        "z": -1
+      },
+      "boundsNote": "Δ(-6, 3) within hero bounds"
+    },
+    {
+      "clusterId": "residential",
+      "shellId": "residential-gable-shell",
+      "beforeOrigin": {
+        "x": -16,
+        "z": -4
+      },
+      "afterOrigin": {
+        "x": -10,
+        "z": -1
+      },
+      "boundsNote": "Δ(6, 3) within hero bounds"
+    }
+  ],
+  "doorDeltas": [
+    {
+      "label": "store-door",
+      "facilityId": "store",
+      "simEntrance": {
+        "x": -14,
+        "z": 10.8
+      },
+      "presentationDoor": {
+        "x": -14,
+        "z": 10.8
+      },
+      "deltaM": 0
+    },
+    {
+      "label": "workshop-door",
+      "facilityId": "workshop",
+      "simEntrance": {
+        "x": 4,
+        "z": 10.8
+      },
+      "presentationDoor": {
+        "x": 4,
+        "z": 10.8
+      },
+      "deltaM": 0
+    },
+    {
+      "label": "home-door",
+      "facilityId": "house-1",
+      "simEntrance": {
+        "x": 16,
+        "z": -6.4
+      },
+      "presentationDoor": {
+        "x": 16,
+        "z": -6.4
+      },
+      "deltaM": 0
+    }
+  ],
+  "doorDeltaPass": true,
+  "boundsCheck": {
+    "pass": true,
+    "violations": []
+  },
+  "cameraPolicy": "frozen — no Candidate D in Phase 0",
+  "overallPass": true
+}

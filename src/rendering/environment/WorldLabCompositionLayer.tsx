@@ -18,9 +18,21 @@ import { ReplacementPhase0ProofLayer } from '@/rendering/replacementProof/Replac
 import { isReplacementPhase0ProofActive } from '@/rendering/replacementProof/replacementPhase0ProofMode';
 import { HeroBlockPhase0ProofLayer } from './heroBlockProof/HeroBlockPhase0ProofLayer';
 import { isHeroBlockPhase0ProofActive } from './heroBlockProof/heroBlockPhase0ProofMode';
+import { FootprintPhase0ProofLayer } from '@/rendering/footprintProof/FootprintPhase0ProofLayer';
+import { isFootprintPhase0ProofActive } from '@/rendering/footprintProof/footprintPhase0ProofMode';
 
 export function WorldLabCompositionLayer() {
   if (!isWorldLabActive()) return null;
+
+  if (isFootprintPhase0ProofActive()) {
+    return (
+      <group name="world-lab-r15-candidate-e-footprint-proof-root">
+        <Suspense fallback={null}>
+          <FootprintPhase0ProofLayer />
+        </Suspense>
+      </group>
+    );
+  }
 
   if (isReplacementPhase0ProofActive()) {
     return (

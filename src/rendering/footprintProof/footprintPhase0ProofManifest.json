@@ -1,0 +1,33 @@
+{
+  "planRevision": "15.3.1",
+  "phase": 0,
+  "authorization": "CANDIDATE_E_PHASE0_ONLY",
+  "integrationMode": "E-presentation-footprint-recomposition",
+  "cameraPolicy": "frozen-default-overview-angled-street",
+  "suppressProofLayers": [
+    "r15Phase0Proof",
+    "r15PathBPhase0Proof",
+    "r15ReplacementPhase0Proof"
+  ],
+  "footprintAuthority": "presentationFootprintSpec.ts",
+  "supplementaryMassingCount": 12,
+  "multiPartRubric": [
+    { "id": "R1", "component": "Qualitative north-star comparison", "hardFail": true },
+    { "id": "R2", "component": "District silhouette/massing proof", "hardFail": true },
+    { "id": "R3", "component": "Street readability (M02 doors/paths)", "hardFail": true },
+    { "id": "R4", "component": "Gameplay camera honesty", "hardFail": true },
+    { "id": "R5", "component": "Whole-frame changed % vs R14", "hardFail": false, "role": "diagnostic" },
+    { "id": "R6", "component": "Whole-frame MAE vs R14", "hardFail": false, "role": "diagnostic" },
+    { "id": "R7", "component": "Frame-occupancy before→proposed", "hardFail": false, "role": "descriptive" },
+    { "id": "R8", "component": "Performance budget (DC/tris)", "hardFail": true },
+    { "id": "R9", "component": "Simulation invariants + zero asset errors", "hardFail": true }
+  ],
+  "performanceBudget": {
+    "overviewDrawCallsMax": 140,
+    "streetDrawCallsMax": 100,
+    "overviewTrianglesMax": 150000,
+    "headroomDrawCallsMin": 5,
+    "headroomTrianglesMin": 8000
+  },
+  "doorDeltaToleranceM": 0.3
+}
