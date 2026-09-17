@@ -1,5 +1,5 @@
 {
-  "sha": "d314c7118077aa35dbb96e035af08c7d4e3cbca4",
+  "sha": "e4b59ab9e52476fe2db50af5f1c8e16f41832208",
   "planRevision": "15.3.1",
   "phase": 0,
   "authorization": "CANDIDATE_E_PHASE0_ONLY",
@@ -34,26 +34,26 @@
     "url": "http://127.0.0.1:4173/?evidence=1&r15FootprintPhase0Proof=1",
     "overview": {
       "file": "Docs/milestones/WF02/r15_footprint_phase0_overview.png",
-      "sha256": "caa8d2b459723b9dbfb7c800ba0f7b2f74ea105a0a46fc889c6128eedd9647de"
+      "sha256": "a12c32ca065594b5892d8f028f914f5443ff9e4693542be3ce51bbfed6d8a53f"
     }
   },
   "captures": [
     {
       "name": "r15_footprint_phase0_overview",
       "file": "Docs/milestones/WF02/r15_footprint_phase0_overview.png",
-      "sha256": "caa8d2b459723b9dbfb7c800ba0f7b2f74ea105a0a46fc889c6128eedd9647de",
+      "sha256": "a12c32ca065594b5892d8f028f914f5443ff9e4693542be3ce51bbfed6d8a53f",
       "camera": "overview"
     },
     {
       "name": "r15_footprint_phase0_civic",
       "file": "Docs/milestones/WF02/r15_footprint_phase0_civic.png",
-      "sha256": "bd808a63cbf4289d4545119c1a85cd928d3ea881d5f31e4256de2c51ba4c840a",
+      "sha256": "9ca2d8d297561e0dbb0ec4f705fa80cf9ee2639852ed5d79a787177342b95497",
       "camera": "civic"
     },
     {
       "name": "r15_footprint_phase0_commercial",
       "file": "Docs/milestones/WF02/r15_footprint_phase0_commercial.png",
-      "sha256": "00cda8df461ca0a57e047bd8ab406efb8acb5648e5e3be9681c6ab35d91b47ba",
+      "sha256": "e242b1ce820ecb6ec3922b7bfe1b503625a87eca6124525711bc964eb5acbd5b",
       "camera": "commercial"
     },
     {
@@ -71,24 +71,24 @@
     {
       "name": "r15_footprint_phase0_street",
       "file": "Docs/milestones/WF02/r15_footprint_phase0_street.png",
-      "sha256": "4b34b2411c96a49e304ad32fc46f7376f755dd72deac5d0dd1b294e5e76559e2",
+      "sha256": "b542be15401cfccd3912b7d9db3cdaabf7b89753c98148fc67c3e66770a9944e",
       "camera": "store-workshop"
     },
     {
       "name": "r15_footprint_phase0_angled",
       "file": "Docs/milestones/WF02/r15_footprint_phase0_angled.png",
-      "sha256": "32e38ad3b064d6b1f1cae08abc9d7e6a5827c96aeaf9d591ace8d1bb28d519d9",
+      "sha256": "a7753154bc3d4ce68eedd2ae7b51b4dd754e713430cc775c17db487ededa7360",
       "camera": "angled"
     }
   ],
   "pixelDelta": {
     "threshold": 5,
-    "mae": 6.3936,
-    "changedPixels": 246549,
+    "mae": 6.387,
+    "changedPixels": 246480,
     "changedPct": 19.02,
     "learningDiagnostics": {
-      "roiMae": 13.7837,
-      "highContrastChangedPct": 14.46,
+      "roiMae": 13.7655,
+      "highContrastChangedPct": 14.45,
       "note": "Diagnostic only — not automatic PASS for Candidate E"
     }
   },
@@ -180,8 +180,8 @@
   ],
   "productSignals": {
     "changedPctDiagnostic": 19.02,
-    "maeDiagnostic": 6.3936,
-    "roiMaeDiagnostic": 13.7837,
+    "maeDiagnostic": 6.387,
+    "roiMaeDiagnostic": 13.7655,
     "builtMassDeltaPct": 0,
     "vegetationDeltaPct": -0.8,
     "meadowPeripheryDeltaPct": 1.1,
