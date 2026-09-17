@@ -1,5 +1,5 @@
 {
-  "sha": "ae14148f43eb80ca1848029925e87f8c158674b9",
+  "sha": "babd0fef738b07cf5ec705ab8742aaf28c691da6",
   "planRevision": 15.1,
   "phase": 0,
   "authorization": "PATH_B_PHASE_0_ONLY",
@@ -18,14 +18,14 @@
   "proof": {
     "name": "r15_pathb_phase0_proof_overview",
     "file": "Docs/milestones/WF02/r15_pathb_phase0_proof_overview.png",
-    "sha256": "aa74ab1d9a2b38a4e76c750eec5c930af7238a056bb0392bea59c736abc0bfba",
+    "sha256": "b6a42f94358b8e8818633ed4a9d2cb1a2e57ace640b5425697dd522382ba693a",
     "url": "http://127.0.0.1:4173/?evidence=1&r15PathBPhase0Proof=1"
   },
   "pixelDelta": {
     "threshold": 5,
-    "mae": 4.5855,
-    "changedPixels": 204372,
-    "changedPct": 15.77,
+    "mae": 4.5916,
+    "changedPixels": 204617,
+    "changedPct": 15.79,
     "passMae8": false,
     "passChanged15": true
   },
