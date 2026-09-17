@@ -1,0 +1,66 @@
+{
+  "sha": "ae14148f43eb80ca1848029925e87f8c158674b9",
+  "planRevision": 15.1,
+  "phase": 0,
+  "authorization": "PATH_B_PHASE_0_ONLY",
+  "integrationMode": "B1-mass-chunk-plus-shells",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "camera": "overview",
+  "simMinute": 0,
+  "clockLabel": "06:00",
+  "baseline": {
+    "file": "Docs/milestones/WF02/01_r14_overview_dawn.png",
+    "sha256": "e90ba51f2ccd25af63b4c139f7efe95b179632d4b7ea156c0b51517917405cc7"
+  },
+  "proof": {
+    "name": "r15_pathb_phase0_proof_overview",
+    "file": "Docs/milestones/WF02/r15_pathb_phase0_proof_overview.png",
+    "sha256": "aa74ab1d9a2b38a4e76c750eec5c930af7238a056bb0392bea59c736abc0bfba",
+    "url": "http://127.0.0.1:4173/?evidence=1&r15PathBPhase0Proof=1"
+  },
+  "pixelDelta": {
+    "threshold": 5,
+    "mae": 4.5855,
+    "changedPixels": 204372,
+    "changedPct": 15.77,
+    "passMae8": false,
+    "passChanged15": true
+  },
+  "gates": {
+    "maeMin": 8,
+    "changedPctMin": 15,
+    "pass": false
+  },
+  "chunkProvenance": {
+    "file": "Docs/milestones/WF02/r15_block_chunk_provenance.json",
+    "totalChunkTriangles": 6654,
+    "chunks": [
+      {
+        "chunkId": "hero-block-mass-west",
+        "partCount": 82,
+        "triangles": 4584,
+        "assetUrl": "/assets/glb/wf02/block-chunks/wf02-hero-block-mass-west.glb"
+      },
+      {
+        "chunkId": "hero-block-mass-east",
+        "partCount": 58,
+        "triangles": 2070,
+        "assetUrl": "/assets/glb/wf02/block-chunks/wf02-hero-block-mass-east.glb"
+      }
+    ]
+  },
+  "audits": {
+    "chunkProvenance": "PASS",
+    "shellDoorBindings": "PASS"
+  },
+  "diagnostics": {
+    "drawCalls": 206,
+    "triangles": 29245,
+    "source": "live-gl"
+  },
+  "consoleErrors": [],
+  "networkAssetErrors": []
+}

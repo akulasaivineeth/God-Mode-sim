@@ -1,0 +1,72 @@
+{
+  "generatedAt": "2026-09-17T02:37:02.212Z",
+  "planRevision": "15.1",
+  "phase": 0,
+  "authorization": "PATH_B_PHASE_0_ONLY",
+  "license": "CC0 1.0 Universal (Kenney kitbash derivatives)",
+  "chunkCount": 2,
+  "totalChunkTriangles": 6654,
+  "chunks": {
+    "hero-block-mass-west": {
+      "license": "CC0 1.0 Universal (Kenney derivative)",
+      "sourceUrl": "https://kenney.nl/assets",
+      "sourceMeshes": [
+        "/assets/glb/kenney/suburban/fence-low.glb",
+        "/assets/glb/kenney/suburban/path-stones-messy.glb",
+        "/assets/glb/kenney/suburban/path-stones-short.glb",
+        "/assets/glb/kenney/suburban/tree-large.glb",
+        "/assets/glb/kenney/suburban/tree-small.glb"
+      ],
+      "partCount": 82,
+      "measuredBounds": {
+        "min": [
+          -28.315899981558324,
+          0,
+          -24.444970251469652
+        ],
+        "max": [
+          6.592567864341459,
+          2.1475998878479,
+          26.85432914864865
+        ],
+        "size": [
+          34.908467845899786,
+          2.1475998878479,
+          51.2992994001183
+        ],
+        "triangles": 4584
+      }
+    },
+    "hero-block-mass-east": {
+      "license": "CC0 1.0 Universal (Kenney derivative)",
+      "sourceUrl": "https://kenney.nl/assets",
+      "sourceMeshes": [
+        "/assets/glb/kenney/suburban/path-long.glb",
+        "/assets/glb/kenney/suburban/path-stones-messy.glb",
+        "/assets/glb/kenney/suburban/path-stones-short.glb",
+        "/assets/glb/kenney/suburban/planter.glb",
+        "/assets/glb/kenney/suburban/tree-large.glb",
+        "/assets/glb/kenney/suburban/tree-small.glb"
+      ],
+      "partCount": 58,
+      "measuredBounds": {
+        "min": [
+          -15.24533497446592,
+          0,
+          -20.396295509253203
+        ],
+        "max": [
+          9.088790118708484,
+          2.1475998878479,
+          13.74549266523207
+        ],
+        "size": [
+          24.334125093174404,
+          2.1475998878479,
+          34.14178817448527
+        ],
+        "triangles": 2070
+      }
+    }
+  }
+}
